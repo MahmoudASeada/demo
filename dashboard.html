@@ -63,6 +63,65 @@ td{border-top:1px solid #eef1f5;padding:15px 26px;font-size:13px}
 .stats,.article-grid{grid-template-columns:1fr}
 .search{width:220px}
 }
+.stat{
+  cursor:pointer;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  padding:20px;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  width:100%;
+  max-width:850px;
+  max-height:80vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.18);
+}
+
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:22px 26px;
+  border-bottom:1px solid #eee;
+}
+
+.modal-head button{
+  border:none;
+  background:#c9000b;
+  color:#fff;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  font-size:22px;
+  cursor:pointer;
+}
+
+.modal-table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.modal-table th,
+.modal-table td{
+  padding:15px 22px;
+  border-bottom:1px solid #eef1f5;
+  text-align:left;
+}
 </style>
 </head>
 
@@ -117,7 +176,7 @@ td{border-top:1px solid #eef1f5;padding:15px 26px;font-size:13px}
       </div>
 
       <div class="stats">
-        <div class="stat">
+        <div class="stat" onclick="openSurveyModal('completed')">
           <div class="icon">🚀</div>
           <div>
             <p>Submitted Surveys</p>
@@ -125,7 +184,7 @@ td{border-top:1px solid #eef1f5;padding:15px 26px;font-size:13px}
           </div>
         </div>
 
-        <div class="stat">
+        <div class="stat" onclick="openSurveyModal('pending')">
           <div class="icon">⏳</div>
           <div>
             <p>Pending Responses</p>
@@ -133,7 +192,7 @@ td{border-top:1px solid #eef1f5;padding:15px 26px;font-size:13px}
           </div>
         </div>
 
-        <div class="stat">
+        <div class="stat" onclick="openSurveyModal('all')">
           <div class="icon">✉</div>
           <div>
             <p>Responses Received</p>
@@ -145,7 +204,7 @@ td{border-top:1px solid #eef1f5;padding:15px 26px;font-size:13px}
       <div class="panel">
         <div class="panel-head">
           <h3>My Submitted Surveys</h3>
-          <a href="#">View All ›</a>
+          <a href="#" onclick="openSurveyModal('all');return false;">View All ›</a>
         </div>
 
         <table>
@@ -209,7 +268,7 @@ const token = localStorage.getItem("portal_token");
 if(!token){
   window.location.href = "login.html";
 }
-
+let allSurveys = [];
 async function loadDashboard(){
   try{
     const res = await fetch("api/dashboard.php",{
@@ -219,13 +278,14 @@ async function loadDashboard(){
     });
 
     const data = await res.json();
-
+    allSurveys = data.surveys;
     if(!data.success){
       localStorage.clear();
       window.location.href = "login.html";
+      
       return;
     }
-
+    
     const name = data.user.name || "User";
     const letter = name.charAt(0).toUpperCase();
 
@@ -287,9 +347,82 @@ function logout(){
   localStorage.clear();
   window.location.href = "login.html";
 }
+function openSurveyModal(type){
 
+  const modal = document.getElementById("surveyModal");
+  const title = document.getElementById("modalTitle");
+  const content = document.getElementById("modalContent");
+
+  let filtered = allSurveys;
+
+  if(type === "pending"){
+    filtered = allSurveys.filter(s => s.status === "pending");
+    title.innerText = "Pending Responses";
+  }
+  else if(type === "completed"){
+    filtered = allSurveys.filter(s => s.status === "completed");
+    title.innerText = "Submitted Surveys";
+  }
+  else{
+    title.innerText = "All Surveys";
+  }
+
+  if(!filtered.length){
+    content.innerHTML = `
+      <div style="padding:30px">
+        No surveys found
+      </div>
+    `;
+  }else{
+
+    content.innerHTML = `
+      <table class="modal-table">
+        <thead>
+          <tr>
+            <th>Survey</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          ${filtered.map(s => `
+
+            <tr>
+              <td>${s.title}</td>
+              <td>${s.created_at}</td>
+              <td>${s.status}</td>
+              <td>
+                <a class="view" href="survey.html?id=${s.id}">
+                  View Details
+                </a>
+              </td>
+            </tr>
+
+          `).join("")}
+        </tbody>
+      </table>
+    `;
+  }
+
+  modal.classList.add("show");
+}
+
+function closeSurveyModal(){
+  document.getElementById("surveyModal").classList.remove("show");
+}
 loadDashboard();
 </script>
+<div class="modal" id="surveyModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2 id="modalTitle">Surveys</h2>
+      <button onclick="closeSurveyModal()">×</button>
+    </div>
 
+    <div id="modalContent"></div>
+  </div>
+</div>
 </body>
 </html>
