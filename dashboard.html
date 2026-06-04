@@ -1,265 +1,271 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wzone Dashboard</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f7f8fc;color:#101828}
+.app{display:flex;min-height:100vh}
+.sidebar{width:230px;background:#fff;border-right:1px solid #eee;position:fixed;top:0;left:0;bottom:0;padding:24px 14px;display:flex;flex-direction:column;justify-content:space-between}
+.logo{font-size:22px;font-weight:800;color:#c9000b;margin-bottom:30px}
+.nav a{display:flex;gap:10px;align-items:center;text-decoration:none;color:#667085;padding:12px 14px;border-radius:12px;margin-bottom:8px;font-size:14px}
+.nav a.active{background:#c9000b;color:#fff}
+.logout{color:#c9000b;font-size:14px;cursor:pointer;margin-bottom:18px}
+.user-card{border:1px solid #c9000b;border-radius:14px;padding:10px;display:flex;gap:10px;align-items:center}
+.avatar{width:38px;height:38px;border-radius:50%;background:#dce3ff;display:flex;align-items:center;justify-content:center;font-weight:800;color:#3745a4}
+.user-card h4{font-size:13px}
+.user-card p{font-size:11px;color:#667085}
+.main{margin-left:230px;width:calc(100% - 230px)}
+.topbar{height:58px;background:#fff;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;padding:0 34px}
+.search{width:420px;height:36px;border:1px solid #d9dee8;border-radius:30px;padding:0 18px;background:#fafbff;outline:none}
+.top-user{display:flex;align-items:center;gap:10px}
+.top-user h4{font-size:13px}
+.top-user p{font-size:10px;color:#667085;text-align:right}
+.content{padding:42px 44px}
+.welcome h1{font-size:30px;margin-bottom:8px}
+.welcome p{font-size:14px;color:#667085;margin-bottom:28px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-bottom:34px}
+.stat{background:#fff;border-radius:16px;padding:24px;display:flex;gap:18px;align-items:center;box-shadow:0 14px 30px rgba(0,0,0,.04)}
+.icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;background:#fff3f3;color:#c9000b}
+.stat:nth-child(2) .icon{background:#f2f4ff;color:#6670d8}
+.stat:nth-child(3) .icon{background:#effaf3;color:#2fbf6b}
+.stat p{font-size:13px;color:#667085;margin-bottom:6px}
+.stat h2{font-size:26px}
+.panel{background:#fff;border-radius:20px;box-shadow:0 14px 30px rgba(0,0,0,.04);overflow:hidden;margin-bottom:34px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;padding:22px 26px}
+.panel-head h3{font-size:17px}
+.panel-head a{font-size:13px;color:#c9000b;text-decoration:none;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th{background:#f8fafc;text-align:left;font-size:12px;color:#667085;padding:14px 26px}
+td{border-top:1px solid #eef1f5;padding:15px 26px;font-size:13px}
+.badge{padding:5px 13px;border-radius:20px;font-size:11px;font-weight:700}
+.waiting{background:#e7f0ff;color:#3478f6}
+.responded{background:#e8faef;color:#20a95a}
+.closed{background:#e9eef7;color:#64748b}
+.view{color:#c9000b;text-decoration:none;font-weight:700}
+.articles-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.articles-head h3{font-size:17px}
+.article-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.article{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.04)}
+.article-img{height:145px;background:linear-gradient(135deg,#122230,#396070);position:relative}
+.tag{position:absolute;top:12px;right:12px;background:#c9000b;color:#fff;padding:5px 10px;border-radius:20px;font-size:10px;font-weight:700}
+.article-body{padding:14px}
+.article-body h4{font-size:14px;margin-bottom:8px}
+.article-body p{font-size:11px;color:#667085;line-height:1.5}
+@media(max-width:950px){
+.sidebar{width:78px;padding:20px 10px}
+.logo{font-size:13px}
+.nav a span,.user-card,.logout{display:none}
+.main{margin-left:78px;width:calc(100% - 78px)}
+.stats,.article-grid{grid-template-columns:1fr}
+.search{width:220px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div>
+      <div class="logo">W zone</div>
+
+      <nav class="nav">
+        <a href="dashboard.html" class="active">▦ <span>Dashboard</span></a>
+        <a href="#">▤ <span>Reports & Articles</span></a>
+        <a href="#">⚙ <span>Settings</span></a>
+        <a href="#">❔ <span>Help Center</span></a>
+      </nav>
+    </div>
+
+    <div>
+      <div class="logout" onclick="logout()">↩ Logout</div>
+
+      <div class="user-card">
+        <div class="avatar" id="sideAvatar">U</div>
+        <div>
+          <h4 id="sideName">User</h4>
+          <p>Pro Member</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+      <input class="search" placeholder="Search surveys, files, or reports..." />
+
+      <div class="top-user">
+        <div>
+          <h4 id="topName">User</h4>
+          <p>ID #84210</p>
+        </div>
+        <div class="avatar" id="topAvatar">U</div>
+      </div>
+    </header>
+
+    <section class="content">
+
+      <div class="welcome">
+        <h1 id="welcomeName">Welcome back</h1>
+        <p>Track your survey activity and responses across all projects in real-time.</p>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="icon">🚀</div>
+          <div>
+            <p>Submitted Surveys</p>
+            <h2 id="submittedSurveys">0</h2>
+          </div>
+        </div>
+
+        <div class="stat">
+          <div class="icon">⏳</div>
+          <div>
+            <p>Pending Responses</p>
+            <h2 id="pendingResponses">0</h2>
+          </div>
+        </div>
+
+        <div class="stat">
+          <div class="icon">✉</div>
+          <div>
+            <p>Responses Received</p>
+            <h2 id="responsesReceived">0</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>My Submitted Surveys</h3>
+          <a href="#">View All ›</a>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Survey Name</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody id="surveyTable">
+            <tr>
+              <td>Customer Satisfaction Q3</td>
+              <td>Oct 12, 2023</td>
+              <td><span class="badge waiting">Waiting</span></td>
+              <td><a class="view" href="#">View Details</a></td>
+            </tr>
+            <tr>
+              <td>Product Feedback: Mobile App</td>
+              <td>Oct 08, 2023</td>
+              <td><span class="badge responded">Responded</span></td>
+              <td><a class="view" href="#">View Details</a></td>
+            </tr>
+            <tr>
+              <td>Employee Engagement Survey</td>
+              <td>Sep 28, 2023</td>
+              <td><span class="badge closed">Closed</span></td>
+              <td><a class="view" href="#">View Details</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="articles-head">
+        <h3>Monthly Published Articles</h3>
+        <div>‹ ›</div>
+      </div>
+
+      <div class="article-grid">
+        <div class="article">
+          <div class="article-img"><span class="tag">ANALYTICS</span></div>
+          <div class="article-body">
+            <h4>Improving Customer Loyalty</h4>
+            <p>Published Oct 15, 2023 · 5 min read</p>
+          </div>
+        </div>
+
+        <div class="article">
+          <div class="article-img"><span class="tag">TRENDS</span></div>
+          <div class="article-body">
+            <h4>Q4 Satisfaction Benchmarks</h4>
+            <p>Published Oct 15, 2023 · 5 min read</p>
+          </div>
+        </div>
+
+        <div class="article">
+          <div class="article-img"><span class="tag">LEADERSHIP</span></div>
+          <div class="article-body">
+            <h4>Voice of Customer Guide</h4>
+            <p>Published Oct 15, 2023 · 5 min read</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+const token = localStorage.getItem("portal_token");
+
+if(!token){
+  window.location.href = "login.html";
 }
 
-body{
-  background:#f6f7fb;
-  color:#111827;
+async function loadDashboard(){
+  try{
+    const res = await fetch("api/dashboard.php",{
+      headers:{
+        Authorization:"Bearer " + token
+      }
+    });
+
+    const data = await res.json();
+
+    if(!data.success){
+      localStorage.clear();
+      window.location.href = "login.html";
+      return;
+    }
+
+    const name = data.user.name || "User";
+    const letter = name.charAt(0).toUpperCase();
+
+    document.getElementById("welcomeName").innerText = "Welcome back, " + name + "!";
+    document.getElementById("sideName").innerText = name;
+    document.getElementById("topName").innerText = name;
+    document.getElementById("sideAvatar").innerText = letter;
+    document.getElementById("topAvatar").innerText = letter;
+
+    document.getElementById("submittedSurveys").innerText = data.stats.submittedSurveys;
+    document.getElementById("pendingResponses").innerText = data.stats.pendingResponses;
+    document.getElementById("responsesReceived").innerText = data.stats.responsesReceived;
+
+  }catch(error){
+    alert("Dashboard connection error");
+  }
 }
 
-.app{
-  display:flex;
-  min-height:100vh;
+function logout(){
+  localStorage.clear();
+  window.location.href = "login.html";
 }
 
-.sidebar{
-  width:245px;
-  background:#fff;
-  border-right:1px solid #eee;
-  padding:26px 14px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
-}
+loadDashboard();
+</script>
 
-.logo{
-  color:#c9000b;
-  font-size:22px;
-  font-weight:800;
-  margin-bottom:30px;
-  padding-left:6px;
-}
-
-.menu a{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px 14px;
-  border-radius:12px;
-  color:#667085;
-  text-decoration:none;
-  font-size:14px;
-  margin-bottom:8px;
-}
-
-.menu a.active{
-  background:#c9000b;
-  color:#fff;
-}
-
-.sidebar-bottom{
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
-
-.logout{
-  color:#c9000b;
-  font-size:14px;
-  cursor:pointer;
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-
-.user-card{
-  border:1px solid #c9000b;
-  border-radius:12px;
-  padding:10px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.avatar{
-  width:36px;
-  height:36px;
-  background:#d7defc;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-  color:#283593;
-}
-
-.user-info h4{
-  font-size:13px;
-}
-
-.user-info p{
-  font-size:11px;
-  color:#667085;
-}
-
-.main{
-  margin-left:245px;
-  width:calc(100% - 245px);
-}
-
-.topbar{
-  height:58px;
-  background:#fff;
-  border-bottom:1px solid #eee;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 34px;
-}
-
-.search{
-  width:420px;
-  height:36px;
-  border:1px solid #dce1ea;
-  background:#f8fafc;
-  border-radius:20px;
-  padding:0 18px;
-  outline:none;
-  font-size:13px;
-}
-
-.top-user{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.top-user div{
-  text-align:right;
-}
-
-.top-user h4{
-  font-size:13px;
-}
-
-.top-user p{
-  font-size:10px;
-  color:#667085;
-}
-
-.content{
-  padding:44px 44px;
-}
-
-.welcome{
-  margin-bottom:28px;
-}
-
-.welcome h1{
-  font-size:30px;
-  margin-bottom:8px;
-}
-
-.welcome p{
-  color:#667085;
-  font-size:14px;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:34px;
-  margin-bottom:34px;
-}
-
-.stat-card{
-  background:#fff;
-  border-radius:14px;
-  padding:24px;
-  display:flex;
-  align-items:center;
-  gap:18px;
-  box-shadow:0 14px 32px rgba(0,0,0,.04);
-}
-
-.stat-icon{
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#fff3f3;
-  color:#c9000b;
-  font-size:22px;
-}
-
-.stat-card:nth-child(2) .stat-icon{
-  background:#f1f4ff;
-  color:#6476d9;
-}
-
-.stat-card:nth-child(3) .stat-icon{
-  background:#effaf3;
-  color:#3bb66b;
-}
-
-.stat-card p{
-  font-size:13px;
-  color:#667085;
-  margin-bottom:6px;
-}
-
-.stat-card h2{
-  font-size:27px;
-}
-
-.panel{
-  background:#fff;
-  border-radius:20px;
-  box-shadow:0 14px 32px rgba(0,0,0,.04);
-  margin-bottom:34px;
-  overflow:hidden;
-}
-
-.panel-head{
-  padding:22px 26px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.panel-head h3{
-  font-size:17px;
-}
-
-.panel-head a{
-  color:#c9000b;
-  font-size:13px;
-  font-weight:700;
-  text-decoration:none;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-th{
-  text-align:left;
-  background:#f8fafc;
-  padding:14px 26px;
-  color:#667085;
-  font-size:12px;
-  font-weight:700;
-}
-
-td{
-  padding:16px 26px;
-  border-top:1px solid #edf0f5;
-  font-size
+</body>
+</html>
