@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+</head>
+<body>
+
+<h1 id="welcome">Loading...</h1>
+
+<script>
+
+const token = localStorage.getItem("portal_token");
+
+if(!token){
+    window.location.href="login.html";
+}
+
+fetch("api/check-auth.php",{
+    headers:{
+        Authorization:"Bearer "+token
+    }
+})
+.then(r=>r.json())
+.then(data=>{
+
+    if(!data.success){
+        localStorage.clear();
+        window.location.href="login.html";
+        return;
+    }
+
+    document.getElementById("welcome").innerHTML =
+      "Welcome "+data.user.name;
+
+});
+
+</script>
+
+</body>
+</html>
