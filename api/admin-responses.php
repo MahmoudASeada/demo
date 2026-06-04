@@ -1,36 +1,24 @@
 <?php
 
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-require "db.php";
-
+require_once "db.php";
 
 header("Content-Type: application/json");
 
-$sql = "
-SELECT
-    sr.id,
-    sr.survey_id,
-    sr.user_id,
-    sr.submitted_at,
-    sr.survey_title,
-    u.name,
-    u.email
-FROM survey_responses sr
-INNER JOIN users u
-ON u.id = sr.user_id
-ORDER BY sr.id DESC
-";
+$stmt = $pdo->query("
+    SELECT
+        sr.id,
+        sr.survey_id,
+        sr.user_id,
+        sr.submitted_at,
+        sr.survey_title,
+        u.name,
+        u.email
+    FROM survey_responses sr
+    INNER JOIN users u ON u.id = sr.user_id
+    ORDER BY sr.id DESC
+");
 
-$result = $conn->query($sql);
-
-$responses = [];
-
-while($row = $result->fetch_assoc()){
-    $responses[] = $row;
-}
+$responses = $stmt->fetchAll();
 
 echo json_encode([
     "success" => true,

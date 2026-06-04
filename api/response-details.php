@@ -1,30 +1,23 @@
 <?php
 
-require "db.php";
+require_once "db.php";
 
 header("Content-Type: application/json");
 
-$id = intval($_GET["id"]);
+$id = (int)($_GET["id"] ?? 0);
 
-$sql = "
-SELECT
-  sa.answer,
-  sq.question_text
-FROM survey_answers sa
-INNER JOIN survey_questions sq
-ON sa.question_id = sq.id
-WHERE sa.response_id = $id
-";
+$stmt = $pdo->prepare("
+    SELECT
+        answer,
+        question_label AS question_text
+    FROM survey_answers
+    WHERE response_id = ?
+    ORDER BY id ASC
+");
 
-$result = $conn->query($sql);
-
-$answers = [];
-
-while($row = $result->fetch_assoc()){
-  $answers[] = $row;
-}
+$stmt->execute([$id]);
 
 echo json_encode([
-  "success"=>true,
-  "answers"=>$answers
+    "success" => true,
+    "answers" => $stmt->fetchAll()
 ]);
