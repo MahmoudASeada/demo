@@ -4,31 +4,18 @@ require "db.php";
 
 header("Content-Type: application/json");
 
-$headers = getallheaders();
-
-if(
-  !isset($headers["Authorization"]) ||
-  $headers["Authorization"] !== "Bearer admin123"
-){
-  echo json_encode([
-    "success" => false,
-    "message" => "Unauthorized"
-  ]);
-  exit;
-}
-
 $sql = "
 SELECT
     sr.id,
     sr.survey_id,
     sr.user_id,
     sr.submitted_at,
+    sr.survey_title,
     u.name,
-    u.email,
-    s.title
+    u.email
 FROM survey_responses sr
-INNER JOIN users u ON u.id = sr.user_id
-INNER JOIN surveys s ON s.id = sr.survey_id
+INNER JOIN users u
+ON u.id = sr.user_id
 ORDER BY sr.id DESC
 ";
 
