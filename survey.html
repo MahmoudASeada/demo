@@ -6,116 +6,127 @@
 <title>Survey</title>
 
 <style>
-*{box-sizing:border-box;font-family:Arial,sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
 
 body{
-  margin:0;
-  background:#fff;
+  background:#f6f7fb;
+  color:#101828;
   min-height:100vh;
-  padding:28px 18px;
-  color:#0f172a;
+  padding:40px 20px;
 }
 
 .container{
   width:100%;
-  max-width:520px;
+  max-width:760px;
   margin:auto;
-  background:white;
 }
 
 .back{
   display:inline-block;
-  margin-bottom:18px;
+  margin-bottom:20px;
   color:#c9000b;
   font-weight:800;
   text-decoration:none;
-  font-size:13px;
+}
+
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:34px;
+  box-shadow:0 14px 35px rgba(0,0,0,.06);
 }
 
 h1{
-  text-align:center;
-  font-size:24px;
-  margin:0 0 10px;
-  font-weight:800;
-  color:#0f172a;
+  font-size:28px;
+  margin-bottom:8px;
 }
 
 .subtitle{
-  text-align:center;
-  font-size:12px;
-  color:#475569;
-  margin-bottom:34px;
-  line-height:1.5;
-}
-
-.progress{
-  width:100%;
-  height:4px;
-  background:#f1dfe2;
-  border-radius:10px;
-  margin-bottom:30px;
-  overflow:hidden;
-}
-
-.progress span{
-  display:block;
-  width:33%;
-  height:100%;
-  background:#c9000b;
-  border-radius:10px;
+  color:#667085;
+  margin-bottom:28px;
 }
 
 .field{
-  margin-bottom:24px;
+  margin-bottom:22px;
 }
 
 label{
   display:block;
-  margin-bottom:8px;
-  font-weight:700;
-  font-size:12px;
-  color:#111;
+  font-size:14px;
+  font-weight:800;
+  margin-bottom:9px;
 }
 
-.required-star{
+.required{
   color:#c9000b;
-}
-
-.input-area{
-  position:relative;
-  width:100%;
 }
 
 input,textarea{
   width:100%;
-  border:1px solid #d1d5db;
+  border:1px solid #dfe3ea;
+  background:#f8fafc;
   border-radius:14px;
-  padding:15px 15px 15px 50px;
-  font-size:13px;
+  padding:14px 16px;
   outline:none;
-  background:#fff;
-  color:#0f172a;
-  direction:auto;
-  resize:none;
-}
-
-input{
-  height:54px;
+  font-size:14px;
 }
 
 textarea{
-  min-height:110px;
-  padding-top:16px;
+  min-height:115px;
+  resize:vertical;
 }
 
 input:focus,textarea:focus{
   border-color:#c9000b;
-  box-shadow:0 0 0 3px rgba(201,0,11,0.08);
+  box-shadow:0 0 0 3px rgba(201,0,11,.08);
 }
 
-.field-error{
+.error-field{
   border-color:#c9000b!important;
-  box-shadow:0 0 0 3px rgba(201,0,11,0.08);
+}
+
+.status{
+  margin-top:15px;
+  color:#667085;
+  font-size:14px;
+}
+
+.status.error{
+  color:#c9000b;
+  font-weight:800;
+}
+
+.submit{
+  width:100%;
+  height:56px;
+  border:none;
+  background:#c9000b;
+  color:#fff;
+  border-radius:14px;
+  font-weight:800;
+  font-size:16px;
+  cursor:pointer;
+  margin-top:15px;
+}
+
+.submit:hover{
+  background:#b00009;
+}
+
+.completed{
+  background:#e8faef;
+  color:#20a95a;
+  padding:14px;
+  border-radius:14px;
+  font-weight:800;
+  margin-bottom:20px;
+}
+.input-area{
+  position:relative;
+}
+
+input,textarea{
+  padding-left:50px;
 }
 
 .mic-btn{
@@ -141,46 +152,6 @@ input:focus,textarea:focus{
   50%{transform:scale(1.18);}
   100%{transform:scale(1);}
 }
-
-.status{
-  margin-top:8px;
-  color:#64748b;
-  font-size:12px;
-  min-height:18px;
-}
-
-.status.error{
-  color:#c9000b;
-  font-weight:700;
-}
-
-.submit-btn{
-  width:100%;
-  padding:17px;
-  border:none;
-  border-radius:16px;
-  background:#c9000b;
-  color:white;
-  font-size:18px;
-  font-weight:700;
-  cursor:pointer;
-  margin-top:30px;
-  box-shadow:0 12px 22px rgba(201,0,11,0.28);
-}
-
-.submit-btn:hover{
-  background:#b00009;
-}
-
-.completed{
-  background:#e8faef;
-  color:#20a95a;
-  padding:14px;
-  border-radius:14px;
-  font-weight:800;
-  margin-bottom:20px;
-  font-size:13px;
-}
 </style>
 </head>
 
@@ -190,25 +161,22 @@ input:focus,textarea:focus{
 
   <a href="dashboard.html" class="back">← Back to Dashboard</a>
 
-  <h1 id="surveyTitle">Loading...</h1>
+  <div class="card">
 
-  <p class="subtitle" id="surveyMeta">
-    Please answer all required questions.
-  </p>
+    <div id="completedBox"></div>
 
-  <div class="progress">
-    <span></span>
+    <h1 id="surveyTitle">Loading...</h1>
+    <p class="subtitle" id="surveyMeta">Please answer all required questions.</p>
+
+    <div id="questionsWrap"></div>
+
+    <button class="submit" id="submitBtn" onclick="submitSurvey()">
+      Submit Survey
+    </button>
+
+    <div class="status" id="status"></div>
+
   </div>
-
-  <div id="completedBox"></div>
-
-  <div id="questionsWrap"></div>
-
-  <div class="status" id="status">Loading questions...</div>
-
-  <button class="submit-btn" id="submitBtn" onclick="submitSurvey()">
-    Submit Feedback ▷
-  </button>
 
 </div>
 
@@ -227,40 +195,10 @@ if(!surveyId){
   window.location.href = "dashboard.html";
 }
 
-const STORAGE_KEY = "survey_answers_" + surveyId;
-
 let loadedQuestions = [];
 let recognition;
 let isRecording = false;
 let currentButton = null;
-
-function saveToLocalStorage(){
-  const data = {};
-
-  document
-    .querySelectorAll("#questionsWrap input, #questionsWrap textarea")
-    .forEach(field => {
-      data[field.dataset.questionId] = field.value;
-    });
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
-function loadFromLocalStorage(){
-  const saved = localStorage.getItem(STORAGE_KEY);
-
-  if(!saved) return;
-
-  const data = JSON.parse(saved);
-
-  Object.keys(data).forEach(key => {
-    const field = document.querySelector(`[data-question-id="${key}"]`);
-
-    if(field){
-      field.value = data[key];
-    }
-  });
-}
 
 async function loadSurvey(){
 
@@ -283,7 +221,6 @@ async function loadSurvey(){
     }
 
     document.getElementById("surveyTitle").innerText = data.survey.title;
-
     document.getElementById("surveyMeta").innerText =
       "Status: " + data.survey.status + " | Created: " + data.survey.created_at;
 
@@ -297,10 +234,6 @@ async function loadSurvey(){
     }
 
     renderQuestions();
-    loadFromLocalStorage();
-
-    status.classList.remove("error");
-    status.innerText = "Ready";
 
   }catch(error){
 
@@ -323,28 +256,25 @@ function renderQuestions(){
 
     const required = Number(q.required) === 1;
 
-    let inputHTML = "";
-
     if(q.question_type === "textarea"){
-      inputHTML = `
-        <textarea
-          data-question-id="${q.id}"
-          data-question-label="${q.question_text}"
-          data-required="${required ? "1" : "0"}"
-          placeholder="Type your answer here..."
-          required
-        ></textarea>
-      `;
-    }else{
-      inputHTML = `
-        <input
-          type="text"
-          data-question-id="${q.id}"
-          data-question-label="${q.question_text}"
-          data-required="${required ? "1" : "0"}"
-          placeholder="Type your answer here..."
-          required
-        >
+      return `
+        <div class="field">
+          <label>
+            ${q.question_text}
+            ${required ? `<span class="required">*</span>` : ""}
+          </label>
+
+          <div class="input-area">
+            <textarea 
+              data-question-id="${q.id}"
+              data-question-label="${q.question_text}"
+              data-required="${required ? "1" : "0"}"
+              placeholder="Type your answer here..."
+            ></textarea>
+
+            <button class="mic-btn" type="button" onclick="toggleVoice(this)">🎙</button>
+          </div>
+        </div>
       `;
     }
 
@@ -352,28 +282,26 @@ function renderQuestions(){
       <div class="field">
         <label>
           ${q.question_text}
-          ${required ? `<span class="required-star">*</span>` : ""}
+          ${required ? `<span class="required">*</span>` : ""}
         </label>
 
         <div class="input-area">
-          ${inputHTML}
-          <button class="mic-btn" type="button" onclick="toggleVoice('${q.id}', this)">🎙</button>
+          <input 
+            type="text"
+            data-question-id="${q.id}"
+            data-question-label="${q.question_text}"
+            data-required="${required ? "1" : "0"}"
+            placeholder="Type your answer here..."
+          >
+
+          <button class="mic-btn" type="button" onclick="toggleVoice(this)">🎙</button>
         </div>
       </div>
     `;
   }).join("");
-
-  document
-    .querySelectorAll("#questionsWrap input, #questionsWrap textarea")
-    .forEach(field => {
-      field.addEventListener("input", function(){
-        field.classList.remove("field-error");
-        saveToLocalStorage();
-      });
-    });
 }
 
-function toggleVoice(fieldId, button){
+function toggleVoice(button){
 
   if(isRecording){
     stopVoice();
@@ -388,9 +316,9 @@ function toggleVoice(fieldId, button){
     return;
   }
 
-  recognition = new SpeechRecognition();
+  const field = button.parentElement.querySelector("input, textarea");
 
-  const field = document.querySelector(`[data-question-id="${fieldId}"]`);
+  recognition = new SpeechRecognition();
 
   recognition.lang = "en-US";
   recognition.continuous = true;
@@ -426,8 +354,7 @@ function toggleVoice(fieldId, button){
     }
 
     field.value = finalTranscript + interimTranscript;
-    field.classList.remove("field-error");
-    saveToLocalStorage();
+    field.classList.remove("error-field");
   };
 
   recognition.onend = function(){
@@ -462,33 +389,17 @@ function validateSurvey(){
 
   const fields = document.querySelectorAll("#questionsWrap input, #questionsWrap textarea");
   let valid = true;
-  let firstEmpty = null;
 
   fields.forEach(field => {
+    field.classList.remove("error-field");
 
     const required = field.dataset.required === "1";
 
     if(required && field.value.trim() === ""){
-      field.classList.add("field-error");
+      field.classList.add("error-field");
       valid = false;
-
-      if(!firstEmpty){
-        firstEmpty = field;
-      }
-    }else{
-      field.classList.remove("field-error");
     }
   });
-
-  if(!valid){
-    const status = document.getElementById("status");
-    status.classList.add("error");
-    status.innerText = "Please answer all required questions.";
-
-    if(firstEmpty){
-      firstEmpty.focus();
-    }
-  }
 
   return valid;
 }
@@ -499,6 +410,8 @@ async function submitSurvey(){
   status.classList.remove("error");
 
   if(!validateSurvey()){
+    status.classList.add("error");
+    status.innerText = "Please answer all required questions.";
     return;
   }
 
@@ -533,7 +446,6 @@ async function submitSurvey(){
     status.innerText = data.message;
 
     if(data.success){
-      localStorage.removeItem(STORAGE_KEY);
       alert("Survey submitted successfully");
       window.location.href = "dashboard.html";
     }else{
@@ -544,6 +456,7 @@ async function submitSurvey(){
 
     status.classList.add("error");
     status.innerText = "Connection error";
+
   }
 }
 
