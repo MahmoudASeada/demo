@@ -1,39 +1,216 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f5f7fb;
+  min-height:100vh;
+  padding:40px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.welcome h1{
+  font-size:30px;
+  color:#111827;
+}
+
+.welcome p{
+  color:#6b7280;
+  margin-top:5px;
+}
+
+.logout{
+  border:none;
+  background:#c9000b;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+  margin-bottom:30px;
+}
+
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:25px;
+  box-shadow:0 10px 25px rgba(0,0,0,.05);
+}
+
+.card h3{
+  color:#6b7280;
+  font-size:14px;
+  margin-bottom:10px;
+}
+
+.number{
+  font-size:32px;
+  font-weight:bold;
+  color:#111827;
+}
+
+.section{
+  background:#fff;
+  border-radius:18px;
+  padding:25px;
+  box-shadow:0 10px 25px rgba(0,0,0,.05);
+}
+
+.empty{
+  color:#9ca3af;
+}
+
+@media(max-width:900px){
+  .stats{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:600px){
+  body{
+    padding:20px;
+  }
+
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .topbar{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:15px;
+  }
+}
+</style>
 </head>
 <body>
 
-<h1 id="welcome">Loading...</h1>
+<div class="topbar">
+
+  <div class="welcome">
+    <h1 id="welcomeName">Loading...</h1>
+    <p>Customer Portal Dashboard</p>
+  </div>
+
+  <button class="logout" onclick="logout()">
+    Logout
+  </button>
+
+</div>
+
+<div class="stats">
+
+  <div class="card">
+    <h3>Submitted Surveys</h3>
+    <div class="number" id="submittedSurveys">0</div>
+  </div>
+
+  <div class="card">
+    <h3>Pending Responses</h3>
+    <div class="number" id="pendingResponses">0</div>
+  </div>
+
+  <div class="card">
+    <h3>Responses Received</h3>
+    <div class="number" id="responsesReceived">0</div>
+  </div>
+
+  <div class="card">
+    <h3>Articles</h3>
+    <div class="number" id="articles">0</div>
+  </div>
+
+</div>
+
+<div class="section">
+  <h2>My Surveys</h2>
+
+  <div class="empty">
+    No surveys assigned yet.
+  </div>
+</div>
 
 <script>
 
 const token = localStorage.getItem("portal_token");
 
 if(!token){
-    window.location.href="login.html";
+  window.location.href = "login.html";
 }
 
-fetch("api/check-auth.php",{
-    headers:{
-        Authorization:"Bearer "+token
-    }
-})
-.then(r=>r.json())
-.then(data=>{
+async function loadDashboard(){
+
+  try{
+
+    const res = await fetch("api/dashboard.php",{
+      headers:{
+        Authorization:"Bearer " + token
+      }
+    });
+
+    const data = await res.json();
 
     if(!data.success){
-        localStorage.clear();
-        window.location.href="login.html";
-        return;
+
+      localStorage.clear();
+      window.location.href = "login.html";
+      return;
     }
 
-    document.getElementById("welcome").innerHTML =
-      "Welcome "+data.user.name;
+    document.getElementById("welcomeName").innerHTML =
+      "Welcome, " + data.user.name;
 
-});
+    document.getElementById("submittedSurveys").innerHTML =
+      data.stats.submittedSurveys;
+
+    document.getElementById("pendingResponses").innerHTML =
+      data.stats.pendingResponses;
+
+    document.getElementById("responsesReceived").innerHTML =
+      data.stats.responsesReceived;
+
+    document.getElementById("articles").innerHTML =
+      data.stats.articles;
+
+  }catch(error){
+
+    alert("Dashboard connection error");
+
+  }
+
+}
+
+function logout(){
+
+  localStorage.clear();
+
+  window.location.href = "login.html";
+}
+
+loadDashboard();
 
 </script>
 
