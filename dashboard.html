@@ -160,24 +160,9 @@ td{border-top:1px solid #eef1f5;padding:15px 26px;font-size:13px}
 
           <tbody id="surveyTable">
             <tr>
-              <td>Customer Satisfaction Q3</td>
-              <td>Oct 12, 2023</td>
-              <td><span class="badge waiting">Waiting</span></td>
-              <td><a class="view" href="#">View Details</a></td>
+                <td colspan="4">Loading surveys...</td>
             </tr>
-            <tr>
-              <td>Product Feedback: Mobile App</td>
-              <td>Oct 08, 2023</td>
-              <td><span class="badge responded">Responded</span></td>
-              <td><a class="view" href="#">View Details</a></td>
-            </tr>
-            <tr>
-              <td>Employee Engagement Survey</td>
-              <td>Sep 28, 2023</td>
-              <td><span class="badge closed">Closed</span></td>
-              <td><a class="view" href="#">View Details</a></td>
-            </tr>
-          </tbody>
+            </tbody>
         </table>
       </div>
 
@@ -253,6 +238,45 @@ async function loadDashboard(){
     document.getElementById("submittedSurveys").innerText = data.stats.submittedSurveys;
     document.getElementById("pendingResponses").innerText = data.stats.pendingResponses;
     document.getElementById("responsesReceived").innerText = data.stats.responsesReceived;
+    const surveyTable = document.getElementById("surveyTable");
+
+if(!data.surveys.length){
+  surveyTable.innerHTML = `
+    <tr>
+      <td colspan="4">No surveys assigned yet.</td>
+    </tr>
+  `;
+}else{
+  surveyTable.innerHTML = data.surveys.map(survey => {
+
+    let statusClass = "waiting";
+
+    if(survey.status === "completed"){
+      statusClass = "responded";
+    }
+
+    if(survey.status === "closed"){
+      statusClass = "closed";
+    }
+
+    return `
+      <tr>
+        <td>${survey.title}</td>
+        <td>${survey.created_at}</td>
+        <td>
+          <span class="badge ${statusClass}">
+            ${survey.status}
+          </span>
+        </td>
+        <td>
+          <a class="view" href="survey.html?id=${survey.id}">
+            View Details
+          </a>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
 
   }catch(error){
     alert("Dashboard connection error");

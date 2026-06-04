@@ -4,7 +4,6 @@ require_once "db.php";
 
 $headers = getallheaders();
 $authHeader = $headers["Authorization"] ?? "";
-
 $token = str_replace("Bearer ", "", $authHeader);
 
 if (!$token) {
@@ -37,21 +36,36 @@ $userId = $user["id"];
 
 $stmt = $pdo->prepare("
     SELECT COUNT(*) AS total
-    FROM survey_responses
-    WHERE user_id = ?
+    FROM surveys
+    WHERE assigned_user_id = ?
 ");
-
 $stmt->execute([$userId]);
-$totalResponses = $stmt->fetch()["total"];
+$totalSurveys = (int)$stmt->fetch()["total"];
 
 $stmt = $pdo->prepare("
     SELECT COUNT(*) AS total
-    FROM survey_responses
-    WHERE user_id = ? AND status = 'completed'
+    FROM surveys
+    WHERE assigned_user_id = ? AND status = 'pending'
 ");
-
 $stmt->execute([$userId]);
-$completedSurveys = $stmt->fetch()["total"];
+$pendingSurveys = (int)$stmt->fetch()["total"];
+
+$stmt = $pdo->prepare("
+    SELECT COUNT(*) AS total
+    FROM surveys
+    WHERE assigned_user_id = ? AND status = 'completed'
+");
+$stmt->execute([$userId]);
+$completedSurveys = (int)$stmt->fetch()["total"];
+
+$stmt = $pdo->prepare("
+    SELECT id, title, status, created_at
+    FROM surveys
+    WHERE assigned_user_id = ?
+    ORDER BY created_at DESC
+");
+$stmt->execute([$userId]);
+$surveys = $stmt->fetchAll();
 
 echo json_encode([
     "success" => true,
@@ -61,11 +75,11 @@ echo json_encode([
         "email" => $user["email"]
     ],
     "stats" => [
-        "submittedSurveys" => (int)$completedSurveys,
-        "pendingResponses" => 0,
-        "responsesReceived" => (int)$totalResponses,
+        "submittedSurveys" => $completedSurveys,
+        "pendingResponses" => $pendingSurveys,
+        "responsesReceived" => $totalSurveys,
         "articles" => 0
     ],
-    "surveys" => [],
+    "surveys" => $surveys,
     "articles" => []
 ]);

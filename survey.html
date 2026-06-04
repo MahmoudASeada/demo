@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Survey</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+
+body{
+  background:#f6f7fb;
+  color:#101828;
+  min-height:100vh;
+  padding:40px 20px;
+}
+
+.container{
+  width:100%;
+  max-width:760px;
+  margin:auto;
+}
+
+.back{
+  display:inline-block;
+  margin-bottom:20px;
+  color:#c9000b;
+  font-weight:800;
+  text-decoration:none;
+}
+
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:34px;
+  box-shadow:0 14px 35px rgba(0,0,0,.06);
+}
+
+h1{
+  font-size:28px;
+  margin-bottom:8px;
+}
+
+.subtitle{
+  color:#667085;
+  margin-bottom:28px;
+}
+
+.field{
+  margin-bottom:22px;
+}
+
+label{
+  display:block;
+  font-size:14px;
+  font-weight:800;
+  margin-bottom:9px;
+}
+
+.required{
+  color:#c9000b;
+}
+
+input,textarea{
+  width:100%;
+  border:1px solid #dfe3ea;
+  background:#f8fafc;
+  border-radius:14px;
+  padding:14px 16px;
+  outline:none;
+  font-size:14px;
+}
+
+textarea{
+  min-height:115px;
+  resize:vertical;
+}
+
+input:focus,textarea:focus{
+  border-color:#c9000b;
+  box-shadow:0 0 0 3px rgba(201,0,11,.08);
+}
+
+.error-field{
+  border-color:#c9000b!important;
+}
+
+.status{
+  margin-top:15px;
+  color:#667085;
+  font-size:14px;
+}
+
+.status.error{
+  color:#c9000b;
+  font-weight:800;
+}
+
+.submit{
+  width:100%;
+  height:56px;
+  border:none;
+  background:#c9000b;
+  color:#fff;
+  border-radius:14px;
+  font-weight:800;
+  font-size:16px;
+  cursor:pointer;
+  margin-top:15px;
+}
+
+.submit:hover{
+  background:#b00009;
+}
+
+.completed{
+  background:#e8faef;
+  color:#20a95a;
+  padding:14px;
+  border-radius:14px;
+  font-weight:800;
+  margin-bottom:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <a href="dashboard.html" class="back">← Back to Dashboard</a>
+
+  <div class="card">
+
+    <div id="completedBox"></div>
+
+    <h1 id="surveyTitle">Loading...</h1>
+    <p class="subtitle" id="surveyMeta">Please answer all required questions.</p>
+
+    <div id="questionsWrap"></div>
+
+    <button class="submit" id="submitBtn" onclick="submitSurvey()">
+      Submit Survey
+    </button>
+
+    <div class="status" id="status"></div>
+
+  </div>
+
+</div>
+
+<script>
+const token = localStorage.getItem("portal_token");
+
+if(!token){
+  window.location.href = "login.html";
+}
+
+const params = new URLSearchParams(window.location.search);
+const surveyId = params.get("id");
+
+if(!surveyId){
+  alert("Survey ID missing");
+  window.location.href = "dashboard.html";
+}
+
+let loadedQuestions = [];
+
+async function loadSurvey(){
+
+  const status = document.getElementById("status");
+
+  try{
+
+    const res = await fetch("api/survey-details.php?id=" + surveyId,{
+      headers:{
+        Authorization:"Bearer " + token
+      }
+    });
+
+    const data = await res.json();
+
+    if(!data.success){
+      status.classList.add("error");
+      status.innerText = data.message;
+      return;
+    }
+
+    document.getElementById("surveyTitle").innerText = data.survey.title;
+    document.getElementById("surveyMeta").innerText =
+      "Status: " + data.survey.status + " | Created: " + data.survey.created_at;
+
+    loadedQuestions = data.questions;
+
+    if(data.survey.status === "completed"){
+      document.getElementById("completedBox").innerHTML =
+        `<div class="completed">This survey has already been submitted.</div>`;
+
+      document.getElementById("submitBtn").style.display = "none";
+    }
+
+    renderQuestions();
+
+  }catch(error){
+
+    status.classList.add("error");
+    status.innerText = "Connection error";
+
+  }
+}
+
+function renderQuestions(){
+
+  const wrap = document.getElementById("questionsWrap");
+
+  if(!loadedQuestions.length){
+    wrap.innerHTML = `<p>No questions found.</p>`;
+    return;
+  }
+
+  wrap.innerHTML = loadedQuestions.map(q => {
+
+    const required = Number(q.required) === 1;
+
+    if(q.question_type === "textarea"){
+      return `
+        <div class="field">
+          <label>
+            ${q.question_text}
+            ${required ? `<span class="required">*</span>` : ""}
+          </label>
+          <textarea 
+            data-question-id="${q.id}"
+            data-question-label="${q.question_text}"
+            data-required="${required ? "1" : "0"}"
+            placeholder="Type your answer here..."
+          ></textarea>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="field">
+        <label>
+          ${q.question_text}
+          ${required ? `<span class="required">*</span>` : ""}
+        </label>
+        <input 
+          type="text"
+          data-question-id="${q.id}"
+          data-question-label="${q.question_text}"
+          data-required="${required ? "1" : "0"}"
+          placeholder="Type your answer here..."
+        >
+      </div>
+    `;
+  }).join("");
+}
+
+function validateSurvey(){
+
+  const fields = document.querySelectorAll("#questionsWrap input, #questionsWrap textarea");
+  let valid = true;
+
+  fields.forEach(field => {
+    field.classList.remove("error-field");
+
+    const required = field.dataset.required === "1";
+
+    if(required && field.value.trim() === ""){
+      field.classList.add("error-field");
+      valid = false;
+    }
+  });
+
+  return valid;
+}
+
+async function submitSurvey(){
+
+  const status = document.getElementById("status");
+  status.classList.remove("error");
+
+  if(!validateSurvey()){
+    status.classList.add("error");
+    status.innerText = "Please answer all required questions.";
+    return;
+  }
+
+  const fields = document.querySelectorAll("#questionsWrap input, #questionsWrap textarea");
+
+  const answers = Array.from(fields).map(field => {
+    return {
+      questionId: field.dataset.questionId,
+      questionLabel: field.dataset.questionLabel,
+      answer: field.value.trim()
+    };
+  });
+
+  status.innerText = "Submitting...";
+
+  try{
+
+    const res = await fetch("api/submit-survey.php",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        Authorization:"Bearer " + token
+      },
+      body:JSON.stringify({
+        surveyId,
+        answers
+      })
+    });
+
+    const data = await res.json();
+
+    status.innerText = data.message;
+
+    if(data.success){
+      alert("Survey submitted successfully");
+      window.location.href = "dashboard.html";
+    }else{
+      status.classList.add("error");
+    }
+
+  }catch(error){
+
+    status.classList.add("error");
+    status.innerText = "Connection error";
+
+  }
+}
+
+loadSurvey();
+</script>
+
+</body>
+</html>
