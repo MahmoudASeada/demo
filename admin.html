@@ -37,6 +37,12 @@ body{
   cursor:pointer;
 }
 
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:28px;
+}
+
 .panel{
   background:#fff;
   border-radius:20px;
@@ -57,6 +63,92 @@ body{
 .panel-head p{
   color:#667085;
   font-size:14px;
+}
+
+.form{
+  padding:26px 28px;
+}
+
+.form-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin-bottom:18px;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+input,select,textarea{
+  width:100%;
+  border:1px solid #dfe3ea;
+  background:#f8fafc;
+  border-radius:12px;
+  padding:13px 14px;
+  outline:none;
+  font-size:14px;
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+input:focus,select:focus,textarea:focus{
+  border-color:#c9000b;
+  box-shadow:0 0 0 3px rgba(201,0,11,.08);
+}
+
+.question-box{
+  display:grid;
+  grid-template-columns:1fr 160px 90px;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.primary-btn{
+  border:none;
+  background:#c9000b;
+  color:#fff;
+  padding:13px 18px;
+  border-radius:10px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.secondary-btn{
+  border:none;
+  background:#eef1f5;
+  color:#101828;
+  padding:12px 16px;
+  border-radius:10px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.remove-btn{
+  border:none;
+  background:#c9000b;
+  color:#fff;
+  border-radius:10px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.form-actions{
+  display:flex;
+  gap:12px;
+  margin-top:18px;
+}
+
+.status-text{
+  margin-top:15px;
+  font-size:13px;
+  color:#667085;
 }
 
 table{
@@ -95,6 +187,11 @@ td{
   color:#d97706;
 }
 
+.survey-status{
+  background:#e7f0ff;
+  color:#3478f6;
+}
+
 .actions{
   display:flex;
   gap:8px;
@@ -125,13 +222,21 @@ td{
   color:#667085;
 }
 
-@media(max-width:700px){
+@media(max-width:800px){
   body{
     padding:18px;
   }
 
+  .form-row{
+    grid-template-columns:1fr;
+  }
+
+  .question-box{
+    grid-template-columns:1fr;
+  }
+
   table{
-    min-width:720px;
+    min-width:760px;
   }
 
   .panel{
@@ -151,31 +256,98 @@ td{
   </button>
 </div>
 
-<div class="panel">
+<div class="grid">
 
-  <div class="panel-head">
-    <h1>Users Management</h1>
-    <p>Approve or reject new registered users.</p>
+  <div class="panel">
+    <div class="panel-head">
+      <h1>Create Survey</h1>
+      <p>Assign a survey and custom questions to a specific approved user.</p>
+    </div>
+
+    <div class="form">
+      <div class="form-row">
+        <div>
+          <label>Survey Title</label>
+          <input type="text" id="surveyTitle" placeholder="Customer Satisfaction Q3">
+        </div>
+
+        <div>
+          <label>Assigned User</label>
+          <select id="assignedUser">
+            <option value="">Loading users...</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Questions</label>
+
+      <div id="questionsWrap"></div>
+
+      <div class="form-actions">
+        <button class="secondary-btn" onclick="addQuestion()" type="button">
+          + Add Question
+        </button>
+
+        <button class="primary-btn" onclick="createSurvey()" type="button">
+          Create Survey
+        </button>
+      </div>
+
+      <div class="status-text" id="surveyStatus"></div>
+    </div>
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>User</th>
-        <th>Email</th>
-        <th>Status</th>
-        <th>Created At</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
+  <div class="panel">
+    <div class="panel-head">
+      <h1>Surveys List</h1>
+      <p>All surveys assigned to approved users.</p>
+    </div>
 
-    <tbody id="usersTable">
-      <tr>
-        <td colspan="6" class="empty">Loading users...</td>
-      </tr>
-    </tbody>
-  </table>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Survey</th>
+          <th>User</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Created At</th>
+        </tr>
+      </thead>
+
+      <tbody id="surveysTable">
+        <tr>
+          <td colspan="6" class="empty">Loading surveys...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h1>Users Management</h1>
+      <p>Approve or reject new registered users.</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody id="usersTable">
+        <tr>
+          <td colspan="6" class="empty">Loading users...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
 </div>
 
@@ -257,6 +429,147 @@ async function loadUsers(){
 
 }
 
+async function loadSurveyData(){
+
+  const userSelect = document.getElementById("assignedUser");
+  const surveysTable = document.getElementById("surveysTable");
+
+  try{
+
+    const res = await fetch("api/admin-surveys.php",{
+      headers:{
+        Authorization:"Bearer " + adminToken
+      }
+    });
+
+    const data = await res.json();
+
+    if(!data.success){
+      userSelect.innerHTML = `<option value="">Unable to load users</option>`;
+      surveysTable.innerHTML = `
+        <tr>
+          <td colspan="6" class="empty">Unable to load surveys.</td>
+        </tr>
+      `;
+      return;
+    }
+
+    if(data.users.length){
+      userSelect.innerHTML = `
+        <option value="">Select user</option>
+        ${data.users.map(user => `
+          <option value="${user.id}">${user.name} - ${user.email}</option>
+        `).join("")}
+      `;
+    }else{
+      userSelect.innerHTML = `<option value="">No approved users</option>`;
+    }
+
+    if(data.surveys.length){
+      surveysTable.innerHTML = data.surveys.map(survey => `
+        <tr>
+          <td>#${survey.id}</td>
+          <td>${survey.title}</td>
+          <td>${survey.user_name}</td>
+          <td>${survey.user_email}</td>
+          <td><span class="badge survey-status">${survey.status}</span></td>
+          <td>${survey.created_at}</td>
+        </tr>
+      `).join("");
+    }else{
+      surveysTable.innerHTML = `
+        <tr>
+          <td colspan="6" class="empty">No surveys created yet.</td>
+        </tr>
+      `;
+    }
+
+  }catch(error){
+
+    userSelect.innerHTML = `<option value="">Connection error</option>`;
+    surveysTable.innerHTML = `
+      <tr>
+        <td colspan="6" class="empty">Connection error.</td>
+      </tr>
+    `;
+
+  }
+}
+
+function addQuestion(value = "", type = "input"){
+
+  const wrap = document.getElementById("questionsWrap");
+
+  const div = document.createElement("div");
+  div.className = "question-box";
+
+  div.innerHTML = `
+    <input type="text" class="questionText" placeholder="Question text" value="${value}">
+    <select class="questionType">
+      <option value="input" ${type === "input" ? "selected" : ""}>Input</option>
+      <option value="textarea" ${type === "textarea" ? "selected" : ""}>Textarea</option>
+    </select>
+    <button class="remove-btn" type="button" onclick="this.parentElement.remove()">Remove</button>
+  `;
+
+  wrap.appendChild(div);
+}
+
+async function createSurvey(){
+
+  const title = document.getElementById("surveyTitle").value.trim();
+  const assignedUserId = document.getElementById("assignedUser").value;
+  const status = document.getElementById("surveyStatus");
+
+  const questions = Array.from(document.querySelectorAll(".question-box")).map(box => {
+    return {
+      text: box.querySelector(".questionText").value.trim(),
+      type: box.querySelector(".questionType").value
+    };
+  }).filter(q => q.text);
+
+  if(!title || !assignedUserId || !questions.length){
+    status.innerText = "Please add survey title, user and at least one question.";
+    return;
+  }
+
+  status.innerText = "Creating survey...";
+
+  try{
+
+    const res = await fetch("api/admin-surveys.php",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        Authorization:"Bearer " + adminToken
+      },
+      body:JSON.stringify({
+        title,
+        assignedUserId,
+        questions
+      })
+    });
+
+    const data = await res.json();
+
+    status.innerText = data.message;
+
+    if(data.success){
+      document.getElementById("surveyTitle").value = "";
+      document.getElementById("assignedUser").value = "";
+      document.getElementById("questionsWrap").innerHTML = "";
+      addQuestion();
+
+      loadSurveyData();
+    }
+
+  }catch(error){
+
+    status.innerText = "Connection error.";
+
+  }
+}
+
 async function updateUser(userId, action){
 
   if(action === "reject"){
@@ -283,6 +596,7 @@ async function updateUser(userId, action){
     alert(data.message);
 
     loadUsers();
+    loadSurveyData();
 
   }catch(error){
 
@@ -297,7 +611,9 @@ function logoutAdmin(){
   window.location.href = "admin-login.html";
 }
 
+addQuestion();
 loadUsers();
+loadSurveyData();
 </script>
 
 </body>
