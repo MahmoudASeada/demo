@@ -178,22 +178,7 @@ document.getElementById("topName").innerText = name;
 document.getElementById("sideAvatar").innerText = letter;
 document.getElementById("topAvatar").innerText = letter;
 
-const SANITY_QUERY = `*[_type=="article" && active==true]|order(publishedDate desc){
-  title,
-  smallTitle,
-  description,
-  category,
-  readTime,
-  publishedDate,
-  featured,
-  buttonText,
-  buttonLink,
-  "imageUrl": image.asset->url
-}`;
-
-const SANITY_API =
-  "https://0b1rlnsm.api.sanity.io/v2021-10-21/data/query/production?query=" +
-  encodeURIComponent(SANITY_QUERY);
+const SANITY_API = "api/articles.php";
 
 let allArticles = [];
 let currentCategory = "All";
