@@ -16,7 +16,7 @@ if (!$token) {
 }
 
 $stmt = $pdo->prepare("
-    SELECT id, name, email, approved 
+    SELECT id, name, email, approved, profile_image 
     FROM users 
     WHERE session_token = ?
     LIMIT 1
@@ -38,6 +38,7 @@ echo json_encode([
     "user" => [
         "id" => $user["id"],
         "name" => $user["name"],
-        "email" => $user["email"]
+        "email" => $user["email"],
+        "profile_image" => $user["profile_image"]
     ]
 ]);
