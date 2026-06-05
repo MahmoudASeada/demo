@@ -2,6 +2,8 @@
 
 require_once "db.php";
 
+header("Content-Type: application/json");
+
 $headers = getallheaders();
 $authHeader = $headers["Authorization"] ?? "";
 $token = str_replace("Bearer ", "", $authHeader);
@@ -96,7 +98,6 @@ try {
     ");
 
     foreach ($answers as $answer) {
-
         $questionId = (int)($answer["questionId"] ?? 0);
         $questionLabel = trim($answer["questionLabel"] ?? "");
         $answerText = trim($answer["answer"] ?? "");
@@ -123,6 +124,8 @@ try {
 
     $pdo->commit();
 
+    sendSurveyEmail($user, $survey, $answers);
+
     echo json_encode([
         "success" => true,
         "message" => "Survey submitted successfully"
@@ -138,4 +141,51 @@ try {
         "message" => "Failed to submit survey"
     ]);
     exit;
+}
+
+function sendSurveyEmail($user, $survey, $answers) {
+
+    $to = "seowzone@gmail.com";
+    $subject = "New Survey Response - " . $survey["title"];
+
+    $csv = "User Name,User Email,Survey Title\n";
+    $csv .= csvValue($user["name"]) . "," . csvValue($user["email"]) . "," . csvValue($survey["title"]) . "\n\n";
+    $csv .= "Question,Answer\n";
+
+    foreach ($answers as $answer) {
+        $question = $answer["questionLabel"] ?? "";
+        $answerText = $answer["answer"] ?? "";
+
+        $csv .= csvValue($question) . "," . csvValue($answerText) . "\n";
+    }
+
+    $fileName = "survey-response-" . date("Y-m-d-H-i-s") . ".csv";
+    $boundary = md5(time());
+
+    $headers = "From: W Zone Portal <no-reply@wzone.local>\r\n";
+    $headers .= "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: multipart/mixed; boundary=\"" . $boundary . "\"\r\n";
+
+    $message = "--" . $boundary . "\r\n";
+    $message .= "Content-Type: text/plain; charset=UTF-8\r\n";
+    $message .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+    $message .= "New survey response submitted.\n\n";
+    $message .= "User: " . $user["name"] . "\n";
+    $message .= "Email: " . $user["email"] . "\n";
+    $message .= "Survey: " . $survey["title"] . "\n\n";
+
+    $message .= "--" . $boundary . "\r\n";
+    $message .= "Content-Type: text/csv; name=\"" . $fileName . "\"\r\n";
+    $message .= "Content-Disposition: attachment; filename=\"" . $fileName . "\"\r\n";
+    $message .= "Content-Transfer-Encoding: base64\r\n\r\n";
+    $message .= chunk_split(base64_encode($csv)) . "\r\n";
+    $message .= "--" . $boundary . "--";
+
+    @mail($to, $subject, $message, $headers);
+}
+
+function csvValue($value) {
+    $value = (string)$value;
+    $value = str_replace('"', '""', $value);
+    return '"' . $value . '"';
 }
