@@ -2,6 +2,8 @@
 
 require_once "db.php";
 
+header("Content-Type: application/json");
+
 $input = json_decode(file_get_contents("php://input"), true);
 
 $email = strtolower(trim($input["email"] ?? ""));
@@ -21,7 +23,7 @@ if (!$email || !$password) {
 if ($email !== $ADMIN_EMAIL || $password !== $ADMIN_PASSWORD) {
     echo json_encode([
         "success" => false,
-        "message" => "Invalid admin credentials"
+        "message" => "Invalid email or password"
     ]);
     exit;
 }
