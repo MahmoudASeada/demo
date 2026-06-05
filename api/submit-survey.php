@@ -125,7 +125,36 @@ try {
     $pdo->commit();
 
     sendSurveyEmail($user, $survey, $answers);
+    $appScriptData = [
+    "userName" => $user["name"],
+    "userEmail" => $user["email"],
+    "surveyTitle" => $survey["title"]
+];
 
+foreach ($answers as $answer) {
+    $question = $answer["questionLabel"] ?? "";
+    $answerText = $answer["answer"] ?? "";
+
+    if ($question) {
+        $appScriptData[$question] = $answerText;
+    }
+}
+
+$ch = curl_init();
+
+curl_setopt_array($ch, [
+    CURLOPT_URL => "https://script.google.com/macros/s/AKfycby8A1MrVhrB0ebOnDp7p2qJtYz9YH8NcM-KW3NIleEX_meVHvWO2rn_jPtdJXiS79MX/exec",
+    CURLOPT_POST => true,
+    CURLOPT_POSTFIELDS => json_encode($appScriptData),
+    CURLOPT_HTTPHEADER => [
+        "Content-Type: application/json"
+    ],
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_TIMEOUT => 10
+]);
+
+curl_exec($ch);
+curl_close($ch);
     echo json_encode([
         "success" => true,
         "message" => "Survey submitted successfully"
