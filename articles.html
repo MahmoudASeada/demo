@@ -196,7 +196,7 @@ body{background:#f7f8fc;color:#101828}
 
 <main class="main">
   <header class="topbar">
-    <input class="search" placeholder="Search surveys, files, or reports...">
+    <input class="search" id="topSearch" placeholder="Search articles...">
 
     <div class="top-user">
       <div>
@@ -532,6 +532,10 @@ async function saveSettings(){
     status.innerText = "Connection error";
   }
 }
+document.getElementById("topSearch").addEventListener("input", function(){
+  document.getElementById("articleSearch").value = this.value;
+  applyFilters();
+});
 loadArticles();
 </script>
 

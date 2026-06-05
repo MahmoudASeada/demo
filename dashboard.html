@@ -253,8 +253,7 @@ td{border-top:1px solid #eef1f5;padding:15px 26px;font-size:13px}
   <main class="main">
 
     <header class="topbar">
-      <input class="search" placeholder="Search surveys, files, or reports..." />
-
+      <input class="search" id="dashboardSearch" placeholder="Search surveys or articles..." />
       <div class="top-user">
         <div>
           <h4 id="topName">User</h4>
@@ -373,7 +372,7 @@ if(!token){
   window.location.href = "login.html";
 }
 let allSurveys = [];
-
+let dashboardArticles = [];
 async function loadDashboard(){
   try{
     const res = await fetch("api/dashboard.php",{
@@ -528,7 +527,7 @@ async function loadDashboardArticles(){
     const data = await res.json();
 
     const articles = (data.result || []).slice(0, 3);
-
+    dashboardArticles = articles;
     if(!articles.length){
       box.innerHTML = `
         <div class="article">
@@ -669,6 +668,110 @@ async function saveSettings(){
   }catch(error){
     status.innerText = "Connection error";
   }
+}
+document.getElementById("dashboardSearch").addEventListener("input", function(){
+  const value = this.value.toLowerCase().trim();
+
+  filterDashboardSurveys(value);
+  filterDashboardArticles(value);
+});
+
+function filterDashboardSurveys(value){
+  const surveyTable = document.getElementById("surveyTable");
+
+  let filtered = allSurveys;
+
+  if(value){
+    filtered = allSurveys.filter(s =>
+      (s.title || "").toLowerCase().includes(value) ||
+      (s.status || "").toLowerCase().includes(value)
+    );
+  }
+
+  if(!filtered.length){
+    surveyTable.innerHTML = `
+      <tr>
+        <td colspan="4">No surveys found.</td>
+      </tr>
+    `;
+    return;
+  }
+
+  surveyTable.innerHTML = filtered.map(survey => {
+    let statusClass = "waiting";
+
+    if(survey.status === "completed"){
+      statusClass = "responded";
+    }
+
+    if(survey.status === "closed"){
+      statusClass = "closed";
+    }
+
+    return `
+      <tr>
+        <td>${survey.title}</td>
+        <td>${survey.created_at}</td>
+        <td>
+          <span class="badge ${statusClass}">
+            ${survey.status}
+          </span>
+        </td>
+        <td>
+          <a class="view" href="survey.html?id=${survey.id}">
+            View Details
+          </a>
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function filterDashboardArticles(value){
+  const box = document.getElementById("dashboardArticles");
+
+  let filtered = dashboardArticles;
+
+  if(value){
+    filtered = dashboardArticles.filter(article =>
+      (article.title || "").toLowerCase().includes(value) ||
+      (article.description || "").toLowerCase().includes(value) ||
+      (article.category || "").toLowerCase().includes(value)
+    );
+  }
+
+  if(!filtered.length){
+    box.innerHTML = `
+      <div class="article">
+        <div class="article-body">
+          <h4>No articles found</h4>
+          <p>Try another keyword.</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  box.innerHTML = filtered.map(article => `
+    <a 
+      class="article" 
+      href="${article.buttonLink || "#"}" 
+      target="_blank"
+      style="text-decoration:none;color:inherit;display:block;"
+    >
+      <div
+        class="article-img"
+        style="${article.imageUrl ? `background:url('${article.imageUrl}') center/cover` : ""}"
+      >
+        <span class="tag">${article.category || "Article"}</span>
+      </div>
+
+      <div class="article-body">
+        <h4>${article.title || ""}</h4>
+        <p>${article.publishedDate || ""} · ${article.readTime || "5 min read"}</p>
+      </div>
+    </a>
+  `).join("");
 }
 loadDashboard();
 loadDashboardArticles();
