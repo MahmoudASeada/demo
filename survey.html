@@ -225,7 +225,7 @@ async function loadSurvey(){
       "Status: " + data.survey.status + " | Created: " + data.survey.created_at;
 
     loadedQuestions = data.questions;
-
+    window.loadedAnswers = data.answers || [];
     if(data.survey.status === "completed"){
       document.getElementById("completedBox").innerHTML =
         `<div class="completed">This survey has already been submitted.</div>`;
@@ -252,29 +252,62 @@ function renderQuestions(){
     return;
   }
 
+  const isCompleted = document.getElementById("submitBtn").style.display === "none";
+
+  if(isCompleted){
+    wrap.innerHTML = loadedQuestions.map(q => {
+
+      const answerObj = (window.loadedAnswers || []).find(a => Number(a.question_id) === Number(q.id));
+      const answerText = answerObj ? answerObj.answer : "No answer found";
+
+      return `
+        <div class="field">
+          <label>${q.question_text}</label>
+
+          <div style="
+            background:#f8fafc;
+            border:1px solid #dfe3ea;
+            border-radius:14px;
+            padding:16px;
+            font-size:14px;
+            color:#101828;
+            line-height:1.6;
+          ">
+            ${answerText}
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    return;
+  }
+
   wrap.innerHTML = loadedQuestions.map(q => {
 
     const required = Number(q.required) === 1;
 
+    let inputHTML = "";
+
     if(q.question_type === "textarea"){
-      return `
-        <div class="field">
-          <label>
-            ${q.question_text}
-            ${required ? `<span class="required">*</span>` : ""}
-          </label>
-
-          <div class="input-area">
-            <textarea 
-              data-question-id="${q.id}"
-              data-question-label="${q.question_text}"
-              data-required="${required ? "1" : "0"}"
-              placeholder="Type your answer here..."
-            ></textarea>
-
-            <button class="mic-btn" type="button" onclick="toggleVoice(this)">🎙</button>
-          </div>
-        </div>
+      inputHTML = `
+        <textarea
+          data-question-id="${q.id}"
+          data-question-label="${q.question_text}"
+          data-required="${required ? "1" : "0"}"
+          placeholder="Type your answer here..."
+          required
+        ></textarea>
+      `;
+    }else{
+      inputHTML = `
+        <input
+          type="text"
+          data-question-id="${q.id}"
+          data-question-label="${q.question_text}"
+          data-required="${required ? "1" : "0"}"
+          placeholder="Type your answer here..."
+          required
+        >
       `;
     }
 
@@ -282,23 +315,25 @@ function renderQuestions(){
       <div class="field">
         <label>
           ${q.question_text}
-          ${required ? `<span class="required">*</span>` : ""}
+          ${required ? `<span class="required-star">*</span>` : ""}
         </label>
 
         <div class="input-area">
-          <input 
-            type="text"
-            data-question-id="${q.id}"
-            data-question-label="${q.question_text}"
-            data-required="${required ? "1" : "0"}"
-            placeholder="Type your answer here..."
-          >
-
-          <button class="mic-btn" type="button" onclick="toggleVoice(this)">🎙</button>
+          ${inputHTML}
+          <button class="mic-btn" type="button" onclick="toggleVoice('${q.id}', this)">🎙</button>
         </div>
       </div>
     `;
   }).join("");
+
+  document
+    .querySelectorAll("#questionsWrap input, #questionsWrap textarea")
+    .forEach(field => {
+      field.addEventListener("input", function(){
+        field.classList.remove("field-error");
+        saveToLocalStorage();
+      });
+    });
 }
 
 function toggleVoice(button){
