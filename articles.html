@@ -178,8 +178,22 @@ document.getElementById("topName").innerText = name;
 document.getElementById("sideAvatar").innerText = letter;
 document.getElementById("topAvatar").innerText = letter;
 
+const SANITY_QUERY = `*[_type=="article" && active==true]|order(publishedDate desc){
+  title,
+  smallTitle,
+  description,
+  category,
+  readTime,
+  publishedDate,
+  featured,
+  buttonText,
+  buttonLink,
+  "imageUrl": image.asset->url
+}`;
+
 const SANITY_API =
-"https://0b1rlnsm.api.sanity.io/v2021-10-21/data/query/production?query=*%5B_type%3D%3D%22article%22%20%26%26%20active%3D%3Dtrue%5D%7Corder(publishedDate%20desc)%7Btitle%2CsmallTitle%2Cdescription%2Ccategory%2CreadTime%2CpublishedDate%2Cfeatured%2CbuttonText%2CbuttonLink%2C%22imageUrl%22%3Aimage.asset-%3Eurl%7D";
+  "https://0b1rlnsm.api.sanity.io/v2021-10-21/data/query/production?query=" +
+  encodeURIComponent(SANITY_QUERY);
 
 let allArticles = [];
 let currentCategory = "All";
@@ -187,7 +201,14 @@ let currentCategory = "All";
 async function loadArticles(){
   try{
     const res = await fetch(SANITY_API);
+
+    if(!res.ok){
+      throw new Error("Sanity request failed");
+    }
+
     const json = await res.json();
+
+    console.log("Sanity articles:", json);
 
     allArticles = json.result || [];
 
@@ -201,6 +222,8 @@ async function loadArticles(){
     renderArticles(allArticles);
 
   }catch(error){
+    console.log("Sanity Error:", error);
+
     document.getElementById("articlesGrid").innerHTML =
       `<div class="empty">Failed to load articles from Sanity.</div>`;
   }
