@@ -16,37 +16,79 @@ body{background:#f7f8fc;color:#101828}
 .logout{color:#c9000b;font-size:14px;cursor:pointer;margin-bottom:18px}
 .user-card{border:1px solid #c9000b;border-radius:14px;padding:10px;display:flex;gap:10px;align-items:center}
 .avatar{width:38px;height:38px;border-radius:50%;background:#dce3ff;display:flex;align-items:center;justify-content:center;font-weight:800;color:#3745a4}
-.user-card h4{font-size:13px}.user-card p{font-size:11px;color:#667085}
+.user-card h4{font-size:13px}
+.user-card p{font-size:11px;color:#667085}
 .main{margin-left:230px;width:calc(100% - 230px)}
 .topbar{height:58px;background:#fff;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;padding:0 34px}
 .search{width:420px;height:36px;border:1px solid #d9dee8;border-radius:30px;padding:0 18px;background:#fafbff;outline:none}
-.top-user{display:flex;align-items:center;gap:10px}.top-user h4{font-size:13px}.top-user p{font-size:10px;color:#667085;text-align:right}
+.top-user{display:flex;align-items:center;gap:10px}
+.top-user h4{font-size:13px}
+.top-user p{font-size:10px;color:#667085;text-align:right}
 .content{padding:34px 44px}
-.page-title h1{font-size:30px;margin-bottom:8px}.page-title p{font-size:14px;color:#667085;margin-bottom:28px}
-.hero{background:#fff;border-radius:22px;display:grid;grid-template-columns:1.1fr 1fr;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.04);margin-bottom:28px}
-.hero-img{min-height:300px;background:linear-gradient(135deg,#0b1f2b,#1d6574);position:relative}
-.hero-tag{position:absolute;top:20px;left:20px;background:#c9000b;color:#fff;padding:8px 13px;border-radius:20px;font-size:11px;font-weight:800}
+.page-title h1{font-size:30px;margin-bottom:8px}
+.page-title p{font-size:14px;color:#667085;margin-bottom:28px}
+
+.hero{
+  background:#fff;
+  border-radius:22px;
+  display:grid;
+  grid-template-columns:1.1fr 1fr;
+  overflow:hidden;
+  box-shadow:0 14px 30px rgba(0,0,0,.04);
+  margin-bottom:28px;
+}
+.hero-img{
+  min-height:300px;
+  background:linear-gradient(135deg,#0b1f2b,#1d6574);
+  background-size:cover;
+  background-position:center;
+  position:relative;
+}
+.hero-tag{
+  position:absolute;
+  top:20px;
+  left:20px;
+  background:#c9000b;
+  color:#fff;
+  padding:8px 13px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:800;
+}
 .hero-content{padding:46px}
-.meta{color:#c9000b;font-size:11px;font-weight:800;margin-bottom:14px}
+.meta{color:#c9000b;font-size:11px;font-weight:800;margin-bottom:14px;text-transform:uppercase}
 .hero-content h2{font-size:30px;line-height:1.1;margin-bottom:16px}
 .hero-content p{color:#667085;font-size:14px;line-height:1.6;margin-bottom:24px}
 .read-btn{display:inline-block;background:#c9000b;color:#fff;text-decoration:none;padding:14px 24px;border-radius:30px;font-size:13px;font-weight:800}
+
 .filters{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}
-.tabs{display:flex;background:#fff;border-radius:22px;padding:5px;gap:6px}
+.tabs{display:flex;background:#fff;border-radius:22px;padding:5px;gap:6px;flex-wrap:wrap}
 .tabs button{border:none;background:transparent;padding:9px 18px;border-radius:20px;cursor:pointer;color:#667085;font-weight:700}
 .tabs button.active{background:#c9000b;color:#fff}
 .article-search{width:260px;height:36px;border:1px solid #e1e5ed;border-radius:22px;background:#fff;padding:0 16px;outline:none}
+
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
 .article{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.04)}
-.article-img{height:205px;background:linear-gradient(135deg,#ded4bd,#50616b);position:relative}
-.article:nth-child(2) .article-img{background:linear-gradient(135deg,#dfd4c8,#15334a)}
-.article:nth-child(3) .article-img{background:linear-gradient(135deg,#cdd4d8,#1a2b35)}
-.article-body{padding:18px}.article-body h3{font-size:16px;line-height:1.3;margin-bottom:10px}.article-body p{font-size:13px;color:#667085;line-height:1.5}
-@media(max-width:950px){.sidebar{width:78px}.nav a span,.user-card,.logout{display:none}.main{margin-left:78px;width:calc(100% - 78px)}.hero,.grid{grid-template-columns:1fr}.search{width:220px}.filters{flex-direction:column;align-items:flex-start}}
+.article-img{height:205px;background:linear-gradient(135deg,#ded4bd,#50616b);background-size:cover;background-position:center;position:relative}
+.tag{position:absolute;top:12px;right:12px;background:#c9000b;color:#fff;padding:5px 10px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase}
+.article-body{padding:18px}
+.article-body h3{font-size:16px;line-height:1.3;margin-bottom:10px}
+.article-body p{font-size:13px;color:#667085;line-height:1.5;margin-bottom:14px}
+.empty{background:#fff;border-radius:18px;padding:30px;color:#667085}
+
+@media(max-width:950px){
+  .sidebar{width:78px}
+  .nav a span,.user-card,.logout{display:none}
+  .main{margin-left:78px;width:calc(100% - 78px)}
+  .hero,.grid{grid-template-columns:1fr}
+  .search{width:220px}
+  .filters{flex-direction:column;align-items:flex-start}
+}
 </style>
 </head>
 
 <body>
+
 <div class="app">
 
 <aside class="sidebar">
@@ -75,6 +117,7 @@ body{background:#f7f8fc;color:#101828}
 <main class="main">
   <header class="topbar">
     <input class="search" placeholder="Search surveys, files, or reports...">
+
     <div class="top-user">
       <div>
         <h4 id="topName">User</h4>
@@ -90,52 +133,29 @@ body{background:#f7f8fc;color:#101828}
       <p>Explore expert insights, industry trends, and strategic guides to elevate customer feedback management.</p>
     </div>
 
-    <div class="hero">
-      <div class="hero-img">
+    <div class="hero" id="featuredArticle">
+      <div class="hero-img" id="featuredImage">
         <span class="hero-tag">Featured Article</span>
       </div>
+
       <div class="hero-content">
-        <div class="meta">STRATEGY • 12 MIN READ</div>
-        <h2>Revolutionizing Customer Feedback Loops in 2024</h2>
-        <p>Discover how leading organizations are adopting AI-driven feedback systems to achieve sustainable growth beyond simple NPS scores.</p>
-        <a href="#" class="read-btn">Read Full Article</a>
+        <div class="meta" id="featuredMeta">Loading...</div>
+        <h2 id="featuredTitle">Loading article...</h2>
+        <p id="featuredDescription">Please wait while we load articles from Sanity.</p>
+        <a href="#" class="read-btn" id="featuredButton">Read Full Article</a>
       </div>
     </div>
 
     <div class="filters">
-      <div class="tabs">
+      <div class="tabs" id="articleTabs">
         <button class="active">All</button>
-        <button>Strategy</button>
-        <button>Analytics</button>
-        <button>Customer Success</button>
       </div>
-      <input class="article-search" placeholder="Search articles...">
+
+      <input class="article-search" id="articleSearch" placeholder="Search articles...">
     </div>
 
-    <div class="grid">
-      <div class="article">
-        <div class="article-img"></div>
-        <div class="article-body">
-          <h3>Understanding Sentiment Analysis in VOC</h3>
-          <p>Deep dive into how NLP decodes emotional nuances in survey responses.</p>
-        </div>
-      </div>
-
-      <div class="article">
-        <div class="article-img"></div>
-        <div class="article-body">
-          <h3>The Future of B2B Feedback: Predictive...</h3>
-          <p>Why predictive models are the next step in enterprise growth strategies?</p>
-        </div>
-      </div>
-
-      <div class="article">
-        <div class="article-img"></div>
-        <div class="article-body">
-          <h3>Reducing Churn with Proactive Support Systems</h3>
-          <p>Actionable steps to turn negative feedback into long-term customer loyalty.</p>
-        </div>
-      </div>
+    <div class="grid" id="articlesGrid">
+      <div class="empty">Loading articles from Sanity...</div>
     </div>
   </section>
 </main>
@@ -146,7 +166,7 @@ body{background:#f7f8fc;color:#101828}
 const token = localStorage.getItem("portal_token");
 
 if(!token){
-  window.location.href="login.html";
+  window.location.href = "login.html";
 }
 
 const user = JSON.parse(localStorage.getItem("portal_user") || "{}");
@@ -162,93 +182,140 @@ const SANITY_API =
 "https://0b1rlnsm.api.sanity.io/v2021-10-21/data/query/production?query=*%5B_type%3D%3D%22article%22%20%26%26%20active%3D%3Dtrue%5D%7Corder(publishedDate%20desc)%7Btitle%2CsmallTitle%2Cdescription%2Ccategory%2CreadTime%2CpublishedDate%2Cfeatured%2CbuttonText%2CbuttonLink%2C%22imageUrl%22%3Aimage.asset-%3Eurl%7D";
 
 let allArticles = [];
+let currentCategory = "All";
 
 async function loadArticles(){
-  const res = await fetch(SANITY_API);
-  const json = await res.json();
+  try{
+    const res = await fetch(SANITY_API);
+    const json = await res.json();
 
-  allArticles = json.result || [];
+    allArticles = json.result || [];
 
-  renderFeatured();
-  renderFilters();
-  renderArticles(allArticles);
+    if(!allArticles.length){
+      showEmptyState();
+      return;
+    }
+
+    renderFeatured();
+    renderFilters();
+    renderArticles(allArticles);
+
+  }catch(error){
+    document.getElementById("articlesGrid").innerHTML =
+      `<div class="empty">Failed to load articles from Sanity.</div>`;
+  }
+}
+
+function showEmptyState(){
+  document.getElementById("featuredMeta").innerText = "NO ARTICLES";
+  document.getElementById("featuredTitle").innerText = "No articles found";
+  document.getElementById("featuredDescription").innerText = "Please publish active articles in Sanity.";
+  document.getElementById("featuredButton").style.display = "none";
+  document.getElementById("articlesGrid").innerHTML =
+    `<div class="empty">No articles found in Sanity.</div>`;
 }
 
 function renderFeatured(){
   const featured = allArticles.find(article => article.featured) || allArticles[0];
 
-  if(!featured) return;
+  if(featured.imageUrl){
+    document.getElementById("featuredImage").style.background =
+      `url('${featured.imageUrl}') center/cover`;
+  }
 
-  document.querySelector(".hero-img").style.background =
-    featured.imageUrl
-      ? `url('${featured.imageUrl}') center/cover`
-      : "linear-gradient(135deg,#0b1f2b,#1d6574)";
-
-  document.querySelector(".meta").innerText =
+  document.getElementById("featuredMeta").innerText =
     featured.smallTitle || `${featured.category || "ARTICLE"} • ${featured.readTime || "5 min read"}`;
 
-  document.querySelector(".hero-content h2").innerText =
+  document.getElementById("featuredTitle").innerText =
     featured.title || "";
 
-  document.querySelector(".hero-content p").innerText =
+  document.getElementById("featuredDescription").innerText =
     featured.description || "";
 
-  const btn = document.querySelector(".read-btn");
+  const btn = document.getElementById("featuredButton");
   btn.innerText = featured.buttonText || "Read Full Article";
   btn.href = featured.buttonLink || "#";
   btn.target = "_blank";
 }
 
 function renderFilters(){
-  const tabs = document.querySelector(".tabs");
+  const tabs = document.getElementById("articleTabs");
 
   const categories = [
     "All",
-    ...new Set(allArticles.map(a => a.category).filter(Boolean))
+    ...new Set(allArticles.map(article => article.category).filter(Boolean))
   ];
 
-  tabs.innerHTML = categories.map((cat, index) => `
-    <button class="${index === 0 ? "active" : ""}" onclick="filterArticles('${cat}', this)">
-      ${cat}
+  tabs.innerHTML = categories.map(category => `
+    <button 
+      class="${category === "All" ? "active" : ""}" 
+      onclick="filterByCategory('${category}', this)"
+    >
+      ${category}
     </button>
   `).join("");
 }
 
-function filterArticles(category, btn){
-  document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
-  btn.classList.add("active");
+function filterByCategory(category, button){
+  currentCategory = category;
 
-  if(category === "All"){
-    renderArticles(allArticles);
-    return;
+  document.querySelectorAll("#articleTabs button").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  button.classList.add("active");
+
+  applyFilters();
+}
+
+document.getElementById("articleSearch").addEventListener("input", applyFilters);
+
+function applyFilters(){
+  const searchValue = document.getElementById("articleSearch").value.toLowerCase().trim();
+
+  let filtered = allArticles;
+
+  if(currentCategory !== "All"){
+    filtered = filtered.filter(article => article.category === currentCategory);
   }
 
-  renderArticles(allArticles.filter(article => article.category === category));
+  if(searchValue){
+    filtered = filtered.filter(article =>
+      (article.title || "").toLowerCase().includes(searchValue) ||
+      (article.description || "").toLowerCase().includes(searchValue) ||
+      (article.category || "").toLowerCase().includes(searchValue)
+    );
+  }
+
+  renderArticles(filtered);
 }
 
 function renderArticles(articles){
-  const grid = document.querySelector(".grid");
+  const grid = document.getElementById("articlesGrid");
 
   if(!articles.length){
-    grid.innerHTML = `<p>No articles found.</p>`;
+    grid.innerHTML = `<div class="empty">No articles found.</div>`;
     return;
   }
 
   grid.innerHTML = articles.map(article => `
     <div class="article">
-      <div class="article-img" style="${
-        article.imageUrl
-          ? `background:url('${article.imageUrl}') center/cover`
-          : ""
-      }">
-        <span class="tag">${article.category || "ARTICLE"}</span>
+      <div 
+        class="article-img"
+        style="${article.imageUrl ? `background:url('${article.imageUrl}') center/cover` : ""}"
+      >
+        <span class="tag">${article.category || "Article"}</span>
       </div>
 
       <div class="article-body">
         <h3>${article.title || ""}</h3>
         <p>${article.description || ""}</p>
-        <br>
-        <a class="read-btn" href="${article.buttonLink || "#"}" target="_blank">
+
+        <a 
+          class="read-btn" 
+          href="${article.buttonLink || "#"}" 
+          target="_blank"
+        >
           ${article.buttonText || "Read More"}
         </a>
       </div>
@@ -258,10 +325,11 @@ function renderArticles(articles){
 
 function logout(){
   localStorage.clear();
-  window.location.href="login.html";
+  window.location.href = "login.html";
 }
 
 loadArticles();
 </script>
+
 </body>
 </html>
