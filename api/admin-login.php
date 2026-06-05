@@ -7,7 +7,7 @@ $input = json_decode(file_get_contents("php://input"), true);
 $email = strtolower(trim($input["email"] ?? ""));
 $password = $input["password"] ?? "";
 
-$ADMIN_EMAIL = "Engmahmoud@gmail.com";
+$ADMIN_EMAIL = "engmahmoud@gmail.com";
 $ADMIN_PASSWORD = "Engmahmoud@!t";
 
 if (!$email || !$password) {
