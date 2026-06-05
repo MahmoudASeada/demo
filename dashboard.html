@@ -230,31 +230,14 @@ td{border-top:1px solid #eef1f5;padding:15px 26px;font-size:13px}
         <div>‹ ›</div>
       </div>
 
-      <div class="article-grid">
-        <div class="article">
-          <div class="article-img"><span class="tag">ANALYTICS</span></div>
-          <div class="article-body">
-            <h4>Improving Customer Loyalty</h4>
-            <p>Published Oct 15, 2023 · 5 min read</p>
-          </div>
-        </div>
-
-        <div class="article">
-          <div class="article-img"><span class="tag">TRENDS</span></div>
-          <div class="article-body">
-            <h4>Q4 Satisfaction Benchmarks</h4>
-            <p>Published Oct 15, 2023 · 5 min read</p>
-          </div>
-        </div>
-
-        <div class="article">
-          <div class="article-img"><span class="tag">LEADERSHIP</span></div>
-          <div class="article-body">
-            <h4>Voice of Customer Guide</h4>
-            <p>Published Oct 15, 2023 · 5 min read</p>
-          </div>
-        </div>
-      </div>
+      <div class="article-grid" id="dashboardArticles">
+  <div class="article">
+    <div class="article-body">
+      <h4>Loading articles...</h4>
+      <p>Please wait</p>
+    </div>
+  </div>
+</div>
 
     </section>
 
@@ -269,6 +252,7 @@ if(!token){
   window.location.href = "login.html";
 }
 let allSurveys = [];
+
 async function loadDashboard(){
   try{
     const res = await fetch("api/dashboard.php",{
@@ -412,7 +396,59 @@ function openSurveyModal(type){
 function closeSurveyModal(){
   document.getElementById("surveyModal").classList.remove("show");
 }
+async function loadDashboardArticles(){
+
+  const box = document.getElementById("dashboardArticles");
+
+  try{
+
+    const res = await fetch("api/articles.php");
+    const data = await res.json();
+
+    const articles = (data.result || []).slice(0, 3);
+
+    if(!articles.length){
+      box.innerHTML = `
+        <div class="article">
+          <div class="article-body">
+            <h4>No articles yet</h4>
+            <p>No articles found in Sanity.</p>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    box.innerHTML = articles.map(article => `
+      <div class="article">
+        <div
+          class="article-img"
+          style="${article.imageUrl ? `background:url('${article.imageUrl}') center/cover` : ""}"
+        >
+          <span class="tag">${article.category || "Article"}</span>
+        </div>
+
+        <div class="article-body">
+          <h4>${article.title || ""}</h4>
+          <p>${article.publishedDate || ""} · ${article.readTime || "5 min read"}</p>
+        </div>
+      </div>
+    `).join("");
+
+  }catch(error){
+
+    box.innerHTML = `
+      <div class="article">
+        <div class="article-body">
+          <h4>Failed to load articles</h4>
+          <p>Try again later.</p>
+        </div>
+      </div>
+    `;
+  }
+}
 loadDashboard();
+loadDashboardArticles();
 </script>
 <div class="modal" id="surveyModal">
   <div class="modal-box">
