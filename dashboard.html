@@ -420,20 +420,25 @@ async function loadDashboardArticles(){
     }
 
     box.innerHTML = articles.map(article => `
-      <div class="article">
-        <div
-          class="article-img"
-          style="${article.imageUrl ? `background:url('${article.imageUrl}') center/cover` : ""}"
-        >
-          <span class="tag">${article.category || "Article"}</span>
-        </div>
+  <a 
+    class="article" 
+    href="${article.buttonLink || "#"}" 
+    target="_blank"
+    style="text-decoration:none;color:inherit;display:block;"
+  >
+    <div
+      class="article-img"
+      style="${article.imageUrl ? `background:url('${article.imageUrl}') center/cover` : ""}"
+    >
+      <span class="tag">${article.category || "Article"}</span>
+    </div>
 
-        <div class="article-body">
-          <h4>${article.title || ""}</h4>
-          <p>${article.publishedDate || ""} · ${article.readTime || "5 min read"}</p>
-        </div>
-      </div>
-    `).join("");
+    <div class="article-body">
+      <h4>${article.title || ""}</h4>
+      <p>${article.publishedDate || ""} · ${article.readTime || "5 min read"}</p>
+    </div>
+  </a>
+`).join("");
 
   }catch(error){
 
