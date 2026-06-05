@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reports & Articles</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f7f8fc;color:#101828}
+.app{display:flex;min-height:100vh}
+.sidebar{width:230px;background:#fff;border-right:1px solid #eee;position:fixed;top:0;left:0;bottom:0;padding:24px 14px;display:flex;flex-direction:column;justify-content:space-between}
+.logo{font-size:22px;font-weight:800;color:#c9000b;margin-bottom:30px}
+.nav a{display:flex;gap:10px;align-items:center;text-decoration:none;color:#667085;padding:12px 14px;border-radius:12px;margin-bottom:8px;font-size:14px}
+.nav a.active{background:#c9000b;color:#fff}
+.logout{color:#c9000b;font-size:14px;cursor:pointer;margin-bottom:18px}
+.user-card{border:1px solid #c9000b;border-radius:14px;padding:10px;display:flex;gap:10px;align-items:center}
+.avatar{width:38px;height:38px;border-radius:50%;background:#dce3ff;display:flex;align-items:center;justify-content:center;font-weight:800;color:#3745a4}
+.user-card h4{font-size:13px}.user-card p{font-size:11px;color:#667085}
+.main{margin-left:230px;width:calc(100% - 230px)}
+.topbar{height:58px;background:#fff;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;padding:0 34px}
+.search{width:420px;height:36px;border:1px solid #d9dee8;border-radius:30px;padding:0 18px;background:#fafbff;outline:none}
+.top-user{display:flex;align-items:center;gap:10px}.top-user h4{font-size:13px}.top-user p{font-size:10px;color:#667085;text-align:right}
+.content{padding:34px 44px}
+.page-title h1{font-size:30px;margin-bottom:8px}.page-title p{font-size:14px;color:#667085;margin-bottom:28px}
+.hero{background:#fff;border-radius:22px;display:grid;grid-template-columns:1.1fr 1fr;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.04);margin-bottom:28px}
+.hero-img{min-height:300px;background:linear-gradient(135deg,#0b1f2b,#1d6574);position:relative}
+.hero-tag{position:absolute;top:20px;left:20px;background:#c9000b;color:#fff;padding:8px 13px;border-radius:20px;font-size:11px;font-weight:800}
+.hero-content{padding:46px}
+.meta{color:#c9000b;font-size:11px;font-weight:800;margin-bottom:14px}
+.hero-content h2{font-size:30px;line-height:1.1;margin-bottom:16px}
+.hero-content p{color:#667085;font-size:14px;line-height:1.6;margin-bottom:24px}
+.read-btn{display:inline-block;background:#c9000b;color:#fff;text-decoration:none;padding:14px 24px;border-radius:30px;font-size:13px;font-weight:800}
+.filters{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}
+.tabs{display:flex;background:#fff;border-radius:22px;padding:5px;gap:6px}
+.tabs button{border:none;background:transparent;padding:9px 18px;border-radius:20px;cursor:pointer;color:#667085;font-weight:700}
+.tabs button.active{background:#c9000b;color:#fff}
+.article-search{width:260px;height:36px;border:1px solid #e1e5ed;border-radius:22px;background:#fff;padding:0 16px;outline:none}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.article{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.04)}
+.article-img{height:205px;background:linear-gradient(135deg,#ded4bd,#50616b);position:relative}
+.article:nth-child(2) .article-img{background:linear-gradient(135deg,#dfd4c8,#15334a)}
+.article:nth-child(3) .article-img{background:linear-gradient(135deg,#cdd4d8,#1a2b35)}
+.article-body{padding:18px}.article-body h3{font-size:16px;line-height:1.3;margin-bottom:10px}.article-body p{font-size:13px;color:#667085;line-height:1.5}
+@media(max-width:950px){.sidebar{width:78px}.nav a span,.user-card,.logout{display:none}.main{margin-left:78px;width:calc(100% - 78px)}.hero,.grid{grid-template-columns:1fr}.search{width:220px}.filters{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar">
+  <div>
+    <div class="logo">W zone</div>
+    <nav class="nav">
+      <a href="dashboard.html">▦ <span>Dashboard</span></a>
+      <a href="articles.html" class="active">▤ <span>Reports & Articles</span></a>
+      <a href="#">⚙ <span>Settings</span></a>
+      <a href="#">❔ <span>Help Center</span></a>
+    </nav>
+  </div>
+
+  <div>
+    <div class="logout" onclick="logout()">↩ Logout</div>
+    <div class="user-card">
+      <div class="avatar" id="sideAvatar">U</div>
+      <div>
+        <h4 id="sideName">User</h4>
+        <p>Pro Member</p>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <header class="topbar">
+    <input class="search" placeholder="Search surveys, files, or reports...">
+    <div class="top-user">
+      <div>
+        <h4 id="topName">User</h4>
+        <p>ID #84210</p>
+      </div>
+      <div class="avatar" id="topAvatar">U</div>
+    </div>
+  </header>
+
+  <section class="content">
+    <div class="page-title">
+      <h1>Articles</h1>
+      <p>Explore expert insights, industry trends, and strategic guides to elevate customer feedback management.</p>
+    </div>
+
+    <div class="hero">
+      <div class="hero-img">
+        <span class="hero-tag">Featured Article</span>
+      </div>
+      <div class="hero-content">
+        <div class="meta">STRATEGY • 12 MIN READ</div>
+        <h2>Revolutionizing Customer Feedback Loops in 2024</h2>
+        <p>Discover how leading organizations are adopting AI-driven feedback systems to achieve sustainable growth beyond simple NPS scores.</p>
+        <a href="#" class="read-btn">Read Full Article</a>
+      </div>
+    </div>
+
+    <div class="filters">
+      <div class="tabs">
+        <button class="active">All</button>
+        <button>Strategy</button>
+        <button>Analytics</button>
+        <button>Customer Success</button>
+      </div>
+      <input class="article-search" placeholder="Search articles...">
+    </div>
+
+    <div class="grid">
+      <div class="article">
+        <div class="article-img"></div>
+        <div class="article-body">
+          <h3>Understanding Sentiment Analysis in VOC</h3>
+          <p>Deep dive into how NLP decodes emotional nuances in survey responses.</p>
+        </div>
+      </div>
+
+      <div class="article">
+        <div class="article-img"></div>
+        <div class="article-body">
+          <h3>The Future of B2B Feedback: Predictive...</h3>
+          <p>Why predictive models are the next step in enterprise growth strategies?</p>
+        </div>
+      </div>
+
+      <div class="article">
+        <div class="article-img"></div>
+        <div class="article-body">
+          <h3>Reducing Churn with Proactive Support Systems</h3>
+          <p>Actionable steps to turn negative feedback into long-term customer loyalty.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+</div>
+
+<script>
+const token = localStorage.getItem("portal_token");
+
+if(!token){
+  window.location.href="login.html";
+}
+
+const user = JSON.parse(localStorage.getItem("portal_user") || "{}");
+const name = user.name || "User";
+const letter = name.charAt(0).toUpperCase();
+
+document.getElementById("sideName").innerText = name;
+document.getElementById("topName").innerText = name;
+document.getElementById("sideAvatar").innerText = letter;
+document.getElementById("topAvatar").innerText = letter;
+
+const SANITY_API =
+"https://0b1rlnsm.api.sanity.io/v2021-10-21/data/query/production?query=*%5B_type%3D%3D%22article%22%20%26%26%20active%3D%3Dtrue%5D%7Corder(publishedDate%20desc)%7Btitle%2CsmallTitle%2Cdescription%2Ccategory%2CreadTime%2CpublishedDate%2Cfeatured%2CbuttonText%2CbuttonLink%2C%22imageUrl%22%3Aimage.asset-%3Eurl%7D";
+
+let allArticles = [];
+
+async function loadArticles(){
+  const res = await fetch(SANITY_API);
+  const json = await res.json();
+
+  allArticles = json.result || [];
+
+  renderFeatured();
+  renderFilters();
+  renderArticles(allArticles);
+}
+
+function renderFeatured(){
+  const featured = allArticles.find(article => article.featured) || allArticles[0];
+
+  if(!featured) return;
+
+  document.querySelector(".hero-img").style.background =
+    featured.imageUrl
+      ? `url('${featured.imageUrl}') center/cover`
+      : "linear-gradient(135deg,#0b1f2b,#1d6574)";
+
+  document.querySelector(".meta").innerText =
+    featured.smallTitle || `${featured.category || "ARTICLE"} • ${featured.readTime || "5 min read"}`;
+
+  document.querySelector(".hero-content h2").innerText =
+    featured.title || "";
+
+  document.querySelector(".hero-content p").innerText =
+    featured.description || "";
+
+  const btn = document.querySelector(".read-btn");
+  btn.innerText = featured.buttonText || "Read Full Article";
+  btn.href = featured.buttonLink || "#";
+  btn.target = "_blank";
+}
+
+function renderFilters(){
+  const tabs = document.querySelector(".tabs");
+
+  const categories = [
+    "All",
+    ...new Set(allArticles.map(a => a.category).filter(Boolean))
+  ];
+
+  tabs.innerHTML = categories.map((cat, index) => `
+    <button class="${index === 0 ? "active" : ""}" onclick="filterArticles('${cat}', this)">
+      ${cat}
+    </button>
+  `).join("");
+}
+
+function filterArticles(category, btn){
+  document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  if(category === "All"){
+    renderArticles(allArticles);
+    return;
+  }
+
+  renderArticles(allArticles.filter(article => article.category === category));
+}
+
+function renderArticles(articles){
+  const grid = document.querySelector(".grid");
+
+  if(!articles.length){
+    grid.innerHTML = `<p>No articles found.</p>`;
+    return;
+  }
+
+  grid.innerHTML = articles.map(article => `
+    <div class="article">
+      <div class="article-img" style="${
+        article.imageUrl
+          ? `background:url('${article.imageUrl}') center/cover`
+          : ""
+      }">
+        <span class="tag">${article.category || "ARTICLE"}</span>
+      </div>
+
+      <div class="article-body">
+        <h3>${article.title || ""}</h3>
+        <p>${article.description || ""}</p>
+        <br>
+        <a class="read-btn" href="${article.buttonLink || "#"}" target="_blank">
+          ${article.buttonText || "Read More"}
+        </a>
+      </div>
+    </div>
+  `).join("");
+}
+
+function logout(){
+  localStorage.clear();
+  window.location.href="login.html";
+}
+
+loadArticles();
+</script>
+</body>
+</html>
