@@ -84,6 +84,86 @@ body{background:#f7f8fc;color:#101828}
   .search{width:220px}
   .filters{flex-direction:column;align-items:flex-start}
 }
+.settings-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  padding:20px;
+}
+.settings-modal.show{display:flex}
+.settings-box{
+  width:100%;
+  max-width:440px;
+  background:#fff;
+  border-radius:22px;
+  overflow:hidden;
+}
+.settings-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:22px 26px;
+  border-bottom:1px solid #eee;
+}
+.settings-head button{
+  border:none;
+  background:#c9000b;
+  color:#fff;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  font-size:22px;
+  cursor:pointer;
+}
+.settings-body{padding:26px}
+.profile-preview{
+  width:82px;
+  height:82px;
+  border-radius:50%;
+  background:#dce3ff;
+  color:#3745a4;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  font-size:28px;
+  margin:0 auto 22px;
+  background-size:cover;
+  background-position:center;
+}
+.settings-body label{
+  display:block;
+  margin-bottom:8px;
+  font-size:13px;
+  font-weight:800;
+}
+.settings-body input{
+  width:100%;
+  height:46px;
+  border:1px solid #dfe3ea;
+  border-radius:12px;
+  padding:0 14px;
+  margin-bottom:16px;
+}
+.save-settings{
+  width:100%;
+  height:50px;
+  border:none;
+  background:#c9000b;
+  color:white;
+  border-radius:12px;
+  font-weight:800;
+  cursor:pointer;
+}
+.settings-status{
+  margin-top:12px;
+  font-size:13px;
+  color:#667085;
+}
 </style>
 </head>
 
@@ -200,7 +280,7 @@ const letter = name.charAt(0).toUpperCase();
 
 document.getElementById("sideName").innerText = name;
 document.getElementById("topName").innerText = name;
-
+setAvatarImage(user);
 
 const SANITY_API = "api/articles.php";
 
@@ -359,7 +439,99 @@ function logout(){
   localStorage.clear();
   window.location.href = "login.html";
 }
+function setAvatarImage(user){
+  const image = user.profile_image;
+  const name = user.name || "User";
+  const letter = name.charAt(0).toUpperCase();
 
+  [document.getElementById("sideAvatar"), document.getElementById("topAvatar")]
+  .forEach(avatar=>{
+    if(!avatar) return;
+
+    if(image){
+      avatar.innerText = "";
+      avatar.style.backgroundImage = `url('${image}')`;
+      avatar.style.backgroundSize = "cover";
+      avatar.style.backgroundPosition = "center";
+    }else{
+      avatar.innerText = letter;
+      avatar.style.backgroundImage = "";
+    }
+  });
+}
+
+function openSettings(){
+  const user = JSON.parse(localStorage.getItem("portal_user") || "{}");
+
+  document.getElementById("settingsName").value = user.name || "";
+  document.getElementById("settingsEmail").value = user.email || "";
+
+  const preview = document.getElementById("settingsImagePreview");
+
+  if(user.profile_image){
+    preview.innerText = "";
+    preview.style.backgroundImage = `url('${user.profile_image}')`;
+  }else{
+    preview.innerText = (user.name || "U").charAt(0).toUpperCase();
+    preview.style.backgroundImage = "";
+  }
+
+  document.getElementById("settingsModal").classList.add("show");
+}
+
+function closeSettings(){
+  document.getElementById("settingsModal").classList.remove("show");
+}
+
+document.getElementById("profileImageInput").addEventListener("change", function(){
+  const file = this.files[0];
+  if(!file) return;
+
+  const preview = document.getElementById("settingsImagePreview");
+  preview.innerText = "";
+  preview.style.backgroundImage = `url('${URL.createObjectURL(file)}')`;
+});
+
+async function saveSettings(){
+  const status = document.getElementById("settingsStatus");
+  status.innerText = "Saving...";
+
+  const formData = new FormData();
+  formData.append("name", document.getElementById("settingsName").value.trim());
+
+  const file = document.getElementById("profileImageInput").files[0];
+
+  if(file){
+    formData.append("profile_image", file);
+  }
+
+  try{
+    const res = await fetch("api/update-profile.php",{
+      method:"POST",
+      headers:{
+        Authorization:"Bearer " + token
+      },
+      body:formData
+    });
+
+    const data = await res.json();
+    status.innerText = data.message;
+
+    if(data.success){
+      localStorage.setItem("portal_user", JSON.stringify(data.user));
+
+      document.getElementById("sideName").innerText = data.user.name;
+      document.getElementById("topName").innerText = data.user.name;
+
+      setAvatarImage(data.user);
+
+      setTimeout(closeSettings, 700);
+    }
+
+  }catch(error){
+    status.innerText = "Connection error";
+  }
+}
 loadArticles();
 </script>
 
