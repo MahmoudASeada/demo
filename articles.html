@@ -97,8 +97,8 @@ body{background:#f7f8fc;color:#101828}
     <nav class="nav">
       <a href="dashboard.html">▦ <span>Dashboard</span></a>
       <a href="articles.html" class="active">▤ <span>Reports & Articles</span></a>
-      <a href="#">⚙ <span>Settings</span></a>
-      <a href="#">❔ <span>Help Center</span></a>
+      <a href="#" onclick="openSettings();return false;">⚙ <span>Settings</span></a>
+      
     </nav>
   </div>
 
@@ -161,6 +161,31 @@ body{background:#f7f8fc;color:#101828}
 </main>
 
 </div>
+<div class="settings-modal" id="settingsModal">
+  <div class="settings-box">
+    <div class="settings-head">
+      <h2>Settings</h2>
+      <button onclick="closeSettings()">×</button>
+    </div>
+
+    <div class="settings-body">
+      <div class="profile-preview" id="settingsImagePreview">U</div>
+
+      <label>Profile Image</label>
+      <input type="file" id="profileImageInput" accept="image/*">
+
+      <label>Name</label>
+      <input type="text" id="settingsName">
+
+      <label>Email</label>
+      <input type="email" id="settingsEmail" readonly>
+
+      <button class="save-settings" onclick="saveSettings()">Save Changes</button>
+
+      <div class="settings-status" id="settingsStatus"></div>
+    </div>
+  </div>
+</div>
 
 <script>
 const token = localStorage.getItem("portal_token");
@@ -175,8 +200,7 @@ const letter = name.charAt(0).toUpperCase();
 
 document.getElementById("sideName").innerText = name;
 document.getElementById("topName").innerText = name;
-document.getElementById("sideAvatar").innerText = letter;
-document.getElementById("topAvatar").innerText = letter;
+
 
 const SANITY_API = "api/articles.php";
 

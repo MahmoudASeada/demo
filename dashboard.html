@@ -340,6 +340,31 @@ td{border-top:1px solid #eef1f5;padding:15px 26px;font-size:13px}
   </main>
 
 </div>
+<div class="settings-modal" id="settingsModal">
+  <div class="settings-box">
+    <div class="settings-head">
+      <h2>Settings</h2>
+      <button onclick="closeSettings()">×</button>
+    </div>
+
+    <div class="settings-body">
+      <div class="profile-preview" id="settingsImagePreview">U</div>
+
+      <label>Profile Image</label>
+      <input type="file" id="profileImageInput" accept="image/*">
+
+      <label>Name</label>
+      <input type="text" id="settingsName">
+
+      <label>Email</label>
+      <input type="email" id="settingsEmail" readonly>
+
+      <button class="save-settings" onclick="saveSettings()">Save Changes</button>
+
+      <div class="settings-status" id="settingsStatus"></div>
+    </div>
+  </div>
+</div>
 
 <script>
 const token = localStorage.getItem("portal_token");
@@ -656,31 +681,6 @@ loadDashboardArticles();
     </div>
 
     <div id="modalContent"></div>
-  </div>
-</div>
-<div class="settings-modal" id="settingsModal">
-  <div class="settings-box">
-    <div class="settings-head">
-      <h2>Settings</h2>
-      <button onclick="closeSettings()">×</button>
-    </div>
-
-    <div class="settings-body">
-      <div class="profile-preview" id="settingsImagePreview">U</div>
-
-      <label>Profile Image</label>
-      <input type="file" id="profileImageInput" accept="image/*">
-
-      <label>Name</label>
-      <input type="text" id="settingsName">
-
-      <label>Email</label>
-      <input type="email" id="settingsEmail" readonly>
-
-      <button class="save-settings" onclick="saveSettings()">Save Changes</button>
-
-      <div class="settings-status" id="settingsStatus"></div>
-    </div>
   </div>
 </div>
 </body>
