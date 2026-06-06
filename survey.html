@@ -199,7 +199,35 @@ let loadedQuestions = [];
 let recognition;
 let isRecording = false;
 let currentButton = null;
+const STORAGE_KEY = "survey_answers_" + surveyId;
 
+function saveToLocalStorage(){
+  const data = {};
+
+  document
+    .querySelectorAll("#questionsWrap input, #questionsWrap textarea")
+    .forEach(field => {
+      data[field.dataset.questionId] = field.value;
+    });
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadFromLocalStorage(){
+  const saved = localStorage.getItem(STORAGE_KEY);
+
+  if(!saved) return;
+
+  const data = JSON.parse(saved);
+
+  Object.keys(data).forEach(key => {
+    const field = document.querySelector(`[data-question-id="${key}"]`);
+
+    if(field){
+      field.value = data[key];
+    }
+  });
+}
 async function loadSurvey(){
 
   const status = document.getElementById("status");
@@ -234,7 +262,7 @@ async function loadSurvey(){
     }
 
     renderQuestions();
-
+    loadFromLocalStorage();
   }catch(error){
 
     status.classList.add("error");
@@ -336,7 +364,7 @@ function renderQuestions(){
     });
 }
 
-function toggleVoice(button){
+function toggleVoice(fieldId, button){
 
   if(isRecording){
     stopVoice();
@@ -351,7 +379,12 @@ function toggleVoice(button){
     return;
   }
 
-  const field = button.parentElement.querySelector("input, textarea");
+  const field = document.querySelector(`[data-question-id="${fieldId}"]`);
+
+  if(!field){
+    alert("Field not found");
+    return;
+  }
 
   recognition = new SpeechRecognition();
 
@@ -389,14 +422,16 @@ function toggleVoice(button){
     }
 
     field.value = finalTranscript + interimTranscript;
-    field.classList.remove("error-field");
+    field.classList.remove("field-error");
+    saveToLocalStorage();
   };
 
   recognition.onend = function(){
     resetButton();
   };
 
-  recognition.onerror = function(){
+  recognition.onerror = function(event){
+    console.log("Speech error:", event.error);
     resetButton();
   };
 }
@@ -481,6 +516,7 @@ async function submitSurvey(){
     status.innerText = data.message;
 
     if(data.success){
+      localStorage.removeItem(STORAGE_KEY);
       alert("Survey submitted successfully");
       window.location.href = "dashboard.html";
     }else{
