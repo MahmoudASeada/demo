@@ -9,9 +9,6 @@ $input = json_decode(file_get_contents("php://input"), true);
 $email = strtolower(trim($input["email"] ?? ""));
 $password = $input["password"] ?? "";
 
-$ADMIN_EMAIL = "engmahmoud@gmail.com";
-$ADMIN_PASSWORD = "Engmahmoud@!t";
-
 if (!$email || !$password) {
     echo json_encode([
         "success" => false,
@@ -20,7 +17,25 @@ if (!$email || !$password) {
     exit;
 }
 
-if ($email !== $ADMIN_EMAIL || $password !== $ADMIN_PASSWORD) {
+$stmt = $pdo->prepare("
+    SELECT id, name, email, password, role, active
+    FROM admins
+    WHERE LOWER(email) = ?
+    LIMIT 1
+");
+
+$stmt->execute([$email]);
+$admin = $stmt->fetch();
+
+if (!$admin || (int)$admin["active"] !== 1) {
+    echo json_encode([
+        "success" => false,
+        "message" => "Invalid email or password"
+    ]);
+    exit;
+}
+
+if ($password !== $admin["password"]) {
     echo json_encode([
         "success" => false,
         "message" => "Invalid email or password"
@@ -30,8 +45,25 @@ if ($email !== $ADMIN_EMAIL || $password !== $ADMIN_PASSWORD) {
 
 $token = bin2hex(random_bytes(32));
 
+$updateStmt = $pdo->prepare("
+    UPDATE admins
+    SET session_token = ?
+    WHERE id = ?
+");
+
+$updateStmt->execute([
+    $token,
+    $admin["id"]
+]);
+
 echo json_encode([
     "success" => true,
     "message" => "Admin login successful",
-    "token" => $token
+    "token" => $token,
+    "admin" => [
+        "id" => $admin["id"],
+        "name" => $admin["name"],
+        "email" => $admin["email"],
+        "role" => $admin["role"]
+    ]
 ]);

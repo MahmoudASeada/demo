@@ -122,6 +122,7 @@ async function loginAdmin(){
     }
 
     localStorage.setItem("admin_token", data.token);
+    localStorage.setItem("admin_user", JSON.stringify(data.admin));
     window.location.href = "admin.html";
 
   }catch(error){
