@@ -2,6 +2,8 @@
 
 require_once "db.php";
 
+header("Content-Type: application/json");
+
 $headers = getallheaders();
 $authHeader = $headers["Authorization"] ?? "";
 $token = str_replace("Bearer ", "", $authHeader);
@@ -16,7 +18,54 @@ if (!$token) {
 
 $method = $_SERVER["REQUEST_METHOD"];
 
+function prepareChips($chips) {
+    $chips = trim($chips ?? "");
+    if (!$chips) return json_encode([]);
+
+    $chipsArray = array_filter(
+        array_map("trim", explode(",", $chips))
+    );
+
+    return json_encode(array_values($chipsArray));
+}
+
 if ($method === "GET") {
+
+    $singleSurveyId = (int)($_GET["survey_id"] ?? 0);
+
+    if ($singleSurveyId) {
+        $stmt = $pdo->prepare("
+            SELECT id, assigned_user_id, title, status, created_at
+            FROM surveys
+            WHERE id = ?
+            LIMIT 1
+        ");
+        $stmt->execute([$singleSurveyId]);
+        $survey = $stmt->fetch();
+
+        if (!$survey) {
+            echo json_encode([
+                "success" => false,
+                "message" => "Survey not found"
+            ]);
+            exit;
+        }
+
+        $qStmt = $pdo->prepare("
+            SELECT id, question_text, question_type, required, sort_order, chips
+            FROM survey_questions
+            WHERE survey_id = ?
+            ORDER BY sort_order ASC, id ASC
+        ");
+        $qStmt->execute([$singleSurveyId]);
+
+        echo json_encode([
+            "success" => true,
+            "survey" => $survey,
+            "questions" => $qStmt->fetchAll()
+        ]);
+        exit;
+    }
 
     $usersStmt = $pdo->query("
         SELECT id, name, email
@@ -47,10 +96,11 @@ if ($method === "GET") {
     exit;
 }
 
-if ($method === "POST") {
+if ($method === "POST" || $method === "PUT") {
 
     $input = json_decode(file_get_contents("php://input"), true);
 
+    $surveyId = (int)($input["surveyId"] ?? 0);
     $title = trim($input["title"] ?? "");
     $assignedUserId = (int)($input["assignedUserId"] ?? 0);
     $questions = $input["questions"] ?? [];
@@ -67,38 +117,72 @@ if ($method === "POST") {
 
     try {
 
-        $stmt = $pdo->prepare("
-            INSERT INTO surveys (title, assigned_user_id, status)
-            VALUES (?, ?, 'pending')
-        ");
+        if ($method === "POST") {
 
-        $stmt->execute([
-            $title,
-            $assignedUserId
-        ]);
+            $stmt = $pdo->prepare("
+                INSERT INTO surveys (title, assigned_user_id, status)
+                VALUES (?, ?, 'pending')
+            ");
 
-        $surveyId = $pdo->lastInsertId();
+            $stmt->execute([
+                $title,
+                $assignedUserId
+            ]);
+
+            $surveyId = $pdo->lastInsertId();
+
+        } else {
+
+            if (!$surveyId) {
+                throw new Exception("Survey ID is required");
+            }
+
+            $checkStmt = $pdo->prepare("
+                SELECT id, status
+                FROM surveys
+                WHERE id = ?
+                LIMIT 1
+            ");
+            $checkStmt->execute([$surveyId]);
+            $survey = $checkStmt->fetch();
+
+            if (!$survey) {
+                throw new Exception("Survey not found");
+            }
+
+            if ($survey["status"] !== "pending") {
+                throw new Exception("Only pending surveys can be edited");
+            }
+
+            $updateStmt = $pdo->prepare("
+                UPDATE surveys
+                SET title = ?, assigned_user_id = ?
+                WHERE id = ?
+            ");
+            $updateStmt->execute([
+                $title,
+                $assignedUserId,
+                $surveyId
+            ]);
+
+            $deleteStmt = $pdo->prepare("
+                DELETE FROM survey_questions
+                WHERE survey_id = ?
+            ");
+            $deleteStmt->execute([$surveyId]);
+        }
 
         $qStmt = $pdo->prepare("
-    INSERT INTO survey_questions
-    (survey_id, question_text, question_type, required, sort_order, chips)
-    VALUES (?, ?, ?, ?, ?, ?)
-");
+            INSERT INTO survey_questions
+            (survey_id, question_text, question_type, required, sort_order, chips)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
 
         foreach ($questions as $index => $question) {
 
             $questionText = trim($question["text"] ?? "");
             $questionType = $question["type"] ?? "input";
-
-            $chips = trim($question["chips"] ?? "");
-
-$chipsArray = [];
-
-if($chips){
-    $chipsArray = array_filter(
-        array_map("trim", explode(",", $chips))
-    );
-}
+            $chips = $question["chips"] ?? "";
 
             if (!$questionText) {
                 continue;
@@ -109,20 +193,22 @@ if($chips){
             }
 
             $qStmt->execute([
-    $surveyId,
-    $questionText,
-    $questionType,
-    1,
-    $index + 1,
-    json_encode($chipsArray)
-]);
+                $surveyId,
+                $questionText,
+                $questionType,
+                1,
+                $index + 1,
+                prepareChips($chips)
+            ]);
         }
 
         $pdo->commit();
 
         echo json_encode([
             "success" => true,
-            "message" => "Survey created successfully"
+            "message" => $method === "POST"
+                ? "Survey created successfully"
+                : "Survey updated successfully"
         ]);
         exit;
 
@@ -132,7 +218,7 @@ if($chips){
 
         echo json_encode([
             "success" => false,
-            "message" => "Failed to create survey"
+            "message" => $e->getMessage() ?: "Failed to save survey"
         ]);
         exit;
     }
