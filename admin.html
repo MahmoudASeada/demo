@@ -647,19 +647,12 @@ async function loadUsers(){
           <td>${user.created_at}</td>
           <td>
   <div class="actions">
-
     ${
-      survey.status === "pending"
-      ? `<button class="btn approve-btn" onclick="editSurvey(${survey.id})">Edit</button>`
-      : ``
+      approved
+      ? `<button class="btn approve-btn" disabled>Approved</button>`
+      : `<button class="btn approve-btn" onclick="updateUser(${user.id}, 'approve')">Approve</button>`
     }
-
-    ${
-      survey.status === "completed"
-      ? `<button class="btn reject-btn" onclick="viewSurveyResponses(${survey.id})">View Responses</button>`
-      : ``
-    }
-
+    <button class="btn reject-btn" onclick="updateUser(${user.id}, 'reject')">Reject</button>
   </div>
 </td>
         </tr>
@@ -778,18 +771,17 @@ function renderSurveysTable(){
       <td>${survey.created_at}</td>
       <td>
   <div class="actions">
-
     ${
       survey.status === "pending"
       ? `<button class="btn approve-btn" onclick="editSurvey(${survey.id})">Edit</button>`
       : ``
     }
 
-    <button class="btn secondary-btn"
-      onclick="viewSurvey(${survey.id})">
-      View
-    </button>
-
+    ${
+      survey.status === "completed"
+      ? `<button class="btn reject-btn" onclick="viewSurveyResponses(${survey.id})">View Responses</button>`
+      : ``
+    }
   </div>
 </td>
     </tr>
@@ -891,61 +883,6 @@ function addEditQuestion(value = "", type = "input", chips = ""){
   `;
 
   wrap.appendChild(div);
-}
-
-async function editSurvey(surveyId){
-  editingSurveyId = surveyId;
-
-  const status = document.getElementById("editSurveyStatus");
-  status.innerText = "Loading survey...";
-
-  try{
-    const res = await fetch("api/admin-surveys.php?survey_id=" + surveyId,{
-      headers:{
-        Authorization:"Bearer " + adminToken
-      }
-    });
-
-    const data = await res.json();
-
-    if(!data.success){
-      status.innerText = data.message;
-      return;
-    }
-
-    if(data.survey.status !== "pending"){
-      alert("Only pending surveys can be edited.");
-      return;
-    }
-
-    document.getElementById("editSurveyTitle").value = data.survey.title;
-
-    const editUserSelect = document.getElementById("editAssignedUser");
-
-    editUserSelect.innerHTML = document.getElementById("assignedUser").innerHTML;
-    editUserSelect.value = data.survey.assigned_user_id;
-
-    document.getElementById("editQuestionsWrap").innerHTML = "";
-
-    data.questions.forEach(q => {
-      let chipsText = "";
-
-      try{
-        const chipsArr = q.chips ? JSON.parse(q.chips) : [];
-        chipsText = chipsArr.join(", ");
-      }catch(e){
-        chipsText = "";
-      }
-
-      addEditQuestion(q.question_text, q.question_type, chipsText);
-    });
-
-    status.innerText = "";
-    document.getElementById("editSurveyModal").classList.add("show");
-
-  }catch(error){
-    status.innerText = "Connection error.";
-  }
 }
 
 function closeEditSurvey(){
