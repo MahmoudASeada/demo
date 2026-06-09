@@ -665,7 +665,7 @@ async function loadSurveyData(){
   }
 }
 
-function addQuestion(value = "", type = "input"){
+function addQuestion(value = "", type = "input", chips = ""){
 
   const wrap = document.getElementById("questionsWrap");
 
@@ -674,11 +674,20 @@ function addQuestion(value = "", type = "input"){
 
   div.innerHTML = `
     <input type="text" class="questionText" placeholder="Question text" value="${value}">
+
     <select class="questionType">
       <option value="input" ${type === "input" ? "selected" : ""}>Input</option>
       <option value="textarea" ${type === "textarea" ? "selected" : ""}>Textarea</option>
     </select>
+
     <button class="remove-btn" type="button" onclick="this.parentElement.remove()">Remove</button>
+
+    <input 
+      type="text" 
+      class="questionChips question-chips-input" 
+      placeholder="Quick keywords: Quick Service, Friendly Staff, High Quality"
+      value="${chips}"
+    >
   `;
 
   wrap.appendChild(div);
