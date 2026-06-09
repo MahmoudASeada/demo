@@ -461,6 +461,12 @@ td{
     <div class="panel-head">
       <h1>Surveys List</h1>
       <p>All surveys assigned to approved users.</p>
+      <div style="margin-top:18px;max-width:360px;">
+  <label>Filter by User</label>
+  <select id="surveyUserFilter" onchange="renderSurveysTable()">
+    <option value="all">All Users</option>
+  </select>
+</div>
     </div>
 
     <table>
@@ -472,12 +478,13 @@ td{
           <th>Email</th>
           <th>Status</th>
           <th>Created At</th>
+          <th>Actions</th>
         </tr>
       </thead>
 
       <tbody id="surveysTable">
         <tr>
-          <td colspan="6" class="empty">Loading surveys...</td>
+          <td colspan="7" class="empty">Loading surveys...</td>
         </tr>
       </tbody>
     </table>
@@ -597,7 +604,7 @@ async function loadUsers(){
   }
 
 }
-
+let allAdminSurveys = [];
 async function loadSurveyData(){
 
   const userSelect = document.getElementById("assignedUser");
@@ -625,6 +632,12 @@ async function loadSurveyData(){
 
     if(data.users.length){
       userSelect.innerHTML = `
+      document.getElementById("surveyUserFilter").innerHTML = `
+  <option value="all">All Users</option>
+  ${data.users.map(user => `
+    <option value="${user.id}">${user.name} - ${user.email}</option>
+  `).join("")}
+`;
         <option value="">Select user</option>
         ${data.users.map(user => `
           <option value="${user.id}">${user.name} - ${user.email}</option>
@@ -634,24 +647,9 @@ async function loadSurveyData(){
       userSelect.innerHTML = `<option value="">No approved users</option>`;
     }
 
-    if(data.surveys.length){
-      surveysTable.innerHTML = data.surveys.map(survey => `
-        <tr>
-          <td>#${survey.id}</td>
-          <td>${survey.title}</td>
-          <td>${survey.user_name}</td>
-          <td>${survey.user_email}</td>
-          <td><span class="badge survey-status">${survey.status}</span></td>
-          <td>${survey.created_at}</td>
-        </tr>
-      `).join("");
-    }else{
-      surveysTable.innerHTML = `
-        <tr>
-          <td colspan="6" class="empty">No surveys created yet.</td>
-        </tr>
-      `;
-    }
+    allAdminSurveys = data.surveys;
+renderSurveysTable();
+return;
 
   }catch(error){
 
@@ -664,7 +662,44 @@ async function loadSurveyData(){
 
   }
 }
+function renderSurveysTable(){
 
+  const surveysTable = document.getElementById("surveysTable");
+  const filterValue = document.getElementById("surveyUserFilter").value;
+
+  let surveys = allAdminSurveys;
+
+  if(filterValue !== "all"){
+    surveys = allAdminSurveys.filter(s => Number(s.assigned_user_id) === Number(filterValue));
+  }
+
+  if(!surveys.length){
+    surveysTable.innerHTML = `
+      <tr>
+        <td colspan="7" class="empty">No surveys found.</td>
+      </tr>
+    `;
+    return;
+  }
+
+  surveysTable.innerHTML = surveys.map(survey => `
+    <tr>
+      <td>#${survey.id}</td>
+      <td>${survey.title}</td>
+      <td>${survey.user_name}</td>
+      <td>${survey.user_email}</td>
+      <td><span class="badge survey-status">${survey.status}</span></td>
+      <td>${survey.created_at}</td>
+      <td>
+        ${
+          survey.status === "pending"
+          ? `<button class="btn approve-btn" onclick="editSurvey(${survey.id})">Edit</button>`
+          : `<span style="color:#98a1ad;font-size:12px;">Locked</span>`
+        }
+      </td>
+    </tr>
+  `).join("");
+}
 function addQuestion(value = "", type = "input", chips = ""){
 
   const wrap = document.getElementById("questionsWrap");

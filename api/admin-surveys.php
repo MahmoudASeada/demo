@@ -28,6 +28,7 @@ if ($method === "GET") {
     $surveysStmt = $pdo->query("
         SELECT 
             surveys.id,
+            surveys.assigned_user_id,
             surveys.title,
             surveys.status,
             surveys.created_at,
