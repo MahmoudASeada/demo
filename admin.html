@@ -461,6 +461,7 @@ td{
     <div class="panel-head">
       <h1>Surveys List</h1>
       <p>All surveys assigned to approved users.</p>
+      
       <div style="margin-top:18px;max-width:360px;">
   <label>Filter by User</label>
   <select id="surveyUserFilter" onchange="renderSurveysTable()">
@@ -609,6 +610,7 @@ async function loadSurveyData(){
 
   const userSelect = document.getElementById("assignedUser");
   const surveysTable = document.getElementById("surveysTable");
+  const surveyUserFilter = document.getElementById("surveyUserFilter");
 
   try{
 
@@ -624,7 +626,7 @@ async function loadSurveyData(){
       userSelect.innerHTML = `<option value="">Unable to load users</option>`;
       surveysTable.innerHTML = `
         <tr>
-          <td colspan="6" class="empty">Unable to load surveys.</td>
+          <td colspan="7" class="empty">Unable to load surveys.</td>
         </tr>
       `;
       return;
@@ -632,31 +634,32 @@ async function loadSurveyData(){
 
     if(data.users.length){
       userSelect.innerHTML = `
-      document.getElementById("surveyUserFilter").innerHTML = `
-  <option value="all">All Users</option>
-  ${data.users.map(user => `
-    <option value="${user.id}">${user.name} - ${user.email}</option>
-  `).join("")}
-`;
         <option value="">Select user</option>
+        ${data.users.map(user => `
+          <option value="${user.id}">${user.name} - ${user.email}</option>
+        `).join("")}
+      `;
+
+      surveyUserFilter.innerHTML = `
+        <option value="all">All Users</option>
         ${data.users.map(user => `
           <option value="${user.id}">${user.name} - ${user.email}</option>
         `).join("")}
       `;
     }else{
       userSelect.innerHTML = `<option value="">No approved users</option>`;
+      surveyUserFilter.innerHTML = `<option value="all">All Users</option>`;
     }
 
-    allAdminSurveys = data.surveys;
-renderSurveysTable();
-return;
+    allAdminSurveys = data.surveys || [];
+    renderSurveysTable();
 
   }catch(error){
 
     userSelect.innerHTML = `<option value="">Connection error</option>`;
     surveysTable.innerHTML = `
       <tr>
-        <td colspan="6" class="empty">Connection error.</td>
+        <td colspan="7" class="empty">Connection error.</td>
       </tr>
     `;
 
