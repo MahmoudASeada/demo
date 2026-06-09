@@ -449,6 +449,30 @@ td{
   justify-content:flex-end;
   gap:12px;
 }
+.survey-filters{
+  display:flex;
+  gap:20px;
+  margin-bottom:25px;
+}
+
+.filter-box{
+  flex:1;
+}
+
+.filter-box label{
+  display:block;
+  margin-bottom:8px;
+  font-weight:700;
+}
+
+.filter-box select{
+  width:100%;
+}
+@media(max-width:768px){
+  .survey-filters{
+    flex-direction:column;
+  }
+}
 </style>
 </head>
 
@@ -520,20 +544,25 @@ td{
       <h1>Surveys List</h1>
       <p>All surveys assigned to approved users.</p>
       
-      <div style="margin-top:18px;max-width:360px;">
-        <label>Filter by User</label>
-        <select id="surveyUserFilter" onchange="renderSurveysTable()">
-          <option value="all">All Users</option>
-        </select>
-      </div>
-      <div style="margin-top:12px;max-width:360px;">
-        <label>Filter by Status</label>
-        <select id="surveyStatusFilter" onchange="renderSurveysTable()">
-          <option value="all">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="completed">Completed</option>
-        </select>
-      </div>
+      <div class="survey-filters">
+
+  <div class="filter-box">
+    <label>Filter by User</label>
+    <select id="surveyUserFilter" onchange="renderSurveysTable()">
+      <option value="all">All Users</option>
+    </select>
+  </div>
+
+  <div class="filter-box">
+    <label>Filter by Status</label>
+    <select id="surveyStatusFilter" onchange="renderSurveysTable()">
+      <option value="all">All Status</option>
+      <option value="pending">Pending</option>
+      <option value="completed">Completed</option>
+    </select>
+  </div>
+
+</div>
     </div>
 
     <table>
