@@ -79,15 +79,25 @@ if ($method === "POST") {
         $surveyId = $pdo->lastInsertId();
 
         $qStmt = $pdo->prepare("
-            INSERT INTO survey_questions 
-            (survey_id, question_text, question_type, required, sort_order)
-            VALUES (?, ?, ?, ?, ?)
-        ");
+    INSERT INTO survey_questions
+    (survey_id, question_text, question_type, required, sort_order, chips)
+    VALUES (?, ?, ?, ?, ?, ?)
+");
 
         foreach ($questions as $index => $question) {
 
             $questionText = trim($question["text"] ?? "");
             $questionType = $question["type"] ?? "input";
+
+            $chips = trim($question["chips"] ?? "");
+
+$chipsArray = [];
+
+if($chips){
+    $chipsArray = array_filter(
+        array_map("trim", explode(",", $chips))
+    );
+}
 
             if (!$questionText) {
                 continue;
@@ -98,12 +108,13 @@ if ($method === "POST") {
             }
 
             $qStmt->execute([
-                $surveyId,
-                $questionText,
-                $questionType,
-                1,
-                $index + 1
-            ]);
+    $surveyId,
+    $questionText,
+    $questionType,
+    1,
+    $index + 1,
+    json_encode($chipsArray)
+]);
         }
 
         $pdo->commit();
