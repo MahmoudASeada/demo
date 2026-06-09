@@ -8,26 +8,13 @@
 </a></div>
 <div class="panel"><div class="panel-head"><h1>Users Management</h1><p>Approve or reject new registered users.</p></div><table><thead><tr><th>ID</th><th>User</th><th>Email</th><th>Status</th><th>Created At</th><th>Actions</th></tr></thead><tbody id="usersTable"><tr><td colspan="6" class="empty">Loading users...</td></tr></tbody></table></div>
 <script>
-
-if(adminUser.role !== "super_admin"){
-  alert("You are not allowed to access this page.");
-  window.location.href = "admin.html";
-}
 const adminToken = localStorage.getItem("admin_token");
 
 if(!adminToken){
   window.location.href = "admin-login.html";
 }
 
-const adminToken = localStorage.getItem("admin_token");
-
-if(!adminToken){
-  window.location.href = "admin-login.html";
-}
-
-const adminUser = JSON.parse(
-  localStorage.getItem("admin_user") || "{}"
-);
+const adminUser = JSON.parse(localStorage.getItem("admin_user") || "{}");
 
 if(adminUser.role !== "super_admin"){
   alert("You are not allowed to access this page.");
@@ -40,8 +27,100 @@ function logoutAdmin(){
   window.location.href = "admin-login.html";
 }
 
-async function loadUsers(){const table=document.getElementById("usersTable");try{const res=await fetch("api/admin-users.php",{headers:{Authorization:"Bearer "+adminToken}});const data=await res.json();if(!data.success){localStorage.removeItem("admin_token");window.location.href="admin-login.html";return;}if(!data.users.length){table.innerHTML=`<tr><td colspan="6" class="empty">No users found.</td></tr>`;return;}table.innerHTML=data.users.map(user=>{const approved=Number(user.approved)===1;return `<tr><td>#${user.id}</td><td>${user.name}</td><td>${user.email}</td><td><span class="badge ${approved?"approved":"pending"}">${approved?"Approved":"Pending"}</span></td><td>${user.created_at}</td><td><div class="actions">${approved?`<button class="btn approve-btn" disabled>Approved</button>`:`<button class="btn approve-btn" onclick="updateUser(${user.id}, 'approve')">Approve</button>`}<button class="btn reject-btn" onclick="updateUser(${user.id}, 'reject')">Reject</button></div></td></tr>`}).join("");}catch(e){table.innerHTML=`<tr><td colspan="6" class="empty">Connection error.</td></tr>`;}}
-async function updateUser(userId,action){if(action==="reject"){const ok=confirm("Are you sure you want to reject and delete this user?");if(!ok)return;}try{const res=await fetch("api/admin-users.php",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+adminToken},body:JSON.stringify({userId,action})});const data=await res.json();alert(data.message);loadUsers();}catch(e){alert("Connection error");}}
+async function loadUsers(){
+  const table = document.getElementById("usersTable");
+
+  try{
+    const res = await fetch("api/admin-users.php",{
+      headers:{
+        Authorization:"Bearer " + adminToken
+      }
+    });
+
+    const data = await res.json();
+
+    if(!data.success){
+      localStorage.removeItem("admin_token");
+      localStorage.removeItem("admin_user");
+      window.location.href = "admin-login.html";
+      return;
+    }
+
+    if(!data.users.length){
+      table.innerHTML = `
+        <tr>
+          <td colspan="6" class="empty">No users found.</td>
+        </tr>
+      `;
+      return;
+    }
+
+    table.innerHTML = data.users.map(user => {
+      const approved = Number(user.approved) === 1;
+
+      return `
+        <tr>
+          <td>#${user.id}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>
+            <span class="badge ${approved ? "approved" : "pending"}">
+              ${approved ? "Approved" : "Pending"}
+            </span>
+          </td>
+          <td>${user.created_at}</td>
+          <td>
+            <div class="actions">
+              ${
+                approved
+                ? `<button class="btn approve-btn" disabled>Approved</button>`
+                : `<button class="btn approve-btn" onclick="updateUser(${user.id}, 'approve')">Approve</button>`
+              }
+              <button class="btn reject-btn" onclick="updateUser(${user.id}, 'reject')">Reject</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+  }catch(error){
+    table.innerHTML = `
+      <tr>
+        <td colspan="6" class="empty">Connection error.</td>
+      </tr>
+    `;
+  }
+}
+
+async function updateUser(userId, action){
+  if(action === "reject"){
+    const ok = confirm("Are you sure you want to reject and delete this user?");
+    if(!ok) return;
+  }
+
+  try{
+    const res = await fetch("api/admin-users.php",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        Authorization:"Bearer " + adminToken
+      },
+      body:JSON.stringify({
+        userId,
+        action
+      })
+    });
+
+    const data = await res.json();
+
+    alert(data.message);
+    loadUsers();
+
+  }catch(error){
+    alert("Connection error");
+  }
+}
+
 loadUsers();
 </script>
 </body></html>
