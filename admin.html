@@ -330,7 +330,16 @@ td{
       </tbody>
     </table>
   </div>
+  <div class="panel">
+  <div class="panel-head">
+    <h1>Articles Assignment</h1>
+    <p>Select which users can see each article.</p>
+  </div>
 
+  <div id="articlesAssignment" style="padding:24px;">
+    Loading articles...
+  </div>
+</div>
   <div class="panel">
     <div class="panel-head">
       <h1>Users Management</h1>
@@ -618,9 +627,94 @@ function logoutAdmin(){
   localStorage.removeItem("admin_token");
   window.location.href = "admin-login.html";
 }
+async function loadAdminArticles(){
 
+  const box = document.getElementById("articlesAssignment");
+
+  try{
+    const res = await fetch("api/admin-articles.php");
+    const data = await res.json();
+
+    if(!data.success){
+      box.innerHTML = "Failed to load articles.";
+      return;
+    }
+
+    if(!data.articles.length){
+      box.innerHTML = "No articles found in Sanity.";
+      return;
+    }
+
+    box.innerHTML = data.articles.map(article => {
+      const assigned = data.assignments[article._id] || [];
+
+      return `
+        <div style="border:1px solid #eef1f5;border-radius:14px;padding:18px;margin-bottom:18px;">
+          <h3 style="margin-bottom:6px;">${article.title}</h3>
+          <p style="color:#667085;font-size:13px;margin-bottom:14px;">
+            ${article.category || "Article"} · ${article.publishedDate || ""}
+          </p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:14px;">
+            ${data.users.map(user => `
+              <label style="display:flex;gap:8px;align-items:center;font-size:13px;">
+                <input 
+                  type="checkbox" 
+                  value="${user.id}"
+                  ${assigned.includes(Number(user.id)) ? "checked" : ""}
+                >
+                ${user.name} - ${user.email}
+              </label>
+            `).join("")}
+          </div>
+
+          <button class="primary-btn" onclick="saveArticleUsers('${article._id}', this)">
+            Save Users
+          </button>
+
+          <span style="margin-left:12px;color:#667085;font-size:13px;"></span>
+        </div>
+      `;
+    }).join("");
+
+  }catch(error){
+    box.innerHTML = "Connection error.";
+  }
+}
+
+async function saveArticleUsers(articleId, button){
+
+  const card = button.closest("div");
+  const status = button.nextElementSibling;
+
+  const userIds = Array.from(card.querySelectorAll("input[type='checkbox']:checked"))
+    .map(input => input.value);
+
+  status.innerText = "Saving...";
+
+  try{
+    const res = await fetch("api/admin-articles.php",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        articleId,
+        userIds
+      })
+    });
+
+    const data = await res.json();
+
+    status.innerText = data.message;
+
+  }catch(error){
+    status.innerText = "Connection error.";
+  }
+}
 addQuestion();
 loadUsers();
+loadAdminArticles();
 loadSurveyData();
 </script>
 
