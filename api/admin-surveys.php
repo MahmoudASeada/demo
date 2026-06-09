@@ -15,7 +15,22 @@ if (!$token) {
     ]);
     exit;
 }
+$adminStmt = $pdo->prepare("
+    SELECT id, role
+    FROM admins
+    WHERE session_token = ?
+    LIMIT 1
+");
+$adminStmt->execute([$token]);
+$currentAdmin = $adminStmt->fetch();
 
+if (!$currentAdmin) {
+    echo json_encode([
+        "success" => false,
+        "message" => "Unauthorized"
+    ]);
+    exit;
+}
 $method = $_SERVER["REQUEST_METHOD"];
 
 function prepareChips($chips) {
@@ -67,12 +82,31 @@ if ($method === "GET") {
         exit;
     }
 
+    if ($currentAdmin["role"] === "super_admin") {
+
     $usersStmt = $pdo->query("
         SELECT id, name, email
         FROM users
         WHERE approved = 1
         ORDER BY name ASC
     ");
+
+} else {
+
+    $usersStmt = $pdo->prepare("
+        SELECT users.id, users.name, users.email
+        FROM users
+        INNER JOIN admin_user_assignments aua
+            ON aua.user_id = users.id
+        WHERE users.approved = 1
+        AND aua.admin_id = ?
+        ORDER BY users.name ASC
+    ");
+
+    $usersStmt->execute([$currentAdmin["id"]]);
+}
+
+    if ($currentAdmin["role"] === "super_admin") {
 
     $surveysStmt = $pdo->query("
         SELECT 
@@ -87,6 +121,28 @@ if ($method === "GET") {
         JOIN users ON users.id = surveys.assigned_user_id
         ORDER BY surveys.created_at DESC
     ");
+
+} else {
+
+    $surveysStmt = $pdo->prepare("
+        SELECT 
+            surveys.id,
+            surveys.assigned_user_id,
+            surveys.title,
+            surveys.status,
+            surveys.created_at,
+            users.name AS user_name,
+            users.email AS user_email
+        FROM surveys
+        JOIN users ON users.id = surveys.assigned_user_id
+        INNER JOIN admin_user_assignments aua
+            ON aua.user_id = users.id
+        WHERE aua.admin_id = ?
+        ORDER BY surveys.created_at DESC
+    ");
+
+    $surveysStmt->execute([$currentAdmin["id"]]);
+}
 
     echo json_encode([
         "success" => true,

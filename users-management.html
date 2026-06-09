@@ -7,6 +7,27 @@
   Users Management
 </a></div>
 <div class="panel"><div class="panel-head"><h1>Users Management</h1><p>Approve or reject new registered users.</p></div><table><thead><tr><th>ID</th><th>User</th><th>Email</th><th>Status</th><th>Created At</th><th>Actions</th></tr></thead><tbody id="usersTable"><tr><td colspan="6" class="empty">Loading users...</td></tr></tbody></table></div>
+<div class="panel" style="margin-top:28px;">
+  <div class="panel-head">
+    <h1>SEO Admin Assignments</h1>
+    <p>Choose which users each SEO admin can manage.</p>
+  </div>
+
+  <div style="padding:24px;">
+    <label>Select SEO Admin</label>
+    <select id="seoAdminSelect" onchange="renderSeoUserAssignments()">
+      <option value="">Loading SEO admins...</option>
+    </select>
+
+    <div id="seoUsersList" style="margin-top:20px;"></div>
+
+    <button class="approve-btn btn" onclick="saveSeoAssignments()" style="margin-top:20px;padding:12px 18px;">
+      Save Assignments
+    </button>
+
+    <div id="assignmentStatus" style="margin-top:12px;color:#667085;"></div>
+  </div>
+</div>
 <script>
 const adminToken = localStorage.getItem("admin_token");
 
@@ -120,7 +141,125 @@ async function updateUser(userId, action){
     alert("Connection error");
   }
 }
+let seoAdmins = [];
+let approvedUsers = [];
+let seoAssignments = {};
 
+async function loadSeoAssignments(){
+  const select = document.getElementById("seoAdminSelect");
+
+  try{
+    const res = await fetch("api/admin-user-assignments.php",{
+      headers:{
+        Authorization:"Bearer " + adminToken
+      }
+    });
+
+    const data = await res.json();
+
+    if(!data.success){
+      select.innerHTML = `<option value="">Unable to load SEO admins</option>`;
+      return;
+    }
+
+    seoAdmins = data.seoAdmins || [];
+    approvedUsers = data.users || [];
+    seoAssignments = data.assignments || {};
+
+    if(!seoAdmins.length){
+      select.innerHTML = `<option value="">No SEO admins found</option>`;
+      return;
+    }
+
+    select.innerHTML = `
+      <option value="">Select SEO Admin</option>
+      ${seoAdmins.map(admin => `
+        <option value="${admin.id}">${admin.name} - ${admin.email}</option>
+      `).join("")}
+    `;
+
+  }catch(error){
+    select.innerHTML = `<option value="">Connection error</option>`;
+  }
+}
+
+function renderSeoUserAssignments(){
+  const adminId = document.getElementById("seoAdminSelect").value;
+  const box = document.getElementById("seoUsersList");
+
+  if(!adminId){
+    box.innerHTML = "";
+    return;
+  }
+
+  const assigned = seoAssignments[adminId] || [];
+
+  box.innerHTML = approvedUsers.map(user => `
+    <label style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border:1px solid #eef1f5;
+      border-radius:12px;
+      padding:12px 16px;
+      margin-bottom:10px;
+      background:#fff;
+    ">
+      <div>
+        <strong>${user.name}</strong><br>
+        <span style="color:#667085;font-size:12px;">${user.email}</span>
+      </div>
+
+      <input 
+        type="checkbox" 
+        value="${user.id}"
+        ${assigned.includes(Number(user.id)) ? "checked" : ""}
+        style="width:18px;height:18px;"
+      >
+    </label>
+  `).join("");
+}
+
+async function saveSeoAssignments(){
+  const adminId = document.getElementById("seoAdminSelect").value;
+  const status = document.getElementById("assignmentStatus");
+
+  if(!adminId){
+    status.innerText = "Please select SEO admin.";
+    return;
+  }
+
+  const userIds = Array.from(
+    document.querySelectorAll("#seoUsersList input[type='checkbox']:checked")
+  ).map(input => input.value);
+
+  status.innerText = "Saving...";
+
+  try{
+    const res = await fetch("api/admin-user-assignments.php",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        Authorization:"Bearer " + adminToken
+      },
+      body:JSON.stringify({
+        adminId,
+        userIds
+      })
+    });
+
+    const data = await res.json();
+    status.innerText = data.message;
+
+    if(data.success){
+      seoAssignments[adminId] = userIds.map(id => Number(id));
+    }
+
+  }catch(error){
+    status.innerText = "Connection error.";
+  }
+}
 loadUsers();
+loadSeoAssignments();
 </script>
 </body></html>
