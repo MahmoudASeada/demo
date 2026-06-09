@@ -699,6 +699,51 @@ async function loadUsers(){
 }
 let allAdminSurveys = [];
 let editingSurveyId = null;
+const DRAFT_KEY = `survey_draft_${adminUser.id || "admin"}`;
+
+function getQuestionsData(){
+  return Array.from(document.querySelectorAll("#questionsWrap .question-box")).map(box => ({
+    text: box.querySelector(".questionText")?.value.trim() || "",
+    type: box.querySelector(".questionType")?.value || "input",
+    chips: box.querySelector(".questionChips")?.value.trim() || ""
+  })).filter(q => q.text || q.chips);
+}
+
+function saveDraft(){
+  if(editingSurveyId) return;
+
+  const draft = {
+    title: document.getElementById("surveyTitle").value,
+    assignedUserId: document.getElementById("assignedUser").value,
+    questions: getQuestionsData()
+  };
+
+  localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+}
+
+function loadDraft(){
+  const saved = localStorage.getItem(DRAFT_KEY);
+  if(!saved) return;
+
+  try{
+    const draft = JSON.parse(saved);
+
+    document.getElementById("surveyTitle").value = draft.title || "";
+    document.getElementById("assignedUser").value = draft.assignedUserId || "";
+
+    document.getElementById("questionsWrap").innerHTML = "";
+
+    if(draft.questions && draft.questions.length){
+      draft.questions.forEach(q => addQuestion(q.text, q.type, q.chips));
+    }else{
+      addQuestion();
+    }
+  }catch(e){}
+}
+
+function clearDraft(){
+  localStorage.removeItem(DRAFT_KEY);
+}
 async function loadSurveyData(){
 
   const userSelect = document.getElementById("assignedUser");
@@ -746,7 +791,7 @@ async function loadSurveyData(){
 
     allAdminSurveys = data.surveys || [];
     renderSurveysTable();
-
+    loadDraft();
   }catch(error){
 
     userSelect.innerHTML = `<option value="">Connection error</option>`;
@@ -930,7 +975,7 @@ function addQuestion(value = "", type = "input", chips = ""){
       <option value="textarea" ${type === "textarea" ? "selected" : ""}>Textarea</option>
     </select>
 
-    <button class="remove-btn" type="button" onclick="this.parentElement.remove()">Remove</button>
+    <button class="remove-btn" type="button">Remove</button>
 
     <input 
       type="text" 
@@ -940,7 +985,18 @@ function addQuestion(value = "", type = "input", chips = ""){
     >
   `;
 
+  div.querySelector(".remove-btn").addEventListener("click", function(){
+    div.remove();
+    saveDraft();
+  });
+
+  div.querySelectorAll("input, select").forEach(el => {
+    el.addEventListener("input", saveDraft);
+    el.addEventListener("change", saveDraft);
+  });
+
   wrap.appendChild(div);
+  saveDraft();
 }
 
 async function saveSurvey(){
@@ -985,6 +1041,7 @@ async function saveSurvey(){
     status.innerText = data.message;
 
     if(data.success){
+      clearDraft();
       editingSurveyId = null;
       document.getElementById("surveySubmitBtn").innerText = "Create Survey";
       document.getElementById("cancelEditBtn").style.display = "none";
@@ -1241,9 +1298,6 @@ async function saveCurrentArticleUsers(){
     status.innerText = "Connection error.";
   }
 }
-addQuestion();
-loadUsers();
-loadAdminArticles();
 loadSurveyData();
 function viewSurveyResponses(surveyId){
   window.location.href = "responses.html?survey_id=" + surveyId;
