@@ -47,6 +47,25 @@ a{
   border-radius:15px;
   color:#667085;
 }
+.nav{
+  margin-bottom:25px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.nav a{
+  background:#101828;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:800;
+}
+
+.nav a.active{
+  background:#c9000b;
+}
 </style>
 </head>
 
@@ -54,9 +73,20 @@ a{
 
 <div class="top">
   <h1 id="pageTitle">Survey Responses</h1>
-  <a href="admin.html" class="back">← Back to Admin</a>
 </div>
+<div class="nav">
+  <a href="admin.html">Surveys</a>
 
+  <a href="responses.html" class="active">Responses</a>
+
+  <a href="articles-assignment.html" id="articlesAssignmentLink">
+    Articles Assignment
+  </a>
+
+  <a href="users-management.html" id="usersManagementLink">
+    Users Management
+  </a>
+</div>
 <div id="responses">
   <div class="empty">Loading responses...</div>
 </div>
@@ -67,7 +97,15 @@ const adminToken = localStorage.getItem("admin_token");
 if(!adminToken){
   window.location.href = "admin-login.html";
 }
+const adminUser = JSON.parse(localStorage.getItem("admin_user") || "{}");
 
+if(adminUser.role !== "super_admin"){
+  const usersLink = document.getElementById("usersManagementLink");
+  const articlesLink = document.getElementById("articlesAssignmentLink");
+
+  if(usersLink) usersLink.style.display = "none";
+  if(articlesLink) articlesLink.style.display = "none";
+}
 const params = new URLSearchParams(window.location.search);
 const surveyId = params.get("survey_id");
 
