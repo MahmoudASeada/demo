@@ -3,7 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <title>Answers</title>
-
+<button onclick="downloadWord()" style="
+  background:#c9000b;
+  color:white;
+  border:none;
+  padding:12px 18px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-bottom:25px;
+">
+  Download Word
+</button>
 <style>
 body{
   font-family:Arial;
@@ -35,10 +46,11 @@ body{
 
 const id =
 new URLSearchParams(location.search).get("id");
-
+let responseAnswers = [];
 fetch(
   "api/response-details.php?id="+id
 )
+responseAnswers = data.answers || [];
 .then(r=>r.json())
 .then(data=>{
 
@@ -64,6 +76,59 @@ fetch(
   document.getElementById("answers").innerHTML = html;
 
 });
+function downloadWord(){
+
+  if(!responseAnswers.length){
+    alert("No answers to download");
+    return;
+  }
+
+  let content = `
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Survey Answers</title>
+      <style>
+        body{font-family:Arial;line-height:1.6;}
+        h1{color:#c9000b;}
+        .answer-box{
+          border:1px solid #ddd;
+          padding:15px;
+          margin-bottom:15px;
+          border-radius:10px;
+        }
+        .question{font-weight:bold;margin-bottom:8px;}
+      </style>
+    </head>
+    <body>
+      <h1>Survey Answers</h1>
+  `;
+
+  responseAnswers.forEach(item => {
+    content += `
+      <div class="answer-box">
+        <div class="question">${item.question_text}</div>
+        <div>${item.answer}</div>
+      </div>
+    `;
+  });
+
+  content += `
+    </body>
+    </html>
+  `;
+
+  const blob = new Blob([content], {
+    type: "application/msword"
+  });
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "survey-answers.doc";
+  link.click();
+
+  URL.revokeObjectURL(link.href);
+}
 </script>
 
 </body>
