@@ -8,13 +8,29 @@
 </a></div>
 <div class="panel"><div class="panel-head"><h1>Users Management</h1><p>Approve or reject new registered users.</p></div><table><thead><tr><th>ID</th><th>User</th><th>Email</th><th>Status</th><th>Created At</th><th>Actions</th></tr></thead><tbody id="usersTable"><tr><td colspan="6" class="empty">Loading users...</td></tr></tbody></table></div>
 <script>
-    const adminUser = JSON.parse(localStorage.getItem("admin_user") || "{}");
 
 if(adminUser.role !== "super_admin"){
   alert("You are not allowed to access this page.");
   window.location.href = "admin.html";
 }
-const adminToken=localStorage.getItem("admin_token");if(!adminToken){window.location.href="admin-login.html";}const adminUser = JSON.parse(localStorage.getItem("admin_user") || "{}");
+const adminToken = localStorage.getItem("admin_token");
+
+if(!adminToken){
+  window.location.href = "admin-login.html";
+}
+
+const adminUser = JSON.parse(localStorage.getItem("admin_user") || "{}");
+
+if(adminUser.role !== "super_admin"){
+  alert("You are not allowed to access this page.");
+  window.location.href = "admin.html";
+}
+
+function logoutAdmin(){
+  localStorage.removeItem("admin_token");
+  localStorage.removeItem("admin_user");
+  window.location.href = "admin-login.html";
+}
 
 if(adminUser.role !== "super_admin"){
   const usersLink = document.getElementById("usersManagementLink");
