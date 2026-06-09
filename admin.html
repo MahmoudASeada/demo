@@ -243,6 +243,142 @@ td{
     overflow-x:auto;
   }
 }
+.article-admin-card{
+  border:1px solid #eef1f5;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
+
+.article-admin-card h3{
+  font-size:18px;
+  margin-bottom:6px;
+}
+
+.article-admin-card p{
+  color:#667085;
+  font-size:13px;
+}
+
+.article-count{
+  background:#f8fafc;
+  border-radius:20px;
+  padding:8px 14px;
+  font-size:13px;
+  font-weight:800;
+  color:#475467;
+  margin-right:10px;
+}
+
+.manage-btn{
+  border:none;
+  background:#c9000b;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:10px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.assign-modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  padding:20px;
+}
+
+.assign-modal.show{
+  display:flex;
+}
+
+.assign-box{
+  width:100%;
+  max-width:620px;
+  max-height:82vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.18);
+}
+
+.assign-head{
+  padding:22px 24px;
+  border-bottom:1px solid #eef1f5;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.assign-head button{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  border:none;
+  background:#c9000b;
+  color:#fff;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.assign-body{
+  padding:22px 24px;
+}
+
+.user-search{
+  width:100%;
+  height:44px;
+  border:1px solid #dfe3ea;
+  border-radius:12px;
+  padding:0 14px;
+  outline:none;
+  margin-bottom:16px;
+}
+
+.assign-user{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border:1px solid #eef1f5;
+  border-radius:12px;
+  margin-bottom:10px;
+}
+
+.assign-user strong{
+  display:block;
+  font-size:14px;
+}
+
+.assign-user span{
+  font-size:12px;
+  color:#667085;
+}
+
+.assign-footer{
+  padding:18px 24px;
+  border-top:1px solid #eef1f5;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.save-assign{
+  border:none;
+  background:#c9000b;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:10px;
+  font-weight:800;
+  cursor:pointer;
+}
 </style>
 </head>
 
@@ -627,6 +763,11 @@ function logoutAdmin(){
   localStorage.removeItem("admin_token");
   window.location.href = "admin-login.html";
 }
+let adminArticles = [];
+let adminUsers = [];
+let adminAssignments = {};
+let currentArticleId = null;
+
 async function loadAdminArticles(){
 
   const box = document.getElementById("articlesAssignment");
@@ -640,39 +781,31 @@ async function loadAdminArticles(){
       return;
     }
 
-    if(!data.articles.length){
+    adminArticles = data.articles || [];
+    adminUsers = data.users || [];
+    adminAssignments = data.assignments || {};
+
+    if(!adminArticles.length){
       box.innerHTML = "No articles found in Sanity.";
       return;
     }
 
-    box.innerHTML = data.articles.map(article => {
-      const assigned = data.assignments[article._id] || [];
+    box.innerHTML = adminArticles.map(article => {
+      const assigned = adminAssignments[article._id] || [];
 
       return `
-        <div style="border:1px solid #eef1f5;border-radius:14px;padding:18px;margin-bottom:18px;">
-          <h3 style="margin-bottom:6px;">${article.title}</h3>
-          <p style="color:#667085;font-size:13px;margin-bottom:14px;">
-            ${article.category || "Article"} · ${article.publishedDate || ""}
-          </p>
-
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:14px;">
-            ${data.users.map(user => `
-              <label style="display:flex;gap:8px;align-items:center;font-size:13px;">
-                <input 
-                  type="checkbox" 
-                  value="${user.id}"
-                  ${assigned.includes(Number(user.id)) ? "checked" : ""}
-                >
-                ${user.name} - ${user.email}
-              </label>
-            `).join("")}
+        <div class="article-admin-card">
+          <div>
+            <h3>${article.title}</h3>
+            <p>${article.category || "Article"} · ${article.publishedDate || ""}</p>
           </div>
 
-          <button class="primary-btn" onclick="saveArticleUsers('${article._id}', this)">
-            Save Users
-          </button>
-
-          <span style="margin-left:12px;color:#667085;font-size:13px;"></span>
+          <div>
+            <span class="article-count">${assigned.length} Users</span>
+            <button class="manage-btn" onclick="openAssignModal('${article._id}')">
+              Manage Users
+            </button>
+          </div>
         </div>
       `;
     }).join("");
@@ -682,13 +815,70 @@ async function loadAdminArticles(){
   }
 }
 
-async function saveArticleUsers(articleId, button){
+function openAssignModal(articleId){
+  currentArticleId = articleId;
 
-  const card = button.closest("div");
-  const status = button.nextElementSibling;
+  const article = adminArticles.find(a => a._id === articleId);
+  const assigned = adminAssignments[articleId] || [];
 
-  const userIds = Array.from(card.querySelectorAll("input[type='checkbox']:checked"))
-    .map(input => input.value);
+  document.getElementById("assignTitle").innerText = article.title;
+  document.getElementById("assignMeta").innerText =
+    `${article.category || "Article"} · ${article.publishedDate || ""}`;
+
+  document.getElementById("assignSearch").value = "";
+  document.getElementById("assignStatus").innerText = "";
+
+  renderAssignUsers(adminUsers, assigned);
+
+  document.getElementById("assignModal").classList.add("show");
+}
+
+function closeAssignModal(){
+  document.getElementById("assignModal").classList.remove("show");
+}
+
+function renderAssignUsers(users, assigned){
+  const list = document.getElementById("assignUsersList");
+
+  if(!users.length){
+    list.innerHTML = "No users found.";
+    return;
+  }
+
+  list.innerHTML = users.map(user => `
+    <label class="assign-user">
+      <input
+        type="checkbox"
+        value="${user.id}"
+        ${assigned.includes(Number(user.id)) ? "checked" : ""}
+      >
+      <div>
+        <strong>${user.name}</strong>
+        <span>${user.email}</span>
+      </div>
+    </label>
+  `).join("");
+}
+
+function filterAssignUsers(){
+  const value = document.getElementById("assignSearch").value.toLowerCase().trim();
+  const assigned = adminAssignments[currentArticleId] || [];
+
+  const filtered = adminUsers.filter(user =>
+    (user.name || "").toLowerCase().includes(value) ||
+    (user.email || "").toLowerCase().includes(value)
+  );
+
+  renderAssignUsers(filtered, assigned);
+}
+
+async function saveCurrentArticleUsers(){
+
+  const status = document.getElementById("assignStatus");
+
+  const userIds = Array.from(
+    document.querySelectorAll("#assignUsersList input[type='checkbox']:checked")
+  ).map(input => input.value);
 
   status.innerText = "Saving...";
 
@@ -699,7 +889,7 @@ async function saveArticleUsers(articleId, button){
         "Content-Type":"application/json"
       },
       body:JSON.stringify({
-        articleId,
+        articleId: currentArticleId,
         userIds
       })
     });
@@ -707,6 +897,15 @@ async function saveArticleUsers(articleId, button){
     const data = await res.json();
 
     status.innerText = data.message;
+
+    if(data.success){
+      adminAssignments[currentArticleId] = userIds.map(id => Number(id));
+      loadAdminArticles();
+
+      setTimeout(() => {
+        closeAssignModal();
+      }, 700);
+    }
 
   }catch(error){
     status.innerText = "Connection error.";
@@ -717,6 +916,33 @@ loadUsers();
 loadAdminArticles();
 loadSurveyData();
 </script>
+<div class="assign-modal" id="assignModal">
+  <div class="assign-box">
+    <div class="assign-head">
+      <div>
+        <h2 id="assignTitle">Assign Users</h2>
+        <p id="assignMeta" style="color:#667085;font-size:13px;margin-top:5px;"></p>
+      </div>
+      <button onclick="closeAssignModal()">×</button>
+    </div>
 
+    <div class="assign-body">
+      <input 
+        type="text" 
+        class="user-search" 
+        id="assignSearch" 
+        placeholder="Search users..."
+        oninput="filterAssignUsers()"
+      >
+
+      <div id="assignUsersList"></div>
+    </div>
+
+    <div class="assign-footer">
+      <span id="assignStatus"></span>
+      <button class="save-assign" onclick="saveCurrentArticleUsers()">Save Users</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

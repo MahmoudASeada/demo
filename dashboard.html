@@ -523,7 +523,11 @@ async function loadDashboardArticles(){
 
   try{
 
-    const res = await fetch("api/articles.php");
+    const res = await fetch("api/articles.php",{
+  headers:{
+    Authorization:"Bearer " + token
+  }
+});
     const data = await res.json();
 
     const articles = (data.result || []).slice(0, 3);

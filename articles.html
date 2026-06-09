@@ -289,7 +289,11 @@ let currentCategory = "All";
 
 async function loadArticles(){
   try{
-    const res = await fetch(SANITY_API);
+    const res = await fetch(SANITY_API,{
+  headers:{
+    Authorization:"Bearer " + token
+  }
+});
 
     if(!res.ok){
       throw new Error("Sanity request failed");
