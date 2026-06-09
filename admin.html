@@ -859,8 +859,9 @@ function renderSurveysTable(){
   `).join("");
 }
 async function editSurvey(surveyId){
+  editingSurveyId = surveyId;
 
-  const status = document.getElementById("surveyStatus");
+  const status = document.getElementById("editSurveyStatus");
   status.innerText = "Loading survey...";
 
   try{
@@ -882,11 +883,13 @@ async function editSurvey(surveyId){
       return;
     }
 
-    editingSurveyId = data.survey.id;
+    document.getElementById("editSurveyTitle").value = data.survey.title;
 
-    document.getElementById("surveyTitle").value = data.survey.title;
-    document.getElementById("assignedUser").value = data.survey.assigned_user_id;
-    document.getElementById("questionsWrap").innerHTML = "";
+    const editUserSelect = document.getElementById("editAssignedUser");
+    editUserSelect.innerHTML = document.getElementById("assignedUser").innerHTML;
+    editUserSelect.value = data.survey.assigned_user_id;
+
+    document.getElementById("editQuestionsWrap").innerHTML = "";
 
     data.questions.forEach(q => {
       let chipsText = "";
@@ -898,18 +901,11 @@ async function editSurvey(surveyId){
         chipsText = "";
       }
 
-      addQuestion(q.question_text, q.question_type, chipsText);
+      addEditQuestion(q.question_text, q.question_type, chipsText);
     });
 
-    document.getElementById("surveySubmitBtn").innerText = "Update Survey";
-    document.getElementById("cancelEditBtn").style.display = "inline-block";
-
-    status.innerText = "Editing survey #" + data.survey.id;
-
-    window.scrollTo({
-      top:0,
-      behavior:"smooth"
-    });
+    status.innerText = "";
+    document.getElementById("editSurveyModal").classList.add("show");
 
   }catch(error){
     status.innerText = "Connection error.";
@@ -1299,8 +1295,26 @@ async function saveCurrentArticleUsers(){
   }
 }
 loadSurveyData();
-function viewSurveyResponses(surveyId){
-  window.location.href = "responses.html?survey_id=" + surveyId;
+async function viewSurveyResponses(surveyId){
+  try{
+    const res = await fetch("api/admin-responses.php?survey_id=" + surveyId,{
+      headers:{
+        Authorization:"Bearer " + adminToken
+      }
+    });
+
+    const data = await res.json();
+
+    if(!data.success || !data.responses || !data.responses.length){
+      alert("No responses found for this survey.");
+      return;
+    }
+
+    window.location.href = "response-details.html?id=" + data.responses[0].id;
+
+  }catch(error){
+    alert("Connection error.");
+  }
 }
 </script>
 <div class="assign-modal" id="assignModal">
