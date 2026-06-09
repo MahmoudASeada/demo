@@ -499,12 +499,20 @@ td{
 </div>
 <div style="margin-bottom:25px;display:flex;gap:12px;flex-wrap:wrap;">
   <a href="admin.html" style="background:#c9000b;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
-    Users & Surveys
-  </a>
+  Surveys
+</a>
 
-  <a href="responses.html" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
-    Responses
-  </a>
+<a href="responses.html" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
+  Responses
+</a>
+
+<a href="articles-assignment.html" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
+  Articles Assignment
+</a>
+
+<a href="users-management.html" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
+  Users Management
+</a>
 </div>
 <div class="grid">
 
@@ -597,43 +605,7 @@ td{
       </tbody>
     </table>
   </div>
-  <div class="panel">
-  <div class="panel-head">
-    <h1>Articles Assignment</h1>
-    <p>Select which users can see each article.</p>
-  </div>
-
-  <div id="articlesAssignment" style="padding:24px;">
-    Loading articles...
-  </div>
-</div>
-  <div class="panel">
-    <div class="panel-head">
-      <h1>Users Management</h1>
-      <p>Approve or reject new registered users.</p>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>User</th>
-          <th>Email</th>
-          <th>Status</th>
-          <th>Created At</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-
-      <tbody id="usersTable">
-        <tr>
-          <td colspan="6" class="empty">Loading users...</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-</div>
+  
 
 <script>
 const adminToken = localStorage.getItem("admin_token");
