@@ -110,6 +110,10 @@ input:focus,select:focus,textarea:focus{
   margin-bottom:12px;
 }
 
+.question-chips-input{
+  grid-column:1 / -1;
+}
+
 .primary-btn{
   border:none;
   background:#c9000b;
@@ -687,11 +691,12 @@ async function createSurvey(){
   const status = document.getElementById("surveyStatus");
 
   const questions = Array.from(document.querySelectorAll(".question-box")).map(box => {
-    return {
-      text: box.querySelector(".questionText").value.trim(),
-      type: box.querySelector(".questionType").value
-    };
-  }).filter(q => q.text);
+  return {
+    text: box.querySelector(".questionText").value.trim(),
+    type: box.querySelector(".questionType").value,
+    chips: box.querySelector(".questionChips").value.trim()
+  };
+}).filter(q => q.text);
 
   if(!title || !assignedUserId || !questions.length){
     status.innerText = "Please add survey title, user and at least one question.";

@@ -152,6 +152,27 @@ input,textarea{
   50%{transform:scale(1.18);}
   100%{transform:scale(1);}
 }
+.question-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:12px;
+}
+
+.chip-btn{
+  border:none;
+  background:#eef1f5;
+  color:#101828;
+  padding:8px 14px;
+  border-radius:20px;
+  cursor:pointer;
+  font-size:13px;
+  font-weight:700;
+}
+
+.chip-btn:hover{
+  background:#dfe3ea;
+}
 </style>
 </head>
 
@@ -287,7 +308,7 @@ function renderQuestions(){
 
       const answerObj = (window.loadedAnswers || []).find(a => Number(a.question_id) === Number(q.id));
       const answerText = answerObj ? answerObj.answer : "No answer found";
-
+      
       return `
         <div class="field">
           <label>${q.question_text}</label>
@@ -315,7 +336,23 @@ function renderQuestions(){
     const required = Number(q.required) === 1;
 
     let inputHTML = "";
+    let chips = [];
 
+try{
+  chips = q.chips ? JSON.parse(q.chips) : [];
+}catch(e){
+  chips = [];
+}
+
+const chipsHTML = chips.map(chip => `
+  <button 
+    class="chip-btn" 
+    type="button" 
+    onclick="insertChip('${q.id}', '${chip.replace(/'/g, "\\'")}')"
+  >
+    ${chip}
+  </button>
+`).join("");
     if(q.question_type === "textarea"){
       inputHTML = `
         <textarea
@@ -350,6 +387,7 @@ function renderQuestions(){
           ${inputHTML}
           <button class="mic-btn" type="button" onclick="toggleVoice('${q.id}', this)">🎙</button>
         </div>
+        ${chipsHTML ? `<div class="question-chips">${chipsHTML}</div>` : ""}
       </div>
     `;
   }).join("");
@@ -473,7 +511,20 @@ function validateSurvey(){
 
   return valid;
 }
+function insertChip(questionId, text){
+  const field = document.querySelector(`[data-question-id="${questionId}"]`);
 
+  if(!field) return;
+
+  if(field.value.trim()){
+    field.value += ", " + text;
+  }else{
+    field.value = text;
+  }
+
+  field.classList.remove("error-field");
+  saveToLocalStorage();
+}
 async function submitSurvey(){
 
   const status = document.getElementById("status");
