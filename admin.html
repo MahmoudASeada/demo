@@ -521,11 +521,19 @@ td{
       <p>All surveys assigned to approved users.</p>
       
       <div style="margin-top:18px;max-width:360px;">
-  <label>Filter by User</label>
-  <select id="surveyUserFilter" onchange="renderSurveysTable()">
-    <option value="all">All Users</option>
-  </select>
-</div>
+        <label>Filter by User</label>
+        <select id="surveyUserFilter" onchange="renderSurveysTable()">
+          <option value="all">All Users</option>
+        </select>
+      </div>
+      <div style="margin-top:12px;max-width:360px;">
+        <label>Filter by Status</label>
+        <select id="surveyStatusFilter" onchange="renderSurveysTable()">
+          <option value="all">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
     </div>
 
     <table>
@@ -638,15 +646,22 @@ async function loadUsers(){
           </td>
           <td>${user.created_at}</td>
           <td>
-            <div class="actions">
-              ${
-                approved
-                ? `<button class="btn approve-btn" disabled>Approved</button>`
-                : `<button class="btn approve-btn" onclick="updateUser(${user.id}, 'approve')">Approve</button>`
-              }
-              <button class="btn reject-btn" onclick="updateUser(${user.id}, 'reject')">Reject</button>
-            </div>
-          </td>
+  <div class="actions">
+
+    ${
+      survey.status === "pending"
+      ? `<button class="btn approve-btn" onclick="editSurvey(${survey.id})">Edit</button>`
+      : ``
+    }
+
+    ${
+      survey.status === "completed"
+      ? `<button class="btn reject-btn" onclick="viewSurveyResponses(${survey.id})">View Responses</button>`
+      : ``
+    }
+
+  </div>
+</td>
         </tr>
       `;
 
@@ -728,13 +743,18 @@ function renderSurveysTable(){
 
   const surveysTable = document.getElementById("surveysTable");
   const filterValue = document.getElementById("surveyUserFilter").value;
+  const statusFilter = document.getElementById("surveyStatusFilter").value;
 
   let surveys = allAdminSurveys;
 
   if(filterValue !== "all"){
     surveys = allAdminSurveys.filter(s => Number(s.assigned_user_id) === Number(filterValue));
   }
-
+  if(statusFilter !== "all"){
+  surveys = surveys.filter(
+    s => s.status === statusFilter
+  );
+}
   if(!surveys.length){
     surveysTable.innerHTML = `
       <tr>
@@ -750,15 +770,28 @@ function renderSurveysTable(){
       <td>${survey.title}</td>
       <td>${survey.user_name}</td>
       <td>${survey.user_email}</td>
-      <td><span class="badge survey-status">${survey.status}</span></td>
+      <td>
+  <span class="badge ${survey.status === 'completed' ? 'approved' : 'pending'}">
+    ${survey.status}
+  </span>
+</td>
       <td>${survey.created_at}</td>
       <td>
-        ${
-          survey.status === "pending"
-          ? `<button class="btn approve-btn" onclick="editSurvey(${survey.id})">Edit</button>`
-          : `<span style="color:#98a1ad;font-size:12px;">Locked</span>`
-        }
-      </td>
+  <div class="actions">
+
+    ${
+      survey.status === "pending"
+      ? `<button class="btn approve-btn" onclick="editSurvey(${survey.id})">Edit</button>`
+      : ``
+    }
+
+    <button class="btn secondary-btn"
+      onclick="viewSurvey(${survey.id})">
+      View
+    </button>
+
+  </div>
+</td>
     </tr>
   `).join("");
 }
@@ -1248,6 +1281,9 @@ addQuestion();
 loadUsers();
 loadAdminArticles();
 loadSurveyData();
+function viewSurveyResponses(surveyId){
+  window.location.href = "responses.html?survey_id=" + surveyId;
+}
 </script>
 <div class="assign-modal" id="assignModal">
   <div class="assign-box">

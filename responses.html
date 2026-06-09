@@ -11,6 +11,19 @@ body{
   padding:30px;
 }
 
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.back{
+  color:#c9000b;
+  font-weight:bold;
+  text-decoration:none;
+}
+
 .card{
   background:#fff;
   padding:20px;
@@ -27,33 +40,72 @@ a{
   color:#c9000b;
   font-weight:bold;
 }
-</style>
 
+.empty{
+  background:#fff;
+  padding:25px;
+  border-radius:15px;
+  color:#667085;
+}
+</style>
 </head>
+
 <body>
 
-<h1>Survey Responses</h1>
+<div class="top">
+  <h1 id="pageTitle">Survey Responses</h1>
+  <a href="admin.html" class="back">← Back to Admin</a>
+</div>
 
-<div id="responses"></div>
+<div id="responses">
+  <div class="empty">Loading responses...</div>
+</div>
 
 <script>
+const adminToken = localStorage.getItem("admin_token");
 
-fetch("api/admin-responses.php",{
-  headers:{
-    Authorization:"Bearer " + localStorage.getItem("admin_token")
-  }
-})
-.then(r=>r.json())
-.then(data=>{
+if(!adminToken){
+  window.location.href = "admin-login.html";
+}
 
-  let html = "";
+const params = new URLSearchParams(window.location.search);
+const surveyId = params.get("survey_id");
 
-  data.responses.forEach(item=>{
+async function loadResponses(){
 
-    html += `
+  const box = document.getElementById("responses");
+
+  const apiUrl = surveyId
+    ? "api/admin-responses.php?survey_id=" + surveyId
+    : "api/admin-responses.php";
+
+  try{
+    const res = await fetch(apiUrl,{
+      headers:{
+        Authorization:"Bearer " + adminToken
+      }
+    });
+
+    const data = await res.json();
+
+    if(!data.success){
+      box.innerHTML = `<div class="empty">${data.message || "Unable to load responses."}</div>`;
+      return;
+    }
+
+    if(!data.responses.length){
+      box.innerHTML = `<div class="empty">No responses found.</div>`;
+      return;
+    }
+
+    if(surveyId){
+      document.getElementById("pageTitle").innerText = "Survey Responses #" + surveyId;
+    }
+
+    box.innerHTML = data.responses.map(item => `
       <div class="card">
 
-        <h2>${item.survey_title}</h2>
+        <h2>${item.title || item.survey_title || "Survey"}</h2>
 
         <p>
           <b>User:</b>
@@ -75,12 +127,14 @@ fetch("api/admin-responses.php",{
         </a>
 
       </div>
-    `;
-  });
+    `).join("");
 
-  document.getElementById("responses").innerHTML = html;
+  }catch(error){
+    box.innerHTML = `<div class="empty">Connection error.</div>`;
+  }
+}
 
-});
+loadResponses();
 </script>
 
 </body>
