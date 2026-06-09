@@ -3,18 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Answers</title>
-<button onclick="downloadWord()" style="
-  background:#c9000b;
-  color:white;
-  border:none;
-  padding:12px 18px;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
-  margin-bottom:25px;
-">
-  Download Word
-</button>
+
 <style>
 body{
   font-family:Arial;
@@ -40,6 +29,19 @@ body{
 
 <h1>Survey Answers</h1>
 
+<button onclick="downloadWord()" style="
+  background:#c9000b;
+  color:white;
+  border:none;
+  padding:12px 18px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-bottom:25px;
+">
+  Download Word
+</button>
+
 <div id="answers"></div>
 
 <script>
@@ -47,20 +49,18 @@ body{
 const id =
 new URLSearchParams(location.search).get("id");
 let responseAnswers = [];
-fetch(
-  "api/response-details.php?id="+id
-)
-responseAnswers = data.answers || [];
-.then(r=>r.json())
-.then(data=>{
+fetch("api/response-details.php?id=" + id)
+.then(r => r.json())
+.then(data => {
+
+  responseAnswers = data.answers || [];
 
   let html = "";
 
-  data.answers.forEach(item=>{
+  data.answers.forEach(item => {
 
     html += `
       <div class="card">
-
         <div class="question">
           ${item.question_text}
         </div>
@@ -68,7 +68,6 @@ responseAnswers = data.answers || [];
         <div>
           ${item.answer}
         </div>
-
       </div>
     `;
   });
