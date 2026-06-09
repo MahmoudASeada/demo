@@ -506,7 +506,7 @@ td{
   Responses
 </a>
 
-<a href="articles-assignment.html" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
+<a href="articles-assignment.html" id="articlesAssignmentLink" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
   Articles Assignment
 </a>
 
@@ -609,7 +609,20 @@ td{
 
 <script>
 const adminToken = localStorage.getItem("admin_token");
+const adminUser = JSON.parse(localStorage.getItem("admin_user") || "{}");
 
+if(adminUser.role !== "super_admin"){
+  const usersLink = document.getElementById("usersManagementLink");
+  const articlesLink = document.getElementById("articlesAssignmentLink");
+
+  if(usersLink){
+    usersLink.style.display = "none";
+  }
+
+  if(articlesLink){
+    articlesLink.style.display = "none";
+  }
+}
 if(!adminToken){
   window.location.href = "admin-login.html";
 }

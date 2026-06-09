@@ -14,10 +14,9 @@
 const adminToken = localStorage.getItem("admin_token"); if(!adminToken){window.location.href="admin-login.html";}const adminUser = JSON.parse(localStorage.getItem("admin_user") || "{}");
 
 if(adminUser.role !== "super_admin"){
-  const usersLink = document.getElementById("usersManagementLink");
-  if(usersLink){
-    usersLink.style.display = "none";
-  }
+  alert("You are not allowed to access this page.");
+  window.location.href = "admin.html";
+
 }function logoutAdmin(){
   localStorage.removeItem("admin_token");
   localStorage.removeItem("admin_user");
