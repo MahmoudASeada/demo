@@ -44,7 +44,7 @@ if (!$survey) {
 }
 
 $qStmt = $pdo->prepare("
-    SELECT id, question_text, question_type, required, sort_order
+    SELECT id, question_text, question_type, required, sort_order, chips
     FROM survey_questions
     WHERE survey_id = ?
     ORDER BY sort_order ASC, id ASC
