@@ -1074,7 +1074,8 @@ async function updateUser(userId, action){
 
 function logoutAdmin(){
   localStorage.removeItem("admin_token");
-  window.location.href = "admin-login.html";
+  localStorage.removeItem("admin_user");
+  window.location.href="admin-login.html";
 }
 let adminArticles = [];
 let adminUsers = [];
