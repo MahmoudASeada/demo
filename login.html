@@ -24,11 +24,7 @@ body{
 
 .auth-wrapper{
   width:100%;
-  max-width:1180px;
-  display:grid;
-  grid-template-columns:1fr 1.15fr;
-  gap:70px;
-  align-items:start;
+  max-width:560px;
 }
 
 .card{
@@ -232,6 +228,26 @@ label{
     margin-top:0;
   }
 }
+.login-card{
+  display:none;
+}
+
+.register-card{
+  display:block;
+}
+
+.switch-text{
+  text-align:center;
+  margin-top:26px;
+  color:#8b95a1;
+  font-size:14px;
+}
+
+.switch-text a{
+  color:#c9000b;
+  font-weight:800;
+  text-decoration:none;
+}
 </style>
 </head>
 
@@ -268,14 +284,10 @@ label{
     </div>
 
     <button class="submit" onclick="loginUser()">Log In →</button>
-
-    <div class="divider"></div>
-
-    <div class="helper">New to the platform?</div>
-    <div class="admin-link">
-      <a href="#" onclick="showRegister()">Request Admin Access ↗</a>
+    <div class="switch-text">
+      New to the platform?
+      <a href="#" onclick="showRegister();return false;">Request Admin Access ↗</a>
     </div>
-
     <div class="status" id="loginStatus"></div>
 
   </div>
@@ -328,7 +340,10 @@ label{
     </label>
 
     <button class="submit" onclick="registerUser()">Register →</button>
-
+    <div class="switch-text">
+      Already have an account?
+      <a href="#" onclick="showLogin();return false;">Log In</a>
+    </div>
     <div class="status" id="registerStatus"></div>
 
   </div>
@@ -339,17 +354,19 @@ label{
 const API_BASE = "api";
 
 function showLogin(){
-  document.querySelector(".login-card").scrollIntoView({
-    behavior:"smooth",
-    block:"center"
-  });
+  document.querySelector(".login-card").style.display = "block";
+  document.querySelector(".register-card").style.display = "none";
+
+  document.getElementById("loginStatus").innerText = "";
+  document.getElementById("registerStatus").innerText = "";
 }
 
 function showRegister(){
-  document.querySelector(".register-card").scrollIntoView({
-    behavior:"smooth",
-    block:"center"
-  });
+  document.querySelector(".register-card").style.display = "block";
+  document.querySelector(".login-card").style.display = "none";
+
+  document.getElementById("loginStatus").innerText = "";
+  document.getElementById("registerStatus").innerText = "";
 }
 
 function togglePassword(id){
@@ -452,7 +469,7 @@ async function registerUser(){
     }
 
     alert("Account created. Please wait for admin approval.");
-
+    showLogin();
     document.getElementById("registerName").value = "";
     document.getElementById("registerEmail").value = "";
     document.getElementById("companyName").value = "";
@@ -464,7 +481,7 @@ async function registerUser(){
     status.innerText = "Connection error.";
   }
 }
-
+showRegister();
 const token = localStorage.getItem("portal_token");
 
 if(token){
