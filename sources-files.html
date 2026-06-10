@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sources & Files</title>
+
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f6f7fb;padding:35px;color:#101828}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+.logo{color:#c9000b;font-size:24px;font-weight:800}
+.logout,.primary{border:none;background:#c9000b;color:#fff;padding:12px 18px;border-radius:10px;font-weight:800;cursor:pointer}
+.nav{margin-bottom:25px;display:flex;gap:12px;flex-wrap:wrap}
+.nav a{background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800}
+.nav a.active{background:#c9000b}
+.panel{background:#fff;border-radius:20px;box-shadow:0 14px 35px rgba(0,0,0,.06);padding:24px;margin-bottom:22px}
+input{width:100%;border:1px solid #dfe3ea;background:#f8fafc;border-radius:12px;padding:13px 14px;margin:10px 0 15px}
+.folder{border:1px solid #eef1f5;border-radius:14px;padding:16px;margin-bottom:12px;cursor:pointer}
+.folder.active{border-color:#c9000b;background:#fff5f5}
+.file{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #eef1f5;padding:14px 0;gap:12px}
+.btn{border:none;padding:8px 12px;border-radius:8px;font-weight:800;cursor:pointer}
+.download{background:#101828;color:#fff}
+.delete{background:#c9000b;color:#fff}
+.small{color:#667085;font-size:13px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <div class="logo">W zone Admin</div>
+  <button class="logout" onclick="logoutAdmin()">Logout</button>
+</div>
+
+<div class="nav">
+  <a href="admin.html">Surveys</a>
+  <a href="responses.html">Responses</a>
+  <a href="sources-files.html" class="active">Sources & Files</a>
+  <a href="articles-assignment.html" id="articlesAssignmentLink">Articles Assignment</a>
+  <a href="users-management.html" id="usersManagementLink">Users Management</a>
+</div>
+
+<div class="panel">
+  <h1>Sources & Files</h1>
+  <p class="small">Create folders and upload files. Each admin can only see their own files.</p>
+</div>
+
+<div class="panel">
+  <h2>Create Folder / Source</h2>
+  <input type="text" id="folderTitle" placeholder="Example: Client Documents">
+  <button class="primary" onclick="createFolder()">Create Folder</button>
+  <div id="folderStatus" class="small"></div>
+</div>
+
+<div class="panel">
+  <h2>Your Folders</h2>
+  <div id="foldersBox">Loading folders...</div>
+</div>
+
+<div class="panel" id="filesPanel" style="display:none;">
+  <h2 id="currentFolderTitle">Files</h2>
+
+  <input type="file" id="fileInput" multiple>
+  <button class="primary" onclick="uploadFiles()">Upload Files</button>
+
+  <div id="uploadStatus" class="small"></div>
+  <div id="filesBox" style="margin-top:20px;"></div>
+</div>
+
+<script>
+const adminToken = localStorage.getItem("admin_token");
+const adminUser = JSON.parse(localStorage.getItem("admin_user") || "{}");
+
+if(!adminToken){
+  window.location.href = "admin-login.html";
+}
+
+if(adminUser.role !== "super_admin"){
+  const articlesLink = document.getElementById("articlesAssignmentLink");
+  const usersLink = document.getElementById("usersManagementLink");
+
+  if(articlesLink) articlesLink.style.display = "none";
+  if(usersLink) usersLink.style.display = "none";
+}
+
+let folders = [];
+let currentFolderId = null;
+
+function logoutAdmin(){
+  localStorage.removeItem("admin_token");
+  localStorage.removeItem("admin_user");
+  window.location.href = "admin-login.html";
+}
+
+async function loadFolders(){
+  const box = document.getElementById("foldersBox");
+
+  try{
+    const res = await fetch("api/source-folders.php",{
+      headers:{
+        Authorization:"Bearer " + adminToken
+      }
+    });
+
+    const data = await res.json();
+
+    if(!data.success){
+      box.innerHTML = data.message || "Failed to load folders.";
+      return;
+    }
+
+    folders = data.folders || [];
+
+    if(!folders.length){
+      box.innerHTML = `<div class="small">No folders yet.</div>`;
+      return;
+    }
+
+    box.innerHTML = folders.map(folder => `
+      <div class="folder" id="folder-${folder.id}" onclick="openFolder(${folder.id})">
+        <strong>${folder.title}</strong>
+        <div class="small">${folder.created_at}</div>
+      </div>
+    `).join("");
+
+  }catch(error){
+    box.innerHTML = "Connection error.";
+  }
+}
+
+async function createFolder(){
+  const titleInput = document.getElementById("folderTitle");
+  const status = document.getElementById("folderStatus");
+  const title = titleInput.value.trim();
+
+  if(!title){
+    status.innerText = "Please enter folder title.";
+    return;
+  }
+
+  status.innerText = "Creating...";
+
+  try{
+    const res = await fetch("api/source-folders.php",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        Authorization:"Bearer " + adminToken
+      },
+      body:JSON.stringify({title})
+    });
+
+    const data = await res.json();
+    status.innerText = data.message;
+
+    if(data.success){
+      titleInput.value = "";
+      loadFolders();
+    }
+
+  }catch(error){
+    status.innerText = "Connection error.";
+  }
+}
+
+async function openFolder(folderId){
+  currentFolderId = folderId;
+
+  document.querySelectorAll(".folder").forEach(el => {
+    el.classList.remove("active");
+  });
+
+  const folderEl = document.getElementById("folder-" + folderId);
+  if(folderEl){
+    folderEl.classList.add("active");
+  }
+
+  const folder = folders.find(f => Number(f.id) === Number(folderId));
+  document.getElementById("currentFolderTitle").innerText = folder ? folder.title : "Files";
+  document.getElementById("filesPanel").style.display = "block";
+
+  await loadFiles();
+}
+
+async function loadFiles(){
+  const box = document.getElementById("filesBox");
+
+  if(!currentFolderId){
+    box.innerHTML = "";
+    return;
+  }
+
+  box.innerHTML = "Loading files...";
+
+  try{
+    const res = await fetch("api/source-files.php?folder_id=" + currentFolderId,{
+      headers:{
+        Authorization:"Bearer " + adminToken
+      }
+    });
+
+    const data = await res.json();
+
+    if(!data.success){
+      box.innerHTML = data.message || "Failed to load files.";
+      return;
+    }
+
+    const files = data.files || [];
+
+    if(!files.length){
+      box.innerHTML = `<div class="small">No files uploaded yet.</div>`;
+      return;
+    }
+
+    box.innerHTML = files.map(file => `
+      <div class="file">
+        <div>
+          <strong>${file.original_name}</strong>
+          <div class="small">
+            ${(Number(file.file_size || 0) / 1024).toFixed(1)} KB · ${file.uploaded_at}
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn download" onclick="downloadFile(${file.id})">Download</button>
+          <button class="btn delete" onclick="deleteFile(${file.id})">Delete</button>
+        </div>
+      </div>
+    `).join("");
+
+  }catch(error){
+    box.innerHTML = "Connection error.";
+  }
+}
+
+async function uploadFiles(){
+  const input = document.getElementById("fileInput");
+  const status = document.getElementById("uploadStatus");
+
+  if(!currentFolderId){
+    status.innerText = "Please select folder first.";
+    return;
+  }
+
+  if(!input.files.length){
+    status.innerText = "Please choose files.";
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("folder_id", currentFolderId);
+
+  Array.from(input.files).forEach(file => {
+    formData.append("files[]", file);
+  });
+
+  status.innerText = "Uploading...";
+
+  try{
+    const res = await fetch("api/source-files.php",{
+      method:"POST",
+      headers:{
+        Authorization:"Bearer " + adminToken
+      },
+      body:formData
+    });
+
+    const data = await res.json();
+    status.innerText = data.message;
+
+    if(data.success){
+      input.value = "";
+      loadFiles();
+    }
+
+  }catch(error){
+    status.innerText = "Connection error.";
+  }
+}
+
+function downloadFile(fileId){
+  window.location.href =
+    "api/download-source-file.php?id=" + fileId +
+    "&token=" + encodeURIComponent(adminToken);
+}
+
+async function deleteFile(fileId){
+  const ok = confirm("Delete this file?");
+  if(!ok) return;
+
+  try{
+    const res = await fetch("api/source-files.php?id=" + fileId,{
+      method:"DELETE",
+      headers:{
+        Authorization:"Bearer " + adminToken
+      }
+    });
+
+    const data = await res.json();
+    alert(data.message);
+
+    if(data.success){
+      loadFiles();
+    }
+
+  }catch(error){
+    alert("Connection error.");
+  }
+}
+
+loadFolders();
+</script>
+
+</body>
+</html>
