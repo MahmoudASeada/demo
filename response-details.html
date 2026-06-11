@@ -41,7 +41,18 @@ body{
 ">
   Download Word
 </button>
-
+<button onclick="downloadExcel()" style="
+  background:#101828;
+  color:white;
+  border:none;
+  padding:12px 18px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-left:10px;
+">
+  Download Excel
+</button>
 <div id="answers"></div>
 
 <script>
@@ -127,6 +138,14 @@ function downloadWord(){
   link.click();
 
   URL.revokeObjectURL(link.href);
+}
+function downloadExcel(){
+  const id = new URLSearchParams(location.search).get("id");
+  const token = localStorage.getItem("admin_token");
+
+  window.location.href =
+    "api/download-response-excel.php?id=" + id +
+    "&token=" + encodeURIComponent(token);
 }
 </script>
 

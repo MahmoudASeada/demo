@@ -67,7 +67,7 @@ if ($method === "GET") {
         }
 
         $qStmt = $pdo->prepare("
-            SELECT id, question_text, question_type, required, sort_order, chips
+            SELECT id, question_text, question_type, required, sort_order, chips, max_file_size_mb
             FROM survey_questions
             WHERE survey_id = ?
             ORDER BY sort_order ASC, id ASC
@@ -230,8 +230,8 @@ if ($method === "POST" || $method === "PUT") {
 
         $qStmt = $pdo->prepare("
             INSERT INTO survey_questions
-            (survey_id, question_text, question_type, required, sort_order, chips)
-            VALUES (?, ?, ?, ?, ?, ?)
+            (survey_id, question_text, question_type, required, sort_order, chips, max_file_size_mb)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
 
         foreach ($questions as $index => $question) {
@@ -244,18 +244,21 @@ if ($method === "POST" || $method === "PUT") {
                 continue;
             }
 
-            if (!in_array($questionType, ["input", "textarea"])) {
+            if (!in_array($questionType, ["input", "textarea", "file"])) {
                 $questionType = "input";
             }
-
+            $maxFileSizeMb = isset($question["maxFileSizeMb"]) && $question["maxFileSizeMb"] !== ""
+            ? (int)$question["maxFileSizeMb"]
+            : null;
             $qStmt->execute([
-                $surveyId,
-                $questionText,
-                $questionType,
-                1,
-                $index + 1,
-                prepareChips($chips)
-            ]);
+            $surveyId,
+            $questionText,
+            $questionType,
+            1,
+            $index + 1,
+            prepareChips($chips),
+            $maxFileSizeMb
+        ]);
         }
 
         $pdo->commit();

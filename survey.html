@@ -173,6 +173,26 @@ input,textarea{
 .chip-btn:hover{
   background:#dfe3ea;
 }
+.confirm-box{
+  margin:20px 0;
+  display:flex;
+  align-items:center;
+}
+
+.confirm-box label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:16px;
+  color:#667085;
+  cursor:pointer;
+}
+
+.confirm-box input[type="checkbox"]{
+  width:22px;
+  height:22px;
+  cursor:pointer;
+}
 </style>
 </head>
 
@@ -190,7 +210,12 @@ input,textarea{
     <p class="subtitle" id="surveyMeta">Please answer all required questions.</p>
 
     <div id="questionsWrap"></div>
-
+    <div class="confirm-box">
+      <label>
+        <input type="checkbox" id="confirmSubmit">
+        I have reviewed all questions before submitting this form.
+      </label>
+    </div>
     <button class="submit" id="submitBtn" onclick="submitSurvey()">
       Submit Survey
     </button>
@@ -308,7 +333,7 @@ function renderQuestions(){
 
       const answerObj = (window.loadedAnswers || []).find(a => Number(a.question_id) === Number(q.id));
       const answerText = answerObj ? answerObj.answer : "No answer found";
-      
+
       return `
         <div class="field">
           <label>${q.question_text}</label>
@@ -338,22 +363,40 @@ function renderQuestions(){
     let inputHTML = "";
     let chips = [];
 
-try{
-  chips = q.chips ? JSON.parse(q.chips) : [];
-}catch(e){
-  chips = [];
-}
+    try{
+      chips = q.chips ? JSON.parse(q.chips) : [];
+    }catch(e){
+      chips = [];
+    }
 
-const chipsHTML = chips.map(chip => `
-  <button 
-    class="chip-btn" 
-    type="button" 
-    onclick="insertChip('${q.id}', '${chip.replace(/'/g, "\\'")}')"
-  >
-    ${chip}
-  </button>
-`).join("");
-    if(q.question_type === "textarea"){
+    const chipsHTML = chips.map(chip => `
+      <button
+        class="chip-btn"
+        type="button"
+        onclick="insertChip('${q.id}', '${chip.replace(/'/g, "\\'")}')"
+      >
+        ${chip}
+      </button>
+    `).join("");
+
+    if(q.question_type === "file"){
+      inputHTML = `
+        <input
+          type="file"
+          data-question-id="${q.id}"
+          data-question-label="${q.question_text}"
+          data-required="${required ? "1" : "0"}"
+          data-max-size="${q.max_file_size_mb || ""}"
+          required
+          style="padding-left:16px;"
+        >
+        ${
+          q.max_file_size_mb
+          ? `<div style="font-size:12px;color:#667085;margin-top:6px;">Max file size: ${q.max_file_size_mb} MB</div>`
+          : ""
+        }
+      `;
+    }else if(q.question_type === "textarea"){
       inputHTML = `
         <textarea
           data-question-id="${q.id}"
@@ -385,9 +428,18 @@ const chipsHTML = chips.map(chip => `
 
         <div class="input-area">
           ${inputHTML}
-          <button class="mic-btn" type="button" onclick="toggleVoice('${q.id}', this)">🎙</button>
+          ${
+            q.question_type !== "file"
+            ? `<button class="mic-btn" type="button" onclick="toggleVoice('${q.id}', this)">🎙</button>`
+            : ""
+          }
         </div>
-        ${chipsHTML ? `<div class="question-chips">${chipsHTML}</div>` : ""}
+
+        ${
+          q.question_type !== "file" && chipsHTML
+          ? `<div class="question-chips">${chipsHTML}</div>`
+          : ""
+        }
       </div>
     `;
   }).join("");
@@ -396,12 +448,16 @@ const chipsHTML = chips.map(chip => `
     .querySelectorAll("#questionsWrap input, #questionsWrap textarea")
     .forEach(field => {
       field.addEventListener("input", function(){
-        field.classList.remove("field-error");
+        field.classList.remove("error-field");
+        saveToLocalStorage();
+      });
+
+      field.addEventListener("change", function(){
+        field.classList.remove("error-field");
         saveToLocalStorage();
       });
     });
 }
-
 function toggleVoice(fieldId, button){
 
   if(isRecording){
@@ -503,75 +559,133 @@ function validateSurvey(){
 
     const required = field.dataset.required === "1";
 
-    if(required && field.value.trim() === ""){
-      field.classList.add("error-field");
-      valid = false;
+    if(required){
+      if(field.type === "file"){
+        if(!field.files.length){
+          field.classList.add("error-field");
+          valid = false;
+          return;
+        }
+
+        const maxMb = Number(field.dataset.maxSize || 0);
+
+        if(maxMb && field.files[0].size > maxMb * 1024 * 1024){
+          field.classList.add("error-field");
+          alert("File is too large. Max size is " + maxMb + " MB");
+          valid = false;
+          return;
+        }
+
+      }else if(field.value.trim() === ""){
+        field.classList.add("error-field");
+        valid = false;
+      }
     }
   });
 
   return valid;
-}
-function insertChip(questionId, text){
-  const field = document.querySelector(`[data-question-id="${questionId}"]`);
-
-  if(!field) return;
-
-  if(field.value.trim()){
-    field.value += ", " + text;
-  }else{
-    field.value = text;
-  }
-
-  field.classList.remove("error-field");
-  saveToLocalStorage();
 }
 async function submitSurvey(){
 
   const status = document.getElementById("status");
   status.classList.remove("error");
 
-  if(!validateSurvey()){
+  const confirmSubmit =
+  document.getElementById("confirmSubmit");
+
+  if(!confirmSubmit.checked){
     status.classList.add("error");
-    status.innerText = "Please answer all required questions.";
+    status.innerText =
+    "Please confirm that you reviewed all questions.";
     return;
   }
 
-  const fields = document.querySelectorAll("#questionsWrap input, #questionsWrap textarea");
+  if(!validateSurvey()){
+    status.classList.add("error");
+    status.innerText =
+    "Please answer all required questions.";
+    return;
+  }
 
-  const answers = Array.from(fields).map(field => {
-    return {
-      questionId: field.dataset.questionId,
-      questionLabel: field.dataset.questionLabel,
-      answer: field.value.trim()
-    };
+  const fields = document.querySelectorAll(
+    "#questionsWrap input, #questionsWrap textarea"
+  );
+
+  const answers = [];
+  const formData = new FormData();
+
+  formData.append("surveyId", surveyId);
+
+  fields.forEach(field => {
+
+    if(field.type === "file"){
+
+      if(field.files.length){
+        formData.append(
+          "files[" + field.dataset.questionId + "]",
+          field.files[0]
+        );
+      }
+
+      answers.push({
+        questionId: field.dataset.questionId,
+        questionLabel: field.dataset.questionLabel,
+        answer: field.files.length
+          ? field.files[0].name
+          : ""
+      });
+
+    }else{
+
+      answers.push({
+        questionId: field.dataset.questionId,
+        questionLabel: field.dataset.questionLabel,
+        answer: field.value.trim()
+      });
+
+    }
+
   });
+
+  formData.append(
+    "answers",
+    JSON.stringify(answers)
+  );
 
   status.innerText = "Submitting...";
 
   try{
 
-    const res = await fetch("api/submit-survey.php",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        Authorization:"Bearer " + token
-      },
-      body:JSON.stringify({
-        surveyId,
-        answers
-      })
-    });
+    const res = await fetch(
+      "api/submit-survey.php",
+      {
+        method:"POST",
+        headers:{
+          Authorization:"Bearer " + token
+        },
+        body:formData
+      }
+    );
 
     const data = await res.json();
 
     status.innerText = data.message;
 
     if(data.success){
+
       localStorage.removeItem(STORAGE_KEY);
-      alert("Survey submitted successfully");
-      window.location.href = "dashboard.html";
+
+      alert(
+        "Survey submitted successfully"
+      );
+
+      window.location.href =
+      "dashboard.html";
+
     }else{
+
       status.classList.add("error");
+
     }
 
   }catch(error){
@@ -581,7 +695,6 @@ async function submitSurvey(){
 
   }
 }
-
 loadSurvey();
 </script>
 

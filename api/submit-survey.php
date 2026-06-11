@@ -16,10 +16,8 @@ if (!$token) {
     exit;
 }
 
-$input = json_decode(file_get_contents("php://input"), true);
-
-$surveyId = (int)($input["surveyId"] ?? 0);
-$answers = $input["answers"] ?? [];
+$surveyId = (int)($_POST["surveyId"] ?? 0);
+$answers = json_decode($_POST["answers"] ?? "[]", true);
 
 if (!$surveyId || !count($answers)) {
     echo json_encode([
@@ -35,7 +33,6 @@ $stmt = $pdo->prepare("
     WHERE session_token = ?
     LIMIT 1
 ");
-
 $stmt->execute([$token]);
 $user = $stmt->fetch();
 
@@ -53,7 +50,6 @@ $stmt = $pdo->prepare("
     WHERE id = ? AND assigned_user_id = ?
     LIMIT 1
 ");
-
 $stmt->execute([$surveyId, $user["id"]]);
 $survey = $stmt->fetch();
 
@@ -71,6 +67,24 @@ if ($survey["status"] === "completed") {
         "message" => "This survey has already been submitted"
     ]);
     exit;
+}
+
+$qStmt = $pdo->prepare("
+    SELECT id, question_text, question_type, max_file_size_mb
+    FROM survey_questions
+    WHERE survey_id = ?
+");
+$qStmt->execute([$surveyId]);
+
+$questionsMap = [];
+foreach ($qStmt->fetchAll() as $q) {
+    $questionsMap[(int)$q["id"]] = $q;
+}
+
+$uploadRoot = __DIR__ . "/../uploads/survey-files";
+
+if (!is_dir($uploadRoot)) {
+    mkdir($uploadRoot, 0777, true);
 }
 
 $pdo->beginTransaction();
@@ -97,12 +111,76 @@ try {
         VALUES (?, ?, ?, ?)
     ");
 
-    foreach ($answers as $answer) {
+    $fileStmt = $pdo->prepare("
+        INSERT INTO survey_uploaded_files
+        (response_id, question_id, user_id, original_name, stored_name, file_path, file_type, file_size)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+
+    foreach ($answers as &$answer) {
+
         $questionId = (int)($answer["questionId"] ?? 0);
         $questionLabel = trim($answer["questionLabel"] ?? "");
         $answerText = trim($answer["answer"] ?? "");
 
-        if (!$questionId || !$questionLabel || !$answerText) {
+        if (!$questionId || !$questionLabel) {
+            continue;
+        }
+
+        $question = $questionsMap[$questionId] ?? null;
+
+        if ($question && $question["question_type"] === "file") {
+
+            if (
+                isset($_FILES["files"]) &&
+                isset($_FILES["files"]["name"][$questionId]) &&
+                $_FILES["files"]["error"][$questionId] === UPLOAD_ERR_OK
+            ) {
+                $originalName = $_FILES["files"]["name"][$questionId];
+                $tmpName = $_FILES["files"]["tmp_name"][$questionId];
+                $fileType = $_FILES["files"]["type"][$questionId];
+                $fileSize = (int)$_FILES["files"]["size"][$questionId];
+
+                $maxMb = (int)($question["max_file_size_mb"] ?? 0);
+
+                if ($maxMb && $fileSize > $maxMb * 1024 * 1024) {
+                    throw new Exception("File too large for: " . $questionLabel);
+                }
+
+                $folderPath = $uploadRoot . "/" . $user["id"] . "/" . $responseId;
+
+                if (!is_dir($folderPath)) {
+                    mkdir($folderPath, 0777, true);
+                }
+
+                $safeName = preg_replace("/[^a-zA-Z0-9._-]/", "_", $originalName);
+                $storedName = time() . "_" . bin2hex(random_bytes(5)) . "_" . $safeName;
+                $filePath = $folderPath . "/" . $storedName;
+
+                if (!move_uploaded_file($tmpName, $filePath)) {
+                    throw new Exception("Failed to upload file: " . $originalName);
+                }
+
+                $fileStmt->execute([
+                    $responseId,
+                    $questionId,
+                    $user["id"],
+                    $originalName,
+                    $storedName,
+                    $filePath,
+                    $fileType,
+                    $fileSize
+                ]);
+
+                $answerText = $originalName;
+                $answer["answer"] = $originalName;
+
+            } else {
+                throw new Exception("File is required for: " . $questionLabel);
+            }
+        }
+
+        if ($answerText === "") {
             continue;
         }
 
@@ -125,36 +203,7 @@ try {
     $pdo->commit();
 
     sendSurveyEmail($user, $survey, $answers);
-    $appScriptData = [
-    "userName" => $user["name"],
-    "userEmail" => $user["email"],
-    "surveyTitle" => $survey["title"]
-];
 
-foreach ($answers as $answer) {
-    $question = $answer["questionLabel"] ?? "";
-    $answerText = $answer["answer"] ?? "";
-
-    if ($question) {
-        $appScriptData[$question] = $answerText;
-    }
-}
-
-$ch = curl_init();
-
-curl_setopt_array($ch, [
-    CURLOPT_URL => "https://script.google.com/macros/s/AKfycby8A1MrVhrB0ebOnDp7p2qJtYz9YH8NcM-KW3NIleEX_meVHvWO2rn_jPtdJXiS79MX/exec",
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode($appScriptData),
-    CURLOPT_HTTPHEADER => [
-        "Content-Type: application/json"
-    ],
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT => 10
-]);
-
-curl_exec($ch);
-curl_close($ch);
     echo json_encode([
         "success" => true,
         "message" => "Survey submitted successfully"
@@ -167,7 +216,7 @@ curl_close($ch);
 
     echo json_encode([
         "success" => false,
-        "message" => "Failed to submit survey"
+        "message" => $e->getMessage()
     ]);
     exit;
 }
