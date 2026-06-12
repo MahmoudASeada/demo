@@ -22,15 +22,24 @@ body{
   font-weight:bold;
   margin-bottom:10px;
 }
-</style>
 
-</head>
-<body>
+.answer{
+  margin-bottom:12px;
+  color:#101828;
+}
 
-<h1>Survey Answers</h1>
+.download-file{
+  display:inline-block;
+  background:#101828;
+  color:#fff;
+  padding:9px 14px;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:bold;
+  font-size:13px;
+}
 
-<button onclick="downloadWord()" style="
-  background:#c9000b;
+.btn{
   color:white;
   border:none;
   padding:12px 18px;
@@ -38,28 +47,34 @@ body{
   font-weight:bold;
   cursor:pointer;
   margin-bottom:25px;
-">
+}
+</style>
+
+</head>
+<body>
+
+<h1>Survey Answers</h1>
+
+<button onclick="downloadWord()" class="btn" style="background:#c9000b;">
   Download Word
 </button>
-<button onclick="downloadExcel()" style="
-  background:#101828;
-  color:white;
-  border:none;
-  padding:12px 18px;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
-  margin-left:10px;
-">
+
+<button onclick="downloadExcel()" class="btn" style="background:#101828;margin-left:10px;">
   Download Excel
 </button>
+
 <div id="answers"></div>
 
 <script>
+const id = new URLSearchParams(location.search).get("id");
+const adminToken = localStorage.getItem("admin_token");
 
-const id =
-new URLSearchParams(location.search).get("id");
+if(!adminToken){
+  window.location.href = "admin-login.html";
+}
+
 let responseAnswers = [];
+
 fetch("api/response-details.php?id=" + id)
 .then(r => r.json())
 .then(data => {
@@ -68,7 +83,16 @@ fetch("api/response-details.php?id=" + id)
 
   let html = "";
 
-  data.answers.forEach(item => {
+  responseAnswers.forEach(item => {
+
+    const fileButton = item.file_id
+      ? `
+        <a class="download-file"
+          href="api/download-survey-file.php?id=${item.file_id}&token=${encodeURIComponent(adminToken)}">
+          Download File: ${item.file_name}
+        </a>
+      `
+      : "";
 
     html += `
       <div class="card">
@@ -76,9 +100,11 @@ fetch("api/response-details.php?id=" + id)
           ${item.question_text}
         </div>
 
-        <div>
-          ${item.answer}
+        <div class="answer">
+          ${item.answer || ""}
         </div>
+
+        ${fileButton}
       </div>
     `;
   });
@@ -86,6 +112,7 @@ fetch("api/response-details.php?id=" + id)
   document.getElementById("answers").innerHTML = html;
 
 });
+
 function downloadWord(){
 
   if(!responseAnswers.length){
@@ -118,7 +145,8 @@ function downloadWord(){
     content += `
       <div class="answer-box">
         <div class="question">${item.question_text}</div>
-        <div>${item.answer}</div>
+        <div>${item.answer || ""}</div>
+        ${item.file_name ? `<div>Attached File: ${item.file_name}</div>` : ""}
       </div>
     `;
   });
@@ -139,13 +167,34 @@ function downloadWord(){
 
   URL.revokeObjectURL(link.href);
 }
-function downloadExcel(){
-  const id = new URLSearchParams(location.search).get("id");
-  const token = localStorage.getItem("admin_token");
 
-  window.location.href =
-    "api/download-response-excel.php?id=" + id +
-    "&token=" + encodeURIComponent(token);
+function downloadExcel(){
+
+  if(!responseAnswers.length){
+    alert("No answers to download");
+    return;
+  }
+
+  let csv = "Question,Answer,Attached File\n";
+
+  responseAnswers.forEach(item => {
+    const question = `"${String(item.question_text || "").replace(/"/g,'""')}"`;
+    const answer = `"${String(item.answer || "").replace(/"/g,'""')}"`;
+    const file = `"${String(item.file_name || "").replace(/"/g,'""')}"`;
+
+    csv += `${question},${answer},${file}\n`;
+  });
+
+  const blob = new Blob([csv], {
+    type:"text/csv;charset=utf-8;"
+  });
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "survey-answers.csv";
+  link.click();
+
+  URL.revokeObjectURL(link.href);
 }
 </script>
 
