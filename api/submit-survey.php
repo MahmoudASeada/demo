@@ -143,9 +143,14 @@ try {
 
                 $maxMb = (int)($question["max_file_size_mb"] ?? 0);
 
-                if ($maxMb && $fileSize > $maxMb * 1024 * 1024) {
-                    throw new Exception("File too large for: " . $questionLabel);
+                if ($maxMb <= 0 || $maxMb > 5) {
+                    $maxMb = 5;
                 }
+
+                if ($maxMb && $fileSize > $maxMb * 1024 * 1024) {
+                    throw new Exception(
+                    "Maximum file size allowed is 5MB for: " . $questionLabel
+                );
 
                 $folderPath = $uploadRoot . "/" . $user["id"] . "/" . $responseId;
 

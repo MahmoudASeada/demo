@@ -567,11 +567,17 @@ function validateSurvey(){
           return;
         }
 
-        const maxMb = Number(field.dataset.maxSize || 0);
+        let maxMb = Number(field.dataset.maxSize || 0);
 
-        if(maxMb && field.files[0].size > maxMb * 1024 * 1024){
+        if(maxMb <= 0 || maxMb > 5){
+          maxMb = 5;
+        }
+
+        if(field.files[0].size > maxMb * 1024 * 1024){
           field.classList.add("error-field");
-          alert("File is too large. Max size is " + maxMb + " MB");
+          document.getElementById("status").classList.add("error");
+          document.getElementById("status").innerText =
+            "Maximum file size allowed is " + maxMb + "MB.";
           valid = false;
           return;
         }
