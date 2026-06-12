@@ -148,9 +148,10 @@ try {
                 }
 
                 if ($maxMb && $fileSize > $maxMb * 1024 * 1024) {
-                    throw new Exception(
-                    "Maximum file size allowed is 5MB for: " . $questionLabel
-                );
+    throw new Exception(
+        "Maximum file size allowed is 5MB for: " . $questionLabel
+    );
+}
 
                 $folderPath = $uploadRoot . "/" . $user["id"] . "/" . $responseId;
 
