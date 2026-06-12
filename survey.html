@@ -591,6 +591,22 @@ function validateSurvey(){
 
   return valid;
 }
+function insertChip(questionId, text){
+  const field = document.querySelector(`[data-question-id="${questionId}"]`);
+
+  if(!field) return;
+
+  if(field.type === "file") return;
+
+  if(field.value.trim()){
+    field.value += ", " + text;
+  }else{
+    field.value = text;
+  }
+
+  field.classList.remove("error-field");
+  saveToLocalStorage();
+}
 async function submitSurvey(){
 
   const status = document.getElementById("status");
