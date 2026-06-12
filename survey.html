@@ -607,11 +607,14 @@ async function submitSurvey(){
   }
 
   if(!validateSurvey()){
-    status.classList.add("error");
-    status.innerText =
-    "Please answer all required questions.";
-    return;
+  status.classList.add("error");
+
+  if(status.innerText.indexOf("Maximum file size") === -1){
+    status.innerText = "Please answer all required questions.";
   }
+
+  return;
+}
 
   const fields = document.querySelectorAll(
     "#questionsWrap input, #questionsWrap textarea"
