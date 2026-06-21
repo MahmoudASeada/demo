@@ -686,13 +686,18 @@ async function submitSurvey(){
       
       // هنا نتحقق إذا كان المستخدم وضع علامة صح أم لا
       // إذا وضع صح، نرسل علامة الصح أو النص "موافق"، وإذا تركه فارغاً نرسل نص فارغ ""
-      const checkboxAnswer = field.checked ? "✓ موافق" : "";
-
-      answers.push({
-        questionId: field.dataset.questionId,
-        questionLabel: field.dataset.questionLabel,
-        answer: checkboxAnswer
-      });
+      // التحقق إذا كان الخيار معلماً عليه (Checked)
+      if (field.checked) {
+        // إذا وضع علامة صح، نرسل إيموجي الصح الأخضر المميز لملف الإكسيل
+        answers.push({
+          questionId: field.dataset.questionId,
+          questionLabel: field.dataset.questionLabel,
+          answer: "✅" 
+        });
+      } else {
+        // إذا تركه فارغاً، لن نقوم بعمل push نهائياً (كأنه مش موجود)
+        // وبذلك لن يرسل للداتابيز ولن يظهر في الإكسيل
+      }
 
     } else {
 
