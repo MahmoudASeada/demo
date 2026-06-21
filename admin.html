@@ -971,10 +971,10 @@ function addQuestion(value = "", type = "input", chips = "", maxFileSizeMb = "")
     <input type="text" class="questionText" placeholder="Question text" value="${value}">
 
     <select class="questionType">
-      <option value="input" ${type === "input" ? "selected" : ""}>Input (حقل نصي عادي)</option>
-      <option value="textarea" ${type === "textarea" ? "selected" : ""}>Textarea (نص طويل)</option>
-      <option value="file" ${type === "file" ? "selected" : ""}>File Upload (رفع ملف)</option>
-      <option value="checkbox" ${type === "checkbox" ? "selected" : ""}>Checkbox (مربع اختيار موافقة)</option>
+      <option value="input" ${type === "input" ? "selected" : ""}>Input</option>
+      <option value="textarea" ${type === "textarea" ? "selected" : ""}>Textarea</option>
+      <option value="file" ${type === "file" ? "selected" : ""}>File Upload</option>
+      <option value="checkbox" ${type === "checkbox" ? "selected" : ""}>Checkbox</option>
     </select>
 
     <button class="remove-btn" type="button">Remove</button>

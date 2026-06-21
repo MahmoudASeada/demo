@@ -407,17 +407,16 @@ function renderQuestions(){
     }else if(q.question_type === "checkbox"){
       // هنا كود الـ Checkbox الجديد ليعرض المربع بجانب النص بشكل منسق
       inputHTML = `
-        <div style="display:flex; align-items:center; gap:12px; padding:10px 0;">
-          <input
-            type="checkbox"
-            class="survey-checkbox-input"
-            data-question-id="${q.id}"
-            data-question-label="${q.question_text}"
-            data-required="${required ? "1" : "0"}"
-            style="width:24px; height:24px; cursor:pointer; padding-left:0; margin-left:10px;"
-          >
-          <span style="font-size:15px; color:#101828; font-weight:500;">أوافق على هذه الجملة / العبارة</span>
-        </div>
+        <div style="display:flex; align-items:center; padding:10px 0;">
+        <input
+          type="checkbox"
+          class="survey-checkbox-input"
+          data-question-id="${q.id}"
+          data-question-label="${q.question_text}"
+          data-required="${required ? "1" : "0"}"
+          style="width:26px; height:26px; cursor:pointer; margin:0;"
+        >
+      </div>
       `;
     }else if(q.question_type === "textarea"){
       inputHTML = `
