@@ -244,21 +244,24 @@ if ($method === "POST" || $method === "PUT") {
                 continue;
             }
 
-            if (!in_array($questionType, ["input", "textarea", "file"])) {
+            // 🔽 قمنا بإضافة "checkbox" هنا لكي يسمح الـ PHP بحفظه في قاعدة البيانات 🔽
+            if (!in_array($questionType, ["input", "textarea", "file", "checkbox"])) {
                 $questionType = "input";
             }
+            
             $maxFileSizeMb = isset($question["maxFileSizeMb"]) && $question["maxFileSizeMb"] !== ""
             ? (int)$question["maxFileSizeMb"]
             : null;
+
             $qStmt->execute([
-            $surveyId,
-            $questionText,
-            $questionType,
-            1,
-            $index + 1,
-            prepareChips($chips),
-            $maxFileSizeMb
-        ]);
+                $surveyId,
+                $questionText,
+                $questionType, // هنا سيتم حفظ كلمة checkbox بنجاح في الداتابيز
+                1,
+                $index + 1,
+                prepareChips($chips),
+                $maxFileSizeMb
+            ]);
         }
 
         $pdo->commit();
