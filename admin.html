@@ -966,67 +966,40 @@ function addQuestion(value = "", type = "input", chips = "", maxFileSizeMb = "")
   const div = document.createElement("div");
   div.className = "question-box";
 
+  // 🔽 هنا الـ HTML الصحيح والنظيف الخاص بلوحة الأدمن 🔽
   div.innerHTML = `
-    if(q.question_type === "file"){
-      inputHTML = `
-        <input
-          type="file"
-          data-question-id="${q.id}"
-          data-question-label="${q.question_text}"
-          data-required="${required ? "1" : "0"}"
-          data-max-size="${q.max_file_size_mb || ""}"
-          required
-          style="padding-left:16px;"
-        >
-        ${
-          q.max_file_size_mb
-          ? `<div style="font-size:12px;color:#667085;margin-top:6px;">Max file size: ${q.max_file_size_mb} MB</div>`
-          : ""
-        }
-      `;
-    }else if(q.question_type === "checkbox"){
-      // 🔽 كود الـ Checkbox المنسق والمحمي من تأثير الـ CSS العام 🔽
-      inputHTML = `
-        <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: #f8fafc; border: 1px solid #dfe3ea; border-radius: 14px; margin-top: 8px; width: 100%;">
-          <input
-            type="checkbox"
-            data-question-id="${q.id}"
-            data-question-label="${q.question_text}"
-            data-required="${required ? "1" : "0"}"
-            style="width: 24px !important; height: 24px !important; min-height: auto !important; padding: 0 !important; margin: 0 !important; cursor: pointer; display: inline-block;"
-          >
-          <span style="font-size: 15px; color: #344054; font-weight: 600; user-select: none;">أوافق على العبارة المذكورة أعلاه</span>
-        </div>
-      `;
-    }else if(q.question_type === "textarea"){
-      inputHTML = `
-        <textarea
-          data-question-id="${q.id}"
-          data-question-label="${q.question_text}"
-          data-required="${required ? "1" : "0"}"
-          placeholder="Type your answer here..."
-          required
-        ></textarea>
-      `;
-    }else{
-      // هذا هو الـ Input العادي (للنوع "input" أو أي نوع غير معروف)
-      inputHTML = `
-        <input
-          type="text"
-          data-question-id="${q.id}"
-          data-question-label="${q.question_text}"
-          data-required="${required ? "1" : "0"}"
-          placeholder="Type your answer here..."
-          required
-        >
-      `;
-    }
+    <input type="text" class="questionText" placeholder="Question text" value="${value}">
 
+    <select class="questionType">
+      <option value="input" ${type === "input" ? "selected" : ""}>Input (حقل نصي عادي)</option>
+      <option value="textarea" ${type === "textarea" ? "selected" : ""}>Textarea (نص طويل)</option>
+      <option value="file" ${type === "file" ? "selected" : ""}>File Upload (رفع ملف)</option>
+      <option value="checkbox" ${type === "checkbox" ? "selected" : ""}>Checkbox (مربع اختيار موافقة)</option>
+    </select>
+
+    <button class="remove-btn" type="button">Remove</button>
+
+    <input 
+      type="text" 
+      class="questionChips question-chips-input" 
+      placeholder="Quick keywords: Quick Service, Friendly Staff, High Quality"
+      value="${chips}"
+    >
+    <input 
+      type="number" 
+      class="questionMaxFileSize question-chips-input" 
+      placeholder="Max file size MB"
+      value="${maxFileSizeMb || ""}"
+    >
+  `;
+
+  // ربط زر الحذف بالوظيفة الخاصة به
   div.querySelector(".remove-btn").addEventListener("click", function(){
     div.remove();
     saveDraft();
   });
 
+  // حفظ مسودة تلقائياً عند تغيير أي قيمة
   div.querySelectorAll("input, select").forEach(el => {
     el.addEventListener("input", saveDraft);
     el.addEventListener("change", saveDraft);
@@ -1035,6 +1008,7 @@ function addQuestion(value = "", type = "input", chips = "", maxFileSizeMb = "")
   wrap.appendChild(div);
   saveDraft();
 }
+
 async function saveSurvey(){
 
   const title = document.getElementById("surveyTitle").value.trim();
