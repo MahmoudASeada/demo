@@ -327,7 +327,12 @@ async function loadSurvey(){
 }
 
 function renderQuestions(){
+  const wrap = document.getElementById("questionsWrap");
+  
+  // 🔽 أضف هذا السطر هنا لمراقبة الأنواع في الـ Console
+  console.log("الأسئلة القادمة من الـ API:", loadedQuestions); 
 
+  if(!loadedQuestions.length){
   const wrap = document.getElementById("questionsWrap");
 
   if(!loadedQuestions.length){
@@ -707,7 +712,7 @@ async function submitSurvey(){
     }
 
   });
-  
+
   formData.append(
     "answers",
     JSON.stringify(answers)
