@@ -148,10 +148,10 @@ try {
                 }
 
                 if ($maxMb && $fileSize > $maxMb * 1024 * 1024) {
-    throw new Exception(
-        "Maximum file size allowed is 5MB for: " . $questionLabel
-    );
-}
+                    throw new Exception(
+                        "Maximum file size allowed is 5MB for: " . $questionLabel
+                    );
+                }
 
                 $folderPath = $uploadRoot . "/" . $user["id"] . "/" . $responseId;
 
@@ -186,9 +186,18 @@ try {
             }
         }
 
-        if ($answerText === "") {
+        // --- [التعديل هنا] ---
+        // إذا كان السؤال نوعه Checkbox ولم يتم اختياره، نضع له نص صريح بدلاً من إهماله تماماً
+        if ($question && $question["question_type"] === "checkbox" && $answerText === "") {
+            $answerText = "غير موافق";
+            $answer["answer"] = "غير موافق";
+        }
+
+        // إذا كان السؤال عادياً وفارغاً نستمر في تخطيه كالعادة
+        if ($answerText === "" && ($question && $question["question_type"] !== "checkbox")) {
             continue;
         }
+        // ---------------------
 
         $answerStmt->execute([
             $responseId,
@@ -209,36 +218,38 @@ try {
     $pdo->commit();
 
     sendSurveyEmail($user, $survey, $answers);
+    
     $appScriptData = [
-    "userName" => $user["name"],
-    "userEmail" => $user["email"],
-    "surveyTitle" => $survey["title"]
-];
+        "userName" => $user["name"],
+        "userEmail" => $user["email"],
+        "surveyTitle" => $survey["title"]
+    ];
 
-foreach ($answers as $answer) {
-    $question = $answer["questionLabel"] ?? "";
-    $answerText = $answer["answer"] ?? "";
+    foreach ($answers as $answer) {
+        $question = $answer["questionLabel"] ?? "";
+        $answerText = $answer["answer"] ?? "";
 
-    if ($question) {
-        $appScriptData[$question] = $answerText;
+        if ($question) {
+            $appScriptData[$question] = $answerText;
+        }
     }
-}
 
-$ch = curl_init();
+    $ch = curl_init();
 
-curl_setopt_array($ch, [
-    CURLOPT_URL => "https://script.google.com/macros/s/AKfycby8A1MrVhrB0ebOnDp7p2qJtYz9YH8NcM-KW3NIleEX_meVHvWO2rn_jPtdJXiS79MX/exec",
-    CURLOPT_POST => true,
-    CURLOPT_POSTFIELDS => json_encode($appScriptData),
-    CURLOPT_HTTPHEADER => [
-        "Content-Type: application/json"
-    ],
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT => 10
-]);
+    curl_setopt_array($ch, [
+        CURLOPT_URL => "https://script.google.com/macros/s/AKfycby8A1MrVhrB0ebOnDp7p2qJtYz9YH8NcM-KW3NIleEX_meVHvWO2rn_jPtdJXiS79MX/exec",
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($appScriptData),
+        CURLOPT_HTTPHEADER => [
+            "Content-Type: application/json"
+        ],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 10
+    ]);
 
-curl_exec($ch);
-curl_close($ch);
+    curl_exec($ch);
+    curl_close($ch);
+    
     echo json_encode([
         "success" => true,
         "message" => "Survey submitted successfully"

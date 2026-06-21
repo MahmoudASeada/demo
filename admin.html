@@ -939,6 +939,7 @@ function addEditQuestion(value = "", type = "input", chips = ""){
     <select class="editQuestionType">
       <option value="input" ${type === "input" ? "selected" : ""}>Input</option>
       <option value="textarea" ${type === "textarea" ? "selected" : ""}>Textarea</option>
+      <option value="checkbox" ${type === "checkbox" ? "selected" : ""}>Checkbox (مربع اختيار)</option>
     </select>
 
     <button class="remove-btn" type="button" onclick="this.parentElement.remove()">Remove</button>
@@ -972,6 +973,7 @@ function addQuestion(value = "", type = "input", chips = "", maxFileSizeMb = "")
       <option value="input" ${type === "input" ? "selected" : ""}>Input</option>
       <option value="textarea" ${type === "textarea" ? "selected" : ""}>Textarea</option>
       <option value="file" ${type === "file" ? "selected" : ""}>File Upload</option>
+      <option value="checkbox" ${type === "checkbox" ? "selected" : ""}>Checkbox (مربع اختيار)</option>
     </select>
 
     <button class="remove-btn" type="button">Remove</button>
@@ -1003,7 +1005,6 @@ function addQuestion(value = "", type = "input", chips = "", maxFileSizeMb = "")
   wrap.appendChild(div);
   saveDraft();
 }
-
 async function saveSurvey(){
 
   const title = document.getElementById("surveyTitle").value.trim();

@@ -253,7 +253,11 @@ function saveToLocalStorage(){
   document
     .querySelectorAll("#questionsWrap input, #questionsWrap textarea")
     .forEach(field => {
-      data[field.dataset.questionId] = field.value;
+      if(field.type === "checkbox"){
+        data[field.dataset.questionId] = field.checked ? "checked" : "unchecked";
+      } else {
+        data[field.dataset.questionId] = field.value;
+      }
     });
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -270,10 +274,15 @@ function loadFromLocalStorage(){
     const field = document.querySelector(`[data-question-id="${key}"]`);
 
     if(field){
-      field.value = data[key];
+      if(field.type === "checkbox"){
+        field.checked = data[key] === "checked";
+      } else {
+        field.value = data[key];
+      }
     }
   });
 }
+
 async function loadSurvey(){
 
   const status = document.getElementById("status");
@@ -396,6 +405,21 @@ function renderQuestions(){
           : ""
         }
       `;
+    }else if(q.question_type === "checkbox"){
+      // هنا كود الـ Checkbox الجديد ليعرض المربع بجانب النص بشكل منسق
+      inputHTML = `
+        <div style="display:flex; align-items:center; gap:12px; padding:10px 0;">
+          <input
+            type="checkbox"
+            class="survey-checkbox-input"
+            data-question-id="${q.id}"
+            data-question-label="${q.question_text}"
+            data-required="${required ? "1" : "0"}"
+            style="width:24px; height:24px; cursor:pointer; padding-left:0; margin-left:10px;"
+          >
+          <span style="font-size:15px; color:#101828; font-weight:500;">أوافق على هذه الجملة / العبارة</span>
+        </div>
+      `;
     }else if(q.question_type === "textarea"){
       inputHTML = `
         <textarea
@@ -429,7 +453,7 @@ function renderQuestions(){
         <div class="input-area">
           ${inputHTML}
           ${
-            q.question_type !== "file"
+            q.question_type !== "file" && q.question_type !== "checkbox"
             ? `<button class="mic-btn" type="button" onclick="toggleVoice('${q.id}', this)">🎙</button>`
             : ""
           }
@@ -660,7 +684,19 @@ async function submitSurvey(){
           : ""
       });
 
-    }else{
+    } else if(field.type === "checkbox") {
+      
+      // هنا نتحقق إذا كان المستخدم وضع علامة صح أم لا
+      // إذا وضع صح، نرسل علامة الصح أو النص "موافق"، وإذا تركه فارغاً نرسل نص فارغ ""
+      const checkboxAnswer = field.checked ? "✓ موافق" : "";
+
+      answers.push({
+        questionId: field.dataset.questionId,
+        questionLabel: field.dataset.questionLabel,
+        answer: checkboxAnswer
+      });
+
+    } else {
 
       answers.push({
         questionId: field.dataset.questionId,
@@ -671,7 +707,7 @@ async function submitSurvey(){
     }
 
   });
-
+  
   formData.append(
     "answers",
     JSON.stringify(answers)
