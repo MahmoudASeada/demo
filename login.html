@@ -285,10 +285,28 @@ label{
 
     <button class="submit" onclick="loginUser()">Log In →</button>
     <div class="switch-text">
-      New to the platform?
-      <a href="#" onclick="showRegister();return false;">Request Admin Access ↗</a>
-    </div>
-    <div class="status" id="loginStatus"></div>
+  New to the platform?
+  <a href="#" onclick="showRegister();return false;">Request Admin Access ↗</a>
+</div>
+
+<div style="text-align:center; margin-top:15px;">
+  <a
+    href="admin-login.html"
+    style="
+      font-size:12px;
+      color:#777;
+      text-decoration:none;
+      opacity:.6;
+      transition:.3s;
+    "
+    onmouseover="this.style.opacity='1'"
+    onmouseout="this.style.opacity='.6'"
+  >
+    Staff Access
+  </a>
+</div>
+
+<div class="status" id="loginStatus"></div>
 
   </div>
 
