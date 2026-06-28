@@ -1340,6 +1340,32 @@ async function viewSurveyResponses(surveyId){
     alert("Connection error.");
   }
 }
+function addChecklistItem(value = ""){
+
+    const wrap = document.getElementById("checklistWrap");
+
+    const div = document.createElement("div");
+    div.className = "question-box";
+
+    div.innerHTML = `
+        <input
+            type="text"
+            class="checklistText"
+            placeholder="Checklist item"
+            value="${value}"
+        >
+
+        <button class="remove-btn" type="button">
+            Remove
+        </button>
+    `;
+
+    div.querySelector(".remove-btn").addEventListener("click", function(){
+        div.remove();
+    });
+
+    wrap.appendChild(div);
+}
 </script>
 <div class="assign-modal" id="assignModal">
   <div class="assign-box">
