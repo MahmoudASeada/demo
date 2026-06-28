@@ -518,16 +518,62 @@ td{
 </a>
 </div>
 <div class="grid">
-  <h3>Checklist</h3>
-<p>Items that users must review before starting the survey.</p>
+  <div class="panel">
+    <div class="panel-head">
+        <h1>Create Checklist</h1>
+        <p>Create a checklist that users must complete before starting the survey.</p>
+    </div>
 
-<div id="checklistWrap"></div>
+    <div class="form">
 
-<button type="button"
-        class="secondary-btn"
-        onclick="addChecklistItem()">
-    + Add Checklist Item
-</button>
+        <div class="form-row">
+
+            <div>
+                <label>Checklist Title</label>
+                <input
+                    type="text"
+                    id="checklistTitle"
+                    placeholder="Checklist Title">
+            </div>
+
+            <div>
+                <label>Assigned User</label>
+                <select id="checklistAssignedUser">
+                    <option value="">Loading users...</option>
+                </select>
+            </div>
+
+        </div>
+
+        <label>Checklist Items</label>
+
+        <div id="checklistWrap"></div>
+
+        <div class="form-actions">
+
+            <button
+                type="button"
+                class="secondary-btn"
+                onclick="addChecklistItem()">
+                + Add Checklist Item
+            </button>
+
+            <button
+                type="button"
+                class="primary-btn"
+                onclick="saveChecklist()">
+                Create Checklist
+            </button>
+
+        </div>
+
+        <div
+            class="status-text"
+            id="checklistStatus">
+        </div>
+
+    </div>
+</div>
   <div class="panel">
     <div class="panel-head">
       <h1>Create Survey</h1>
@@ -1319,6 +1365,8 @@ async function saveCurrentArticleUsers(){
   }
 }
 loadSurveyData();
+document.getElementById("checklistAssignedUser").innerHTML =
+document.getElementById("assignedUser").innerHTML;
 async function viewSurveyResponses(surveyId){
   try{
     const res = await fetch("api/admin-responses.php?survey_id=" + surveyId,{
@@ -1339,6 +1387,60 @@ async function viewSurveyResponses(surveyId){
   }catch(error){
     alert("Connection error.");
   }
+}
+function addChecklistItem(value = ""){
+
+    const wrap = document.getElementById("checklistWrap");
+
+    const div = document.createElement("div");
+    div.className = "question-box";
+
+    div.innerHTML = `
+        <input
+            type="text"
+            class="checklistText"
+            placeholder="Checklist Item"
+            value="${value}">
+
+        <button
+            class="remove-btn"
+            type="button">
+            Remove
+        </button>
+    `;
+
+    div.querySelector(".remove-btn").onclick = function(){
+        div.remove();
+    };
+
+    wrap.appendChild(div);
+}
+function saveChecklist(){
+
+    const title =
+        document.getElementById("checklistTitle").value.trim();
+
+    const assignedUserId =
+        document.getElementById("checklistAssignedUser").value;
+
+    const items = [...document.querySelectorAll(".checklistText")]
+        .map(i => i.value.trim())
+        .filter(Boolean);
+
+    if(!title || !assignedUserId || !items.length){
+        document.getElementById("checklistStatus").innerText =
+        "Please fill all fields.";
+        return;
+    }
+
+    console.log({
+        title,
+        assignedUserId,
+        items
+    });
+
+    document.getElementById("checklistStatus").innerText =
+    "Checklist Ready.";
 }
 function addChecklistItem(value = ""){
 
