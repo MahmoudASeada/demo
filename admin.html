@@ -48,6 +48,7 @@ body{
   border-radius:20px;
   box-shadow:0 14px 35px rgba(0,0,0,.06);
   overflow:hidden;
+  margin-bottom: 20px;
 }
 
 .panel-head{
@@ -101,15 +102,6 @@ textarea{
 input:focus,select:focus,textarea:focus{
   border-color:#c9000b;
   box-shadow:0 0 0 3px rgba(201,0,11,.08);
-}
-
-/* ستايل مخصص للقسم المستقل الجديد */
-.checkbox-section {
-  background: #fdfdfd;
-  border: 1px dashed #dfe3ea;
-  border-radius: 14px;
-  padding: 18px;
-  margin-bottom: 22px;
 }
 
 .question-box{
@@ -503,41 +495,39 @@ td{
     Logout
   </button>
 </div>
+
 <div style="margin-bottom:25px;display:flex;gap:12px;flex-wrap:wrap;">
   <a href="admin.html" style="background:#c9000b;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
-  Surveys
-</a>
-
-<a href="responses.html" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
-  Responses
-</a>
-
-<a href="articles-assignment.html" id="articlesAssignmentLink" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
-  Articles Assignment
-</a>
-
-<a href="users-management.html" id="usersManagementLink" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
-  Users Management
-</a>
-<a href="sources-files.html" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
-  Sources & Files
-</a>
+    Surveys
+  </a>
+  <a href="responses.html" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
+    Responses
+  </a>
+  <a href="articles-assignment.html" id="articlesAssignmentLink" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
+    Articles Assignment
+  </a>
+  <a href="users-management.html" id="usersManagementLink" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
+    Users Management
+  </a>
+  <a href="sources-files.html" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
+    Sources & Files
+  </a>
 </div>
+
 <div class="grid">
 
+  <!-- 1. لوحة تفاصيل الـ Survey الأساسية -->
   <div class="panel">
     <div class="panel-head">
       <h1>Create Survey</h1>
-      <p>Assign a survey and custom questions to a specific approved user.</p>
+      <p>Assign a survey metadata to a specific approved user.</p>
     </div>
-
     <div class="form">
       <div class="form-row">
         <div>
           <label>Survey Title</label>
           <input type="text" id="surveyTitle" placeholder="Customer Satisfaction Q3">
         </div>
-
         <div>
           <label>Assigned User</label>
           <select id="assignedUser">
@@ -545,14 +535,24 @@ td{
           </select>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="checkbox-section">
-        <label style="color: #c9000b;">Checkbox Question (جملة مربع الاختيار - مستقلة)</label>
-        <input type="text" id="surveyCheckboxQuestion" placeholder="مثال: الاهلى افضل فريق عربى (اتركه فارغاً إذا لم ترغب به)">
+  <!-- 2. 🟢 القسم المنفصل تماماً والمستقل [Create Questions] 🟢 -->
+  <div class="panel">
+    <div class="panel-head">
+      <h1 style="color: #c9000b;">Create Questions</h1>
+      <p>Add custom fields, file inputs, or a persistent checkbox option to this survey.</p>
+    </div>
+    <div class="form">
+      
+      <!-- حقل الـ Checkbox المنفصل والمستقل تماماً داخل هذا القسم -->
+      <div style="background: #fdfdfd; border: 1px dashed #dfe3ea; padding: 20px; border-radius: 14px; margin-bottom: 25px;">
+        <label style="color: #101828; font-weight: bold;">Persistent Checkbox Statement (جملة مربع الاختيار الثابتة)</label>
+        <input type="text" id="surveyCheckboxQuestion" placeholder="مثال: الاهلى افضل فريق عربى (اتركه فارغاً إن لم ترغب به)">
       </div>
 
-      <label>Questions (باقي الأسئلة)</label>
-
+      <label>Dynamic Survey Fields (باقي أسئلة الاستبيان)</label>
       <div id="questionsWrap"></div>
 
       <div class="form-actions">
@@ -561,7 +561,7 @@ td{
         </button>
 
         <button class="primary-btn" id="surveySubmitBtn" onclick="saveSurvey()" type="button">
-          Create Survey
+          Create & Submit Survey
         </button>
 
         <button class="secondary-btn" id="cancelEditBtn" onclick="cancelEditSurvey()" type="button" style="display:none;">
@@ -573,30 +573,28 @@ td{
     </div>
   </div>
 
+  <!-- 3. جدول استعراض الـ Surveys -->
   <div class="panel">
     <div class="panel-head">
       <h1>Surveys List</h1>
       <p>All surveys assigned to approved users.</p>
       
       <div class="survey-filters">
-
-  <div class="filter-box">
-    <label>Filter by User</label>
-    <select id="surveyUserFilter" onchange="renderSurveysTable()">
-      <option value="all">All Users</option>
-    </select>
-  </div>
-
-  <div class="filter-box">
-    <label>Filter by Status</label>
-    <select id="surveyStatusFilter" onchange="renderSurveysTable()">
-      <option value="all">All Status</option>
-      <option value="pending">Pending</option>
-      <option value="completed">Completed</option>
-    </select>
-  </div>
-
-</div>
+        <div class="filter-box">
+          <label>Filter by User</label>
+          <select id="surveyUserFilter" onchange="renderSurveysTable()">
+            <option value="all">All Users</option>
+          </select>
+        </div>
+        <div class="filter-box">
+          <label>Filter by Status</label>
+          <select id="surveyStatusFilter" onchange="renderSurveysTable()">
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
     </div>
 
     <table>
@@ -611,7 +609,6 @@ td{
           <th>Actions</th>
         </tr>
       </thead>
-
       <tbody id="surveysTable">
         <tr>
           <td colspan="7" class="empty">Loading surveys...</td>
@@ -620,6 +617,7 @@ td{
     </table>
   </div>
   
+</div>
 
 <script>
 const adminToken = localStorage.getItem("admin_token");
@@ -628,89 +626,13 @@ const adminUser = JSON.parse(localStorage.getItem("admin_user") || "{}");
 if(adminUser.role !== "super_admin"){
   const usersLink = document.getElementById("usersManagementLink");
   const articlesLink = document.getElementById("articlesAssignmentLink");
-
-  if(usersLink){
-    usersLink.style.display = "none";
-  }
-
-  if(articlesLink){
-    articlesLink.style.display = "none";
-  }
+  if(usersLink) usersLink.style.display = "none";
+  if(articlesLink) articlesLink.style.display = "none";
 }
 if(!adminToken){
   window.location.href = "admin-login.html";
 }
 
-async function loadUsers(){
-
-  const table = document.getElementById("usersTable");
-
-  try{
-
-    const res = await fetch("api/admin-users.php",{
-      headers:{
-        Authorization:"Bearer " + adminToken
-      }
-    });
-
-    const data = await res.json();
-
-    if(!data.success){
-      localStorage.removeItem("admin_token");
-      window.location.href = "admin-login.html";
-      return;
-    }
-
-    if(!data.users.length){
-      table.innerHTML = `
-        <tr>
-          <td colspan="6" class="empty">No users found.</td>
-        </tr>
-      `;
-      return;
-    }
-
-    table.innerHTML = data.users.map(user => {
-
-      const approved = Number(user.approved) === 1;
-
-      return `
-        <tr>
-          <td>#${user.id}</td>
-          <td>${user.name}</td>
-          <td>${user.email}</td>
-          <td>
-            <span class="badge ${approved ? "approved" : "pending"}">
-              ${approved ? "Approved" : "Pending"}
-            </span>
-          </td>
-          <td>${user.created_at}</td>
-          <td>
-  <div class="actions">
-    ${
-      approved
-      ? `<button class="btn approve-btn" disabled>Approved</button>`
-      : `<button class="btn approve-btn" onclick="updateUser(${user.id}, 'approve')">Approve</button>`
-    }
-    <button class="btn reject-btn" onclick="updateUser(${user.id}, 'reject')">Reject</button>
-  </div>
-</td>
-        </tr>
-      `;
-
-    }).join("");
-
-  }catch(error){
-
-    table.innerHTML = `
-      <tr>
-        <td colspan="6" class="empty">Connection error.</td>
-      </tr>
-    `;
-
-  }
-
-}
 let allAdminSurveys = [];
 let editingSurveyId = null;
 const DRAFT_KEY = `survey_draft_${adminUser.id || "admin"}`;
@@ -725,30 +647,24 @@ function getQuestionsData(){
 
 function saveDraft(){
   if(editingSurveyId) return;
-
   const draft = {
     title: document.getElementById("surveyTitle").value,
     assignedUserId: document.getElementById("assignedUser").value,
-    checkboxQuestion: document.getElementById("surveyCheckboxQuestion").value, // حفظ المسودة للـ checkbox
+    checkboxQuestion: document.getElementById("surveyCheckboxQuestion").value,
     questions: getQuestionsData()
   };
-
   localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
 }
 
 function loadDraft(){
   const saved = localStorage.getItem(DRAFT_KEY);
   if(!saved) return;
-
   try{
     const draft = JSON.parse(saved);
-
     document.getElementById("surveyTitle").value = draft.title || "";
     document.getElementById("assignedUser").value = draft.assignedUserId || "";
-    document.getElementById("surveyCheckboxQuestion").value = draft.checkboxQuestion || ""; // استرجاع المسودة
-
+    document.getElementById("surveyCheckboxQuestion").value = draft.checkboxQuestion || "";
     document.getElementById("questionsWrap").innerHTML = "";
-
     if(draft.questions && draft.questions.length){
       draft.questions.forEach(q => addQuestion(q.text, q.type, q.chips));
     }else{
@@ -760,46 +676,27 @@ function loadDraft(){
 function clearDraft(){
   localStorage.removeItem(DRAFT_KEY);
 }
-async function loadSurveyData(){
 
+async function loadSurveyData(){
   const userSelect = document.getElementById("assignedUser");
   const surveysTable = document.getElementById("surveysTable");
   const surveyUserFilter = document.getElementById("surveyUserFilter");
 
   try{
-
     const res = await fetch("api/admin-surveys.php",{
-      headers:{
-        Authorization:"Bearer " + adminToken
-      }
+      headers:{ Authorization:"Bearer " + adminToken }
     });
-
     const data = await res.json();
 
     if(!data.success){
       userSelect.innerHTML = `<option value="">Unable to load users</option>`;
-      surveysTable.innerHTML = `
-        <tr>
-          <td colspan="7" class="empty">Unable to load surveys.</td>
-        </tr>
-      `;
+      surveysTable.innerHTML = `<tr><td colspan="7" class="empty">Unable to load surveys.</td></tr>`;
       return;
     }
 
     if(data.users.length){
-      userSelect.innerHTML = `
-        <option value="">Select user</option>
-        ${data.users.map(user => `
-          <option value="${user.id}">${user.name} - ${user.email}</option>
-        `).join("")}
-      `;
-
-      surveyUserFilter.innerHTML = `
-        <option value="all">All Users</option>
-        ${data.users.map(user => `
-          <option value="${user.id}">${user.name} - ${user.email}</option>
-        `).join("")}
-      `;
+      userSelect.innerHTML = `<option value="">Select user</option>` + data.users.map(user => `<option value="${user.id}">${user.name} - ${user.email}</option>`).join("");
+      surveyUserFilter.innerHTML = `<option value="all">All Users</option>` + data.users.map(user => `<option value="${user.id}">${user.name} - ${user.email}</option>`).join("");
     }else{
       userSelect.innerHTML = `<option value="">No approved users</option>`;
       surveyUserFilter.innerHTML = `<option value="all">All Users</option>`;
@@ -809,38 +706,25 @@ async function loadSurveyData(){
     renderSurveysTable();
     loadDraft();
   }catch(error){
-
     userSelect.innerHTML = `<option value="">Connection error</option>`;
-    surveysTable.innerHTML = `
-      <tr>
-        <td colspan="7" class="empty">Connection error.</td>
-      </tr>
-    `;
-
+    surveysTable.innerHTML = `<tr><td colspan="7" class="empty">Connection error.</td></tr>`;
   }
 }
-function renderSurveysTable(){
 
+function renderSurveysTable(){
   const surveysTable = document.getElementById("surveysTable");
   const filterValue = document.getElementById("surveyUserFilter").value;
   const statusFilter = document.getElementById("surveyStatusFilter").value;
 
   let surveys = allAdminSurveys;
-
   if(filterValue !== "all"){
     surveys = allAdminSurveys.filter(s => Number(s.assigned_user_id) === Number(filterValue));
   }
   if(statusFilter !== "all"){
-  surveys = surveys.filter(
-    s => s.status === statusFilter
-  );
-}
+    surveys = surveys.filter(s => s.status === statusFilter);
+  }
   if(!surveys.length){
-    surveysTable.innerHTML = `
-      <tr>
-        <td colspan="7" class="empty">No surveys found.</td>
-      </tr>
-    `;
+    surveysTable.innerHTML = `<tr><td colspan="7" class="empty">No surveys found.</td></tr>`;
     return;
   }
 
@@ -850,43 +734,27 @@ function renderSurveysTable(){
       <td>${survey.title}</td>
       <td>${survey.user_name}</td>
       <td>${survey.user_email}</td>
-      <td>
-  <span class="badge ${survey.status === 'completed' ? 'approved' : 'pending'}">
-    ${survey.status}
-  </span>
-</td>
+      <td><span class="badge ${survey.status === 'completed' ? 'approved' : 'pending'}">${survey.status}</span></td>
       <td>${survey.created_at}</td>
       <td>
-  <div class="actions">
-    ${
-      survey.status === "pending"
-      ? `<button class="btn approve-btn" onclick="editSurvey(${survey.id})">Edit</button>`
-      : ``
-    }
-
-    ${
-      survey.status === "completed"
-      ? `<button class="btn reject-btn" onclick="viewSurveyResponses(${survey.id})">View Responses</button>`
-      : ``
-    }
-  </div>
-</td>
+        <div class="actions">
+          ${survey.status === "pending" ? `<button class="btn approve-btn" onclick="editSurvey(${survey.id})">Edit</button>` : ``}
+          ${survey.status === "completed" ? `<button class="btn reject-btn" onclick="viewSurveyResponses(${survey.id})">View Responses</button>` : ``}
+        </div>
+      </td>
     </tr>
   `).join("");
 }
+
 async function editSurvey(surveyId){
   editingSurveyId = surveyId;
-
   const status = document.getElementById("editSurveyStatus");
   status.innerText = "Loading survey...";
 
   try{
     const res = await fetch("api/admin-surveys.php?survey_id=" + surveyId,{
-      headers:{
-        Authorization:"Bearer " + adminToken
-      }
+      headers:{ Authorization:"Bearer " + adminToken }
     });
-
     const data = await res.json();
 
     if(!data.success){
@@ -894,494 +762,172 @@ async function editSurvey(surveyId){
       return;
     }
 
-    if(data.survey.status !== "pending"){
-      alert("Only pending surveys can be edited.");
-      return;
-    }
-
     document.getElementById("editSurveyTitle").value = data.survey.title;
-
     const editUserSelect = document.getElementById("editAssignedUser");
     editUserSelect.innerHTML = document.getElementById("assignedUser").innerHTML;
     editUserSelect.value = data.survey.assigned_user_id;
 
     document.getElementById("editQuestionsWrap").innerHTML = "";
-    document.getElementById("editSurveyCheckboxQuestion").value = ""; // تصفير حقل التعديل للـ checkbox
+    document.getElementById("editSurveyCheckboxQuestion").value = "";
 
     data.questions.forEach(q => {
-      // إذا كان السؤال القادم من الداتابيز نوعه checkbox، نضعه في خانة الـ checkbox المنفصلة للتعديل
       if (q.question_type === "checkbox") {
          document.getElementById("editSurveyCheckboxQuestion").value = q.question_text;
          return;
       }
-
       let chipsText = "";
       try{
         const chipsArr = q.chips ? JSON.parse(q.chips) : [];
         chipsText = chipsArr.join(", ");
-      }catch(e){
-        chipsText = "";
-      }
-
+      }catch(e){}
       addEditQuestion(q.question_text, q.question_type, chipsText);
     });
 
     status.innerText = "";
     document.getElementById("editSurveyModal").classList.add("show");
-
   }catch(error){
     status.innerText = "Connection error.";
   }
 }
 
-function cancelEditSurvey(){
-  editingSurveyId = null;
-
-  document.getElementById("surveyTitle").value = "";
-  document.getElementById("assignedUser").value = "";
-  document.getElementById("surveyCheckboxQuestion").value = "";
-  document.getElementById("questionsWrap").innerHTML = "";
-
-  addQuestion();
-
-  document.getElementById("surveySubmitBtn").innerText = "Create Survey";
-  document.getElementById("cancelEditBtn").style.display = "none";
-  document.getElementById("surveyStatus").innerText = "";
-}
-
-function addEditQuestion(value = "", type = "input", chips = ""){
-  const wrap = document.getElementById("editQuestionsWrap");
-
-  const div = document.createElement("div");
-  div.className = "question-box";
-  div.innerHTML = `
-    <input type="text" class="editQuestionText" placeholder="Question text" value="${value}">
-
-    <select class="editQuestionType">
-      <option value="input" ${type === "input" ? "selected" : ""}>Input</option>
-      <option value="textarea" ${type === "textarea" ? "selected" : ""}>Textarea</option>
-      <option value="file" ${type === "file" ? "selected" : ""}>File Upload</option>
-    </select>
-
-    <button class="remove-btn" type="button" onclick="this.parentElement.remove()">Remove</button>
-
-    <input 
-      type="text" 
-      class="editQuestionChips question-chips-input" 
-      placeholder="Quick keywords: Quick Service, Friendly Staff, High Quality"
-      value="${chips}"
-    >
-  `;
-
-  wrap.appendChild(div);
-}
-
-function closeEditSurvey(){
-  editingSurveyId = null;
-  document.getElementById("editSurveyModal").classList.remove("show");
-}
-
 function addQuestion(value = "", type = "input", chips = "", maxFileSizeMb = ""){
-
   const wrap = document.getElementById("questionsWrap");
-
   const div = document.createElement("div");
   div.className = "question-box";
-
   div.innerHTML = `
     <input type="text" class="questionText" placeholder="Question text" value="${value}">
-
     <select class="questionType">
       <option value="input" ${type === "input" ? "selected" : ""}>Input (حقل نصي)</option>
       <option value="textarea" ${type === "textarea" ? "selected" : ""}>Textarea (نص طويل)</option>
       <option value="file" ${type === "file" ? "selected" : ""}>File Upload (ملف)</option>
     </select>
-
     <button class="remove-btn" type="button">Remove</button>
-
-    <input 
-      type="text" 
-      class="questionChips question-chips-input" 
-      placeholder="Quick keywords: Quick Service, Friendly Staff, High Quality"
-      value="${chips}"
-    >
-    <input 
-      type="number" 
-      class="questionMaxFileSize question-chips-input" 
-      placeholder="Max file size MB"
-      value="${maxFileSizeMb || ""}"
-    >
+    <input type="text" class="questionChips question-chips-input" placeholder="Quick keywords..." value="${chips}">
+    <input type="number" class="questionMaxFileSize question-chips-input" placeholder="Max file size MB" value="${maxFileSizeMb || ""}">
   `;
 
-  div.querySelector(".remove-btn").addEventListener("click", function(){
-    div.remove();
-    saveDraft();
-  });
-
-  div.querySelectorAll("input, select").forEach(el => {
-    el.addEventListener("input", saveDraft);
-    el.addEventListener("change", saveDraft);
-  });
-
+  div.querySelector(".remove-btn").addEventListener("click", function(){ div.remove(); saveDraft(); });
+  div.querySelectorAll("input, select").forEach(el => { el.addEventListener("input", saveDraft); el.addEventListener("change", saveDraft); });
   wrap.appendChild(div);
   saveDraft();
 }
 
 async function saveSurvey(){
-
   const title = document.getElementById("surveyTitle").value.trim();
   const assignedUserId = document.getElementById("assignedUser").value;
-  const checkboxQuestionText = document.getElementById("surveyCheckboxQuestion").value.trim(); // قراءة جملة الـ Checkbox الثابتة
+  const checkboxQuestionText = document.getElementById("surveyCheckboxQuestion").value.trim();
   const status = document.getElementById("surveyStatus");
 
-  // تجميع الأسئلة العادية
-  const questions = Array.from(document.querySelectorAll("#questionsWrap .question-box")).map(box => {
-    return {
-      text: box.querySelector(".questionText").value.trim(),
-      type: box.querySelector(".questionType").value,
-      chips: box.querySelector(".questionChips").value.trim(),
-      maxFileSizeMb: box.querySelector(".questionMaxFileSize")?.value.trim() || ""
-    };
-  }).filter(q => q.text);
+  const questions = Array.from(document.querySelectorAll("#questionsWrap .question-box")).map(box => ({
+    text: box.querySelector(".questionText").value.trim(),
+    type: box.querySelector(".questionType").value,
+    chips: box.querySelector(".questionChips").value.trim(),
+    maxFileSizeMb: box.querySelector(".questionMaxFileSize")?.value.trim() || ""
+  })).filter(q => q.text);
 
-  // 🟢 هندسة ذكية: إذا كتب الأدمن جملة في مربع الـ Checkbox المستقل، نقوم بحقنها تلقائياً في أول المصفوفة لترسل للـ API كنوع checkbox 🟢
   if (checkboxQuestionText !== "") {
-    questions.unshift({
-      text: checkboxQuestionText,
-      type: "checkbox",
-      chips: "",
-      maxFileSizeMb: ""
-    });
+    questions.unshift({ text: checkboxQuestionText, type: "checkbox", chips: "", maxFileSizeMb: "" });
   }
 
   if(!title || !assignedUserId || !questions.length){
-    status.innerText = "Please add survey title, user and at least one question.";
+    status.innerText = "Please fill survey details and add at least one question.";
     return;
   }
 
   status.innerText = "Creating survey...";
-
   try{
-
     const res = await fetch("api/admin-surveys.php",{
-      method: editingSurveyId ? "PUT" : "POST",
-      headers:{
-        "Content-Type":"application/json",
-        Authorization:"Bearer " + adminToken
-      },
-      body:JSON.stringify({
-        surveyId: editingSurveyId,
-        title,
-        assignedUserId,
-        questions
-      })
+      method: "POST",
+      headers:{ "Content-Type":"application/json", Authorization:"Bearer " + adminToken },
+      body:JSON.stringify({ title, assignedUserId, questions })
     });
-
     const data = await res.json();
-
     status.innerText = data.message;
 
     if(data.success){
       clearDraft();
-      editingSurveyId = null;
-      document.getElementById("surveySubmitBtn").innerText = "Create Survey";
-      document.getElementById("cancelEditBtn").style.display = "none";
       document.getElementById("surveyTitle").value = "";
       document.getElementById("assignedUser").value = "";
-      document.getElementById("surveyCheckboxQuestion").value = ""; // تفريغ الحقل
+      document.getElementById("surveyCheckboxQuestion").value = "";
       document.getElementById("questionsWrap").innerHTML = "";
       addQuestion();
-
       loadSurveyData();
     }
+  }catch(error){ status.innerText = "Connection error."; }
+}
 
-  }catch(error){
-    status.innerText = "Connection error.";
-  }
+function addEditQuestion(value = "", type = "input", chips = ""){
+  const wrap = document.getElementById("editQuestionsWrap");
+  const div = document.createElement("div");
+  div.className = "question-box";
+  div.innerHTML = `
+    <input type="text" class="editQuestionText" placeholder="Question text" value="${value}">
+    <select class="editQuestionType">
+      <option value="input" ${type === "input" ? "selected" : ""}>Input</option>
+      <option value="textarea" ${type === "textarea" ? "selected" : ""}>Textarea</option>
+      <option value="file" ${type === "file" ? "selected" : ""}>File Upload</option>
+    </select>
+    <button class="remove-btn" type="button" onclick="this.parentElement.remove()">Remove</button>
+    <input type="text" class="editQuestionChips question-chips-input" value="${chips}">
+  `;
+  wrap.appendChild(div);
 }
 
 async function updateSurvey(){
   const title = document.getElementById("editSurveyTitle").value.trim();
   const assignedUserId = document.getElementById("editAssignedUser").value;
-  const editCheckboxText = document.getElementById("editSurveyCheckboxQuestion").value.trim(); // جملة التعديل
+  const editCheckboxText = document.getElementById("editSurveyCheckboxQuestion").value.trim();
   const status = document.getElementById("editSurveyStatus");
 
-  const questions = Array.from(document.querySelectorAll("#editQuestionsWrap .question-box")).map(box => {
-    return {
-      text: box.querySelector(".editQuestionText").value.trim(),
-      type: box.querySelector(".editQuestionType").value,
-      chips: box.querySelector(".editQuestionChips").value.trim(),
-    };
-  }).filter(q => q.text);
+  const questions = Array.from(document.querySelectorAll("#editQuestionsWrap .question-box")).map(box => ({
+    text: box.querySelector(".editQuestionText").value.trim(),
+    type: box.querySelector(".editQuestionType").value,
+    chips: box.querySelector(".editQuestionChips").value.trim(),
+  })).filter(q => q.text);
 
-  // إعادة حقن الـ Checkbox المعدل في أول مصفوفة التعديل
   if (editCheckboxText !== "") {
-    questions.unshift({
-      text: editCheckboxText,
-      type: "checkbox",
-      chips: ""
-    });
+    questions.unshift({ text: editCheckboxText, type: "checkbox", chips: "" });
   }
-
-  if(!title || !assignedUserId || !questions.length){
-    status.innerText = "Please add title, user and at least one question.";
-    return;
-  }
-
-  status.innerText = "Updating survey...";
 
   try{
     const res = await fetch("api/admin-surveys.php",{
       method:"PUT",
-      headers:{
-        "Content-Type":"application/json",
-        Authorization:"Bearer " + adminToken
-      },
-      body:JSON.stringify({
-        surveyId: editingSurveyId,
-        title,
-        assignedUserId,
-        questions
-      })
-    });
-
-    const data = await res.json();
-    status.innerText = data.message;
-
-    if(data.success){
-      closeEditSurvey();
-      loadSurveyData();
-    }
-
-  }catch(error){
-    status.innerText = "Connection error.";
-  }
-}
-
-async function updateUser(userId, action){
-  if(action === "reject"){
-    const confirmDelete = confirm("Are you sure you want to reject and delete this user?");
-    if(!confirmDelete) return;
-  }
-
-  try{
-    const res = await fetch("api/admin-users.php",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-        Authorization:"Bearer " + adminToken
-      },
-      body:JSON.stringify({
-        userId,
-        action
-      })
-    });
-
-    const data = await res.json();
-    alert(data.message);
-
-    loadUsers();
-    loadSurveyData();
-  }catch(error){
-    alert("Connection error");
-  }
-}
-
-function logoutAdmin(){
-  localStorage.removeItem("admin_token");
-  localStorage.removeItem("admin_user");
-  window.location.href="admin-login.html";
-}
-
-let adminArticles = [];
-let adminUsers = [];
-let adminAssignments = {};
-let currentArticleId = null;
-
-async function loadAdminArticles(){
-  const box = document.getElementById("articlesAssignment");
-  try{
-    const res = await fetch("api/admin-articles.php");
-    const data = await res.json();
-
-    if(!data.success){
-      box.innerHTML = "Failed to load articles.";
-      return;
-    }
-
-    adminArticles = data.articles || [];
-    adminUsers = data.users || [];
-    adminAssignments = data.assignments || {};
-
-    if(!adminArticles.length){
-      box.innerHTML = "No articles found in Sanity.";
-      return;
-    }
-
-    box.innerHTML = adminArticles.map(article => {
-      const assigned = adminAssignments[article._id] || [];
-      return `
-        <div class="article-admin-card">
-          <div>
-            <h3>${article.title}</h3>
-            <p>${article.category || "Article"} · ${article.publishedDate || ""}</p>
-          </div>
-          <div>
-            <span class="article-count">${assigned.length} Users</span>
-            <button class="manage-btn" onclick="openAssignModal('${article._id}')">
-              Manage Users
-            </button>
-          </div>
-        </div>
-      `;
-    }).join("");
-  }catch(error){
-    box.innerHTML = "Connection error.";
-  }
-}
-
-function openAssignModal(articleId){
-  currentArticleId = articleId;
-  const article = adminArticles.find(a => a._id === articleId);
-  const assigned = adminAssignments[articleId] || [];
-
-  document.getElementById("assignTitle").innerText = article.title;
-  document.getElementById("assignMeta").innerText = `${article.category || "Article"} · ${article.publishedDate || ""}`;
-  document.getElementById("assignSearch").value = "";
-  document.getElementById("assignStatus").innerText = "";
-
-  renderAssignUsers(adminUsers, assigned);
-  document.getElementById("assignModal").classList.add("show");
-}
-
-function closeAssignModal(){
-  document.getElementById("assignModal").classList.remove("show");
-}
-
-function renderAssignUsers(users, assigned){
-  const list = document.getElementById("assignUsersList");
-  if(!users.length){
-    list.innerHTML = "No users found.";
-    return;
-  }
-  list.innerHTML = users.map(user => `
-    <label class="assign-user">
-      <div class="assign-user-info">
-        <strong>${user.name}</strong>
-        <span>${user.email}</span>
-      </div>
-      <input type="checkbox" value="${user.id}" ${assigned.includes(Number(user.id)) ? "checked" : ""}>
-    </label>
-  `).join("");
-}
-
-function filterAssignUsers(){
-  const value = document.getElementById("assignSearch").value.toLowerCase().trim();
-  const assigned = adminAssignments[currentArticleId] || [];
-  const filtered = adminUsers.filter(user =>
-    (user.name || "").toLowerCase().includes(value) ||
-    (user.email || "").toLowerCase().includes(value)
-  );
-  renderAssignUsers(filtered, assigned);
-}
-
-async function saveCurrentArticleUsers(){
-  const status = document.getElementById("assignStatus");
-  const userIds = Array.from(document.querySelectorAll("#assignUsersList input[type='checkbox']:checked")).map(input => input.value);
-  status.innerText = "Saving...";
-
-  try{
-    const res = await fetch("api/admin-articles.php",{
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body:JSON.stringify({ articleId: currentArticleId, userIds })
+      headers:{ "Content-Type":"application/json", Authorization:"Bearer " + adminToken },
+      body:JSON.stringify({ surveyId: editingSurveyId, title, assignedUserId, questions })
     });
     const data = await res.json();
-    status.innerText = data.message;
-
-    if(data.success){
-      adminAssignments[currentArticleId] = userIds.map(id => Number(id));
-      loadAdminArticles();
-      setTimeout(() => { closeAssignModal(); }, 700);
-    }
-  }catch(error){
-    status.innerText = "Connection error.";
-  }
+    if(data.success){ document.getElementById("editSurveyModal").classList.remove("show"); loadSurveyData(); }
+    else { status.innerText = data.message; }
+  }catch(e){ status.innerText = "Error."; }
 }
+
+function closeEditSurvey(){ document.getElementById("editSurveyModal").classList.remove("show"); }
+function logoutAdmin(){ localStorage.removeItem("admin_token"); window.location.href="admin-login.html"; }
 
 loadSurveyData();
-
-async function viewSurveyResponses(surveyId){
-  try{
-    const res = await fetch("api/admin-responses.php?survey_id=" + surveyId,{
-      headers:{ Authorization:"Bearer " + adminToken }
-    });
-    const data = await res.json();
-    if(!data.success || !data.responses || !data.responses.length){
-      alert("No responses found for this survey.");
-      return;
-    }
-    window.location.href = "response-details.html?id=" + data.responses[0].id;
-  }catch(error){
-    alert("Connection error.");
-  }
-}
 </script>
 
-<div class="assign-modal" id="assignModal">
-  <div class="assign-box">
-    <div class="assign-head">
-      <div>
-        <h2 id="assignTitle">Assign Users</h2>
-        <p id="assignMeta" style="color:#667085;font-size:13px;margin-top:5px;"></p>
-      </div>
-      <button onclick="closeAssignModal()">×</button>
-    </div>
-    <div class="assign-body">
-      <input type="text" class="user-search" id="assignSearch" placeholder="Search users..." oninput="filterAssignUsers()">
-      <div id="assignUsersList"></div>
-    </div>
-    <div class="assign-footer">
-      <span id="assignStatus"></span>
-      <button class="save-assign" onclick="saveCurrentArticleUsers()">Save Users</button>
-    </div>
-  </div>
-</div>
-
+<!-- نافذة التعديل (Modal) -->
 <div class="edit-modal" id="editSurveyModal">
   <div class="edit-box">
-    <div class="edit-head">
-      <h2>Edit Survey</h2>
-      <button onclick="closeEditSurvey()">×</button>
-    </div>
-
+    <div class="edit-head"><h2>Edit Survey & Questions</h2><button onclick="closeEditSurvey()">×</button></div>
     <div class="edit-body">
-      <label>Survey Title</label>
-      <input type="text" id="editSurveyTitle">
-      <br><br>
-
-      <label>Assigned User</label>
-      <select id="editAssignedUser"></select>
-      <br><br>
-
-      <div class="checkbox-section">
-        <label style="color: #c9000b;">Edit Checkbox Question (جملة مربع الاختيار)</label>
-        <input type="text" id="editSurveyCheckboxQuestion" placeholder="العبارة الخاصة بمربع الاختيار">
+      <label>Survey Title</label><input type="text" id="editSurveyTitle"><br><br>
+      <label>Assigned User</label><select id="editAssignedUser"></select><br><br>
+      
+      <div style="background: #fdfdfd; border: 1px dashed #dfe3ea; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+        <label style="color: #c9000b;">Edit Checkbox Question</label>
+        <input type="text" id="editSurveyCheckboxQuestion">
       </div>
 
-      <label>Questions</label>
+      <label>Dynamic Fields</label>
       <div id="editQuestionsWrap"></div>
-
-      <button class="secondary-btn" type="button" onclick="addEditQuestion()">
-        + Add Question
-      </button>
-
+      <button class="secondary-btn" type="button" onclick="addEditQuestion()">+ Add Question</button>
       <div class="status-text" id="editSurveyStatus"></div>
     </div>
-
     <div class="edit-footer">
-      <button class="secondary-btn" type="button" onclick="closeEditSurvey()">Cancel</button>
-      <button class="primary-btn" type="button" onclick="updateSurvey()">Update Survey</button>
+      <button class="secondary-btn" onclick="closeEditSurvey()">Cancel</button>
+      <button class="primary-btn" onclick="updateSurvey()">Update Survey</button>
     </div>
   </div>
 </div>
