@@ -835,7 +835,8 @@ async function loadSurveyData(){
           <option value="${user.id}">${user.name} - ${user.email}</option>
         `).join("")}
       `;
-
+      document.getElementById("checklistAssignedUser").innerHTML =
+      userSelect.innerHTML;
       surveyUserFilter.innerHTML = `
         <option value="all">All Users</option>
         ${data.users.map(user => `
@@ -1365,8 +1366,6 @@ async function saveCurrentArticleUsers(){
   }
 }
 loadSurveyData();
-document.getElementById("checklistAssignedUser").innerHTML =
-document.getElementById("assignedUser").innerHTML;
 async function viewSurveyResponses(surveyId){
   try{
     const res = await fetch("api/admin-responses.php?survey_id=" + surveyId,{
