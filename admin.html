@@ -518,7 +518,16 @@ td{
 </a>
 </div>
 <div class="grid">
+  <h3>Checklist</h3>
+<p>Items that users must review before starting the survey.</p>
 
+<div id="checklistWrap"></div>
+
+<button type="button"
+        class="secondary-btn"
+        onclick="addChecklistItem()">
+    + Add Checklist Item
+</button>
   <div class="panel">
     <div class="panel-head">
       <h1>Create Survey</h1>
@@ -552,42 +561,7 @@ td{
         <button class="primary-btn" id="surveySubmitBtn" onclick="saveSurvey()" type="button">
   Create Survey
 </button>
-{% comment %} ------------------------------------------------------------------------ {% endcomment %}
 
-<div class="panel">
-    <div class="panel-head">
-      <h1>Create Survey</h1>
-      <p>Assign a survey and custom questions to a specific approved user.</p>
-    </div>
-
-    <div class="form">
-      <div class="form-row">
-        <div>
-          <label>Survey Title</label>
-          <input type="text" id="surveyTitle" placeholder="Customer Satisfaction Q3">
-        </div>
-
-        <div>
-          <label>Assigned User</label>
-          <select id="assignedUser">
-            <option value="">Loading users...</option>
-          </select>
-        </div>
-      </div>
-
-      <label>Questions</label>
-
-      <div id="questionsWrap"></div>
-
-      <div class="form-actions">
-        <button class="secondary-btn" onclick="addQuestion()" type="button">
-          + Add Question
-        </button>
-
-        <button class="primary-btn" id="surveySubmitBtn" onclick="saveSurvey()" type="button">
-  Create Survey
-</button>
-{% comment %} --------------------------------------------------------------------------- {% endcomment %}
 <button class="secondary-btn" id="cancelEditBtn" onclick="cancelEditSurvey()" type="button" style="display:none;">
   Cancel Edit
 </button>
@@ -1009,7 +983,6 @@ function addQuestion(value = "", type = "input", chips = "", maxFileSizeMb = "")
       <option value="input" ${type === "input" ? "selected" : ""}>Input</option>
       <option value="textarea" ${type === "textarea" ? "selected" : ""}>Textarea</option>
       <option value="file" ${type === "file" ? "selected" : ""}>File Upload</option>
-      <option value="checkbox" ${type === "checkbox" ? "selected" : ""}>Checkbox</option>
     </select>
 
     <button class="remove-btn" type="button">Remove</button>
