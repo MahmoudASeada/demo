@@ -558,12 +558,9 @@ td{
                 + Add Checklist Item
             </button>
 
-            <button
-                type="button"
-                class="primary-btn"
-                onclick="saveChecklist()">
-                Create Checklist
-            </button>
+            <button class="primary-btn" id="surveySubmitBtn" onclick="saveSurvey()" type="button">
+  Create Question
+</button>
 
         </div>
 
@@ -1064,38 +1061,37 @@ function addQuestion(value = "", type = "input", chips = "", maxFileSizeMb = "")
   saveDraft();
 }
 
-async function saveSurvey(){
+async function saveQuestions(){
 
-  const title = document.getElementById("surveyTitle").value.trim();
-  const assignedUserId = document.getElementById("assignedUser").value;
-  const status = document.getElementById("surveyStatus");
+  const title = document.getElementById("checklistTitle").value.trim();
+  const assignedUserId = document.getElementById("checklistAssignedUser").value;
+  const status = document.getElementById("checklistStatus");
 
-  const questions = Array.from(document.querySelectorAll("#questionsWrap .question-box")).map(box => {
-  return {
-    text: box.querySelector(".questionText").value.trim(),
-    type: box.querySelector(".questionType").value,
-    chips: box.querySelector(".questionChips").value.trim(),
-    maxFileSizeMb: box.querySelector(".questionMaxFileSize")?.value.trim() || ""
-  };
-}).filter(q => q.text);
+  const questions = Array.from(document.querySelectorAll("#checklistWrap .question-box")).map(box => {
+    return {
+      text: box.querySelector(".checklistText").value.trim(),
+      type: "checkbox",
+      chips: "",
+      maxFileSizeMb: ""
+    };
+  }).filter(q => q.text);
 
   if(!title || !assignedUserId || !questions.length){
-    status.innerText = "Please add survey title, user and at least one question.";
+    status.innerText = "Please add title, user and at least one question.";
     return;
   }
 
-  status.innerText = "Creating survey...";
+  status.innerText = "Creating questions...";
 
   try{
 
     const res = await fetch("api/admin-surveys.php",{
-      method: editingSurveyId ? "PUT" : "POST",
+      method:"POST",
       headers:{
         "Content-Type":"application/json",
         Authorization:"Bearer " + adminToken
       },
       body:JSON.stringify({
-        surveyId: editingSurveyId,
         title,
         assignedUserId,
         questions
@@ -1107,14 +1103,12 @@ async function saveSurvey(){
     status.innerText = data.message;
 
     if(data.success){
-      clearDraft();
-      editingSurveyId = null;
-      document.getElementById("surveySubmitBtn").innerText = "Create Survey";
-      document.getElementById("cancelEditBtn").style.display = "none";
-      document.getElementById("surveyTitle").value = "";
-      document.getElementById("assignedUser").value = "";
-      document.getElementById("questionsWrap").innerHTML = "";
-      addQuestion();
+
+      document.getElementById("checklistTitle").value = "";
+      document.getElementById("checklistAssignedUser").value = "";
+      document.getElementById("checklistWrap").innerHTML = "";
+
+      addChecklistItem();
 
       loadSurveyData();
     }
@@ -1124,7 +1118,9 @@ async function saveSurvey(){
     status.innerText = "Connection error.";
 
   }
+
 }
+
 async function updateSurvey(){
   const title = document.getElementById("editSurveyTitle").value.trim();
   const assignedUserId = document.getElementById("editAssignedUser").value;
