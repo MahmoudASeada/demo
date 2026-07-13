@@ -1,496 +1,555 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login / Register</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login / Register</title>
 
-<style>
-*{
-  box-sizing:border-box;
-  font-family:Arial, sans-serif;
-}
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
 
-body{
-  margin:0;
-  min-height:100vh;
-  background:#f6f6f6;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:40px 20px;
-  color:#171717;
-}
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: #f6f6f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        color: #171717;
+      }
 
-.auth-wrapper{
-  width:100%;
-  max-width:560px;
-}
+      .auth-wrapper {
+        width: 100%;
+        max-width: 560px;
+      }
 
-.card{
-  background:#fff;
-  border-radius:24px;
-  padding:34px;
-  box-shadow:0 10px 30px rgba(0,0,0,.08);
-}
+      .card {
+        background: #fff;
+        border-radius: 24px;
+        padding: 34px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
 
-.login-card{
-  margin-top:20px;
-}
+      .login-card {
+        margin-top: 20px;
+      }
 
-.tabs{
-  display:flex;
-  background:#eef0f3;
-  border-radius:12px;
-  padding:4px;
-  margin-bottom:32px;
-}
+      .tabs {
+        display: flex;
+        background: #eef0f3;
+        border-radius: 12px;
+        padding: 4px;
+        margin-bottom: 32px;
+      }
 
-.tabs button{
-  flex:1;
-  border:none;
-  background:transparent;
-  padding:13px 10px;
-  border-radius:10px;
-  font-weight:700;
-  color:#7b8491;
-  cursor:pointer;
-}
+      .tabs button {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 13px 10px;
+        border-radius: 10px;
+        font-weight: 700;
+        color: #7b8491;
+        cursor: pointer;
+      }
 
-.tabs button.active{
-  background:#fff;
-  color:#c9000b;
-  box-shadow:0 1px 4px rgba(0,0,0,.08);
-}
+      .tabs button.active {
+        background: #fff;
+        color: #c9000b;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      }
 
-.form-group{
-  margin-bottom:24px;
-}
+      .form-group {
+        margin-bottom: 22px;
+      }
 
-.form-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:10px;
-}
+      .form-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
 
-label{
-  display:block;
-  font-size:14px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.4px;
-}
+      label {
+        display: block;
+        font-size: 14px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        margin-bottom: 8px;
+      }
 
-.login-card label{
-  text-transform:none;
-  letter-spacing:0;
-}
+      .login-card label {
+        text-transform: none;
+        letter-spacing: 0;
+      }
 
-.forgot{
-  font-size:12px;
-  color:#c9000b;
-  text-decoration:none;
-  font-weight:700;
-}
+      .login-card .form-row label {
+        margin-bottom: 0;
+      }
 
-.input-box{
-  position:relative;
-}
+      .login-card .form-row {
+        margin-bottom: 6px;
+      }
 
-.input-box span{
-  position:absolute;
-  left:15px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#98a1ad;
-  font-size:18px;
-}
+      .forgot {
+        font-size: 12px;
+        color: #c9000b;
+        text-decoration: none;
+        font-weight: 700;
+      }
 
-.input-box input{
-  width:100%;
-  height:54px;
-  border:1px solid #e0e3e8;
-  background:#f1f3f6;
-  border-radius:10px;
-  padding:0 45px;
-  outline:none;
-  font-size:14px;
-  color:#111827;
-}
+      .input-box {
+        position: relative;
+      }
 
-.input-box input:focus{
-  border-color:#c9000b;
-  background:#fff;
-  box-shadow:0 0 0 3px rgba(201,0,11,.08);
-}
+      .input-box span {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #98a1ad;
+        font-size: 18px;
+      }
 
-.eye{
-  position:absolute;
-  right:14px;
-  top:50%;
-  transform:translateY(-50%);
-  border:none;
-  background:transparent;
-  cursor:pointer;
-  color:#98a1ad;
-  font-size:17px;
-}
+      .input-box input {
+        width: 100%;
+        height: 54px;
+        border: 1px solid #e0e3e8;
+        background: #f1f3f6;
+        border-radius: 8px;
+        padding: 0 45px;
+        outline: none;
+        font-size: 14px;
+        color: #111827;
+      }
 
-.submit{
-  width:100%;
-  height:56px;
-  border:none;
-  background:#c9000b;
-  color:#fff;
-  font-size:15px;
-  font-weight:800;
-  border-radius:10px;
-  cursor:pointer;
-  box-shadow:0 12px 20px rgba(201,0,11,.18);
-}
+      .input-box input:focus {
+        border-color: #c9000b;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(201, 0, 11, 0.08);
+      }
 
-.submit:hover{
-  background:#b00009;
-}
+      .eye {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: #98a1ad;
+        font-size: 17px;
+      }
 
-.divider{
-  height:1px;
-  background:#e5e7eb;
-  margin:34px 0 26px;
-}
+      .submit {
+        width: 100%;
+        height: 56px;
+        border: none;
+        background: #c9000b;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 800;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 0 12px 20px rgba(201, 0, 11, 0.18);
+      }
 
-.helper{
-  text-align:center;
-  color:#8b95a1;
-  font-size:13px;
-  margin-bottom:12px;
-}
+      .submit:hover {
+        background: #b00009;
+      }
 
-.admin-link{
-  text-align:center;
-  font-size:14px;
-  font-weight:800;
-}
+      .divider {
+        height: 1px;
+        background: #e5e7eb;
+        margin: 34px 0 26px;
+      }
 
-.admin-link a{
-  color:#171717;
-  text-decoration:none;
-}
+      .helper {
+        text-align: center;
+        color: #8b95a1;
+        font-size: 13px;
+        margin-bottom: 12px;
+      }
 
-.note{
-  font-size:11px;
-  color:#98a1ad;
-  margin-top:8px;
-}
+      .admin-link {
+        text-align: center;
+        font-size: 14px;
+        font-weight: 800;
+      }
 
-.terms{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:13px;
-  color:#333;
-  margin:20px 0 24px;
-}
+      .admin-link a {
+        color: #171717;
+        text-decoration: none;
+      }
 
-.terms input{
-  width:16px;
-  height:16px;
-  accent-color:#c9000b;
-}
+      .note {
+        font-size: 11px;
+        color: #98a1ad;
+        margin-top: 8px;
+      }
 
-.terms a{
-  color:#c9000b;
-  text-decoration:none;
-}
+      .terms {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        color: #333;
+        margin: 20px 0 24px;
+        text-transform: none;
+        letter-spacing: 0;
+      }
 
-.status{
-  min-height:22px;
-  margin-top:14px;
-  text-align:center;
-  font-size:13px;
-  color:#64748b;
-}
+      .terms input {
+        width: 16px;
+        height: 16px;
+        accent-color: #c9000b;
+      }
 
-.status.error{
-  color:#c9000b;
-  font-weight:700;
-}
+      .terms a {
+        color: #c9000b;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
 
-@media(max-width:900px){
-  .auth-wrapper{
-    grid-template-columns:1fr;
-    gap:24px;
-    max-width:520px;
-  }
+      .status {
+        min-height: 22px;
+        margin-top: 14px;
+        text-align: center;
+        font-size: 13px;
+        color: #64748b;
+      }
 
-  .login-card{
-    margin-top:0;
-  }
-}
-.login-card{
-  display:none;
-}
+      .status.error {
+        color: #c9000b;
+        font-weight: 700;
+      }
 
-.register-card{
-  display:block;
-}
+      @media (max-width: 900px) {
+        .auth-wrapper {
+          grid-template-columns: 1fr;
+          gap: 24px;
+          max-width: 520px;
+        }
 
-.switch-text{
-  text-align:center;
-  margin-top:26px;
-  color:#8b95a1;
-  font-size:14px;
-}
+        .login-card {
+          margin-top: 0;
+        }
+      }
+      .login-card {
+        display: none;
+      }
 
-.switch-text a{
-  color:#c9000b;
-  font-weight:800;
-  text-decoration:none;
-}
-</style>
-</head>
+      .register-card {
+        display: block;
+      }
 
-<body>
+      .switch-text {
+        text-align: center;
+        margin-top: 26px;
+        color: #8b95a1;
+        font-size: 14px;
+      }
 
-<div class="auth-wrapper">
+      .switch-text a {
+        color: #c9000b;
+        font-weight: 800;
+        text-decoration: none;
+      }
 
-  <!-- Login Card -->
-  <div class="card login-card">
+      .switch-text button {
+        border: none;
+        background: transparent;
+        color: #c9000b;
+        font: inherit;
+        font-weight: 800;
+        padding: 0;
+        cursor: pointer;
+      }
+    </style>
+  </head>
 
-    <div class="tabs">
-      <button class="active" onclick="showLogin()">Log In</button>
-      <button onclick="showRegister()">Register</button>
-    </div>
+  <body>
+    <div class="auth-wrapper">
+      <!-- Login Card -->
+      <div class="card login-card">
+        <div class="tabs">
+          <button class="active" onclick="showLogin()">Log In</button>
+          <button onclick="showRegister()">Register</button>
+        </div>
 
-    <div class="form-group">
-      <label>Email Address</label>
-      <div class="input-box">
-        <span>✉</span>
-        <input type="email" id="loginEmail" placeholder="name@company.com">
+        <div class="form-group">
+          <label>Email Address</label>
+          <div class="input-box">
+            <span>✉</span>
+            <input
+              type="email"
+              id="loginEmail"
+              placeholder="name@company.com"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="form-row">
+            <label>Password</label>
+            <a href="#" class="forgot">Forgot password?</a>
+          </div>
+          <div class="input-box">
+            <span>🔒</span>
+            <input type="password" id="loginPassword" placeholder="••••••••" />
+            <button
+              class="eye"
+              type="button"
+              onclick="togglePassword('loginPassword')"
+            >
+              ◉
+            </button>
+          </div>
+        </div>
+
+        <button class="submit" onclick="loginUser()">Log In →</button>
+        <div class="switch-text">
+          New to the platform?
+          <button
+            type="button"
+            onclick="window.location.href = 'admin-login.html'"
+            style="text-decoration: underline; color: #000000"
+          >
+            Sign Up
+          </button>
+        </div>
+
+        <div class="status" id="loginStatus"></div>
+      </div>
+
+      <!-- Register Card -->
+      <div class="card register-card">
+        <div class="tabs">
+          <button onclick="showLogin()">Log In</button>
+          <button class="active" onclick="showRegister()">Register</button>
+        </div>
+
+        <div class="form-group">
+          <label>Full Name</label>
+          <div class="input-box">
+            <span>♙</span>
+            <input type="text" id="registerName" placeholder="John Doe" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Work Email</label>
+          <div class="input-box">
+            <span>✉</span>
+            <input
+              type="email"
+              id="registerEmail"
+              placeholder="name@company.com"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Company Name</label>
+          <div class="input-box">
+            <span>▦</span>
+            <input
+              type="text"
+              id="companyName"
+              placeholder="Acme Corporation"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-box">
+            <span>🔒</span>
+            <input
+              type="password"
+              id="registerPassword"
+              placeholder="••••••••"
+            />
+            <button
+              class="eye"
+              type="button"
+              onclick="togglePassword('registerPassword')"
+            >
+              ◉
+            </button>
+          </div>
+          <div class="note">
+            Requires 8+ characters with uppercase and symbols.
+          </div>
+        </div>
+
+        <label class="terms">
+          <input type="checkbox" id="termsCheck" />
+          <span
+            >I agree to the <a href="#">Terms</a> and
+            <a href="#">Privacy Policy</a>.</span
+          >
+        </label>
+
+        <button class="submit" onclick="registerUser()">Register →</button>
+        <div class="switch-text">
+          Already have an account?
+          <button
+            type="button"
+            onclick="showLogin()"
+            style="text-decoration: underline; color: #000000""
+          >
+            Log In
+          </button>
+        </div>
+
+        <div class="status" id="registerStatus"></div>
       </div>
     </div>
 
-    <div class="form-group">
-      <div class="form-row">
-        <label>Password</label>
-        <a href="#" class="forgot">Forgot password?</a>
-      </div>
-      <div class="input-box">
-        <span>🔒</span>
-        <input type="password" id="loginPassword" placeholder="••••••••">
-        <button class="eye" type="button" onclick="togglePassword('loginPassword')">◉</button>
-      </div>
-    </div>
+    <script>
+      const API_BASE = "api";
 
-    <button class="submit" onclick="loginUser()">Log In →</button>
-    <div class="switch-text">
-  New to the platform?
-  <a href="#" onclick="showRegister();return false;">Request Admin Access ↗</a>
-</div>
+      function showLogin() {
+        document.querySelector(".login-card").style.display = "block";
+        document.querySelector(".register-card").style.display = "none";
 
+        document.getElementById("loginStatus").innerText = "";
+        document.getElementById("registerStatus").innerText = "";
+      }
 
-<div class="status" id="loginStatus"></div>
+      function showRegister() {
+        document.querySelector(".register-card").style.display = "block";
+        document.querySelector(".login-card").style.display = "none";
 
-  </div>
+        document.getElementById("loginStatus").innerText = "";
+        document.getElementById("registerStatus").innerText = "";
+      }
 
-  <!-- Register Card -->
-  <div class="card register-card">
+      function togglePassword(id) {
+        const input = document.getElementById(id);
+        input.type = input.type === "password" ? "text" : "password";
+      }
 
-    <div class="tabs">
-      <button onclick="showLogin()">Log In</button>
-      <button class="active" onclick="showRegister()">Register</button>
-    </div>
+      async function loginUser() {
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+        const status = document.getElementById("loginStatus");
 
-    <div class="form-group">
-      <label>Full Name</label>
-      <div class="input-box">
-        <span>♙</span>
-        <input type="text" id="registerName" placeholder="John Doe">
-      </div>
-    </div>
+        status.classList.remove("error");
 
-    <div class="form-group">
-      <label>Work Email</label>
-      <div class="input-box">
-        <span>✉</span>
-        <input type="email" id="registerEmail" placeholder="name@company.com">
-      </div>
-    </div>
+        if (!email || !password) {
+          status.classList.add("error");
+          status.innerText = "Please enter email and password.";
+          return;
+        }
 
-    <div class="form-group">
-      <label>Company Name</label>
-      <div class="input-box">
-        <span>▦</span>
-        <input type="text" id="companyName" placeholder="Acme Corporation">
-      </div>
-    </div>
+        status.innerText = "Please wait...";
 
-    <div class="form-group">
-      <label>Password</label>
-      <div class="input-box">
-        <span>🔒</span>
-        <input type="password" id="registerPassword" placeholder="••••••••">
-        <button class="eye" type="button" onclick="togglePassword('registerPassword')">◉</button>
-      </div>
-      <div class="note">Requires 8+ characters with uppercase and symbols.</div>
-    </div>
+        try {
+          const res = await fetch(`${API_BASE}/login.php`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email,
+              password,
+            }),
+          });
 
-    <label class="terms">
-      <input type="checkbox" id="termsCheck">
-      <span>I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</span>
-    </label>
+          const data = await res.json();
 
-    <button class="submit" onclick="registerUser()">Register →</button>
-    <div class="switch-text">
-      Already have an account?
-      <a href="#" onclick="showLogin();return false;">Log In</a>
-    </div>
-    
-    <div class="status" id="registerStatus"></div>
+          status.innerText = data.message;
 
-  </div>
+          if (!data.success) {
+            status.classList.add("error");
+            return;
+          }
 
-</div>
+          localStorage.setItem("portal_token", data.token);
+          localStorage.setItem("portal_user", JSON.stringify(data.user));
 
-<script>
-const API_BASE = "api";
+          window.location.href = "dashboard.html";
+        } catch (error) {
+          status.classList.add("error");
+          status.innerText = "Connection error.";
+        }
+      }
 
-function showLogin(){
-  document.querySelector(".login-card").style.display = "block";
-  document.querySelector(".register-card").style.display = "none";
+      async function registerUser() {
+        const name = document.getElementById("registerName").value.trim();
+        const email = document.getElementById("registerEmail").value.trim();
+        const company = document.getElementById("companyName").value.trim();
+        const password = document
+          .getElementById("registerPassword")
+          .value.trim();
+        const terms = document.getElementById("termsCheck").checked;
+        const status = document.getElementById("registerStatus");
 
-  document.getElementById("loginStatus").innerText = "";
-  document.getElementById("registerStatus").innerText = "";
-}
+        status.classList.remove("error");
 
-function showRegister(){
-  document.querySelector(".register-card").style.display = "block";
-  document.querySelector(".login-card").style.display = "none";
+        if (!name || !email || !company || !password) {
+          status.classList.add("error");
+          status.innerText = "Please fill all required fields.";
+          return;
+        }
 
-  document.getElementById("loginStatus").innerText = "";
-  document.getElementById("registerStatus").innerText = "";
-}
+        if (!terms) {
+          status.classList.add("error");
+          status.innerText = "Please accept terms and privacy policy.";
+          return;
+        }
 
-function togglePassword(id){
-  const input = document.getElementById(id);
-  input.type = input.type === "password" ? "text" : "password";
-}
+        status.innerText = "Please wait...";
 
-async function loginUser(){
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
-  const status = document.getElementById("loginStatus");
+        try {
+          const res = await fetch(`${API_BASE}/register.php`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name,
+              email,
+              company,
+              password,
+            }),
+          });
 
-  status.classList.remove("error");
+          const data = await res.json();
 
-  if(!email || !password){
-    status.classList.add("error");
-    status.innerText = "Please enter email and password.";
-    return;
-  }
+          status.innerText = data.message;
 
-  status.innerText = "Please wait...";
+          if (!data.success) {
+            status.classList.add("error");
+            return;
+          }
 
-  try{
-    const res = await fetch(`${API_BASE}/login.php`, {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        email,
-        password
-      })
-    });
+          alert("Account created. Please wait for admin approval.");
+          showLogin();
+          document.getElementById("registerName").value = "";
+          document.getElementById("registerEmail").value = "";
+          document.getElementById("companyName").value = "";
+          document.getElementById("registerPassword").value = "";
+          document.getElementById("termsCheck").checked = false;
+        } catch (error) {
+          status.classList.add("error");
+          status.innerText = "Connection error.";
+        }
+      }
+      showRegister();
+      const token = localStorage.getItem("portal_token");
 
-    const data = await res.json();
-
-    status.innerText = data.message;
-
-    if(!data.success){
-      status.classList.add("error");
-      return;
-    }
-
-    localStorage.setItem("portal_token", data.token);
-    localStorage.setItem("portal_user", JSON.stringify(data.user));
-
-    window.location.href = "dashboard.html";
-
-  }catch(error){
-    status.classList.add("error");
-    status.innerText = "Connection error.";
-  }
-}
-
-async function registerUser(){
-  const name = document.getElementById("registerName").value.trim();
-  const email = document.getElementById("registerEmail").value.trim();
-  const company = document.getElementById("companyName").value.trim();
-  const password = document.getElementById("registerPassword").value.trim();
-  const terms = document.getElementById("termsCheck").checked;
-  const status = document.getElementById("registerStatus");
-
-  status.classList.remove("error");
-
-  if(!name || !email || !company || !password){
-    status.classList.add("error");
-    status.innerText = "Please fill all required fields.";
-    return;
-  }
-
-  if(!terms){
-    status.classList.add("error");
-    status.innerText = "Please accept terms and privacy policy.";
-    return;
-  }
-
-  status.innerText = "Please wait...";
-
-  try{
-    const res = await fetch(`${API_BASE}/register.php`, {
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        name,
-        email,
-        company,
-        password
-      })
-    });
-
-    const data = await res.json();
-
-    status.innerText = data.message;
-
-    if(!data.success){
-      status.classList.add("error");
-      return;
-    }
-
-    alert("Account created. Please wait for admin approval.");
-    showLogin();
-    document.getElementById("registerName").value = "";
-    document.getElementById("registerEmail").value = "";
-    document.getElementById("companyName").value = "";
-    document.getElementById("registerPassword").value = "";
-    document.getElementById("termsCheck").checked = false;
-
-  }catch(error){
-    status.classList.add("error");
-    status.innerText = "Connection error.";
-  }
-}
-showRegister();
-const token = localStorage.getItem("portal_token");
-
-if(token){
-  window.location.href = "dashboard.html";
-}
-</script>
-
-</body>
+      if (token) {
+        window.location.href = "dashboard.html";
+      }
+    </script>
+  </body>
 </html>

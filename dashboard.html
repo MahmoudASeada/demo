@@ -1,430 +1,711 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Wzone Dashboard</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wzone Dashboard</title>
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{background:#f7f8fc;color:#101828}
-.app{display:flex;min-height:100vh}
-.sidebar{width:230px;background:#fff;border-right:1px solid #eee;position:fixed;top:0;left:0;bottom:0;padding:24px 14px;display:flex;flex-direction:column;justify-content:space-between}
-.logo{font-size:22px;font-weight:800;color:#c9000b;margin-bottom:30px}
-.nav a{display:flex;gap:10px;align-items:center;text-decoration:none;color:#667085;padding:12px 14px;border-radius:12px;margin-bottom:8px;font-size:14px}
-.nav a.active{background:#c9000b;color:#fff}
-.logout{color:#c9000b;font-size:14px;cursor:pointer;margin-bottom:18px}
-.user-card{border:1px solid #c9000b;border-radius:14px;padding:10px;display:flex;gap:10px;align-items:center}
-.avatar{width:38px;height:38px;border-radius:50%;background:#dce3ff;display:flex;align-items:center;justify-content:center;font-weight:800;color:#3745a4}
-.user-card h4{font-size:13px}
-.user-card p{font-size:11px;color:#667085}
-.main{margin-left:230px;width:calc(100% - 230px)}
-.topbar{height:58px;background:#fff;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;padding:0 34px}
-.search{width:420px;height:36px;border:1px solid #d9dee8;border-radius:30px;padding:0 18px;background:#fafbff;outline:none}
-.top-user{display:flex;align-items:center;gap:10px}
-.top-user h4{font-size:13px}
-.top-user p{font-size:10px;color:#667085;text-align:right}
-.content{padding:42px 44px}
-.welcome h1{font-size:30px;margin-bottom:8px}
-.welcome p{font-size:14px;color:#667085;margin-bottom:28px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-bottom:34px}
-.stat{background:#fff;border-radius:16px;padding:24px;display:flex;gap:18px;align-items:center;box-shadow:0 14px 30px rgba(0,0,0,.04)}
-.icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;background:#fff3f3;color:#c9000b}
-.stat:nth-child(2) .icon{background:#f2f4ff;color:#6670d8}
-.stat:nth-child(3) .icon{background:#effaf3;color:#2fbf6b}
-.stat p{font-size:13px;color:#667085;margin-bottom:6px}
-.stat h2{font-size:26px}
-.panel{background:#fff;border-radius:20px;box-shadow:0 14px 30px rgba(0,0,0,.04);overflow:hidden;margin-bottom:34px}
-.panel-head{display:flex;justify-content:space-between;align-items:center;padding:22px 26px}
-.panel-head h3{font-size:17px}
-.panel-head a{font-size:13px;color:#c9000b;text-decoration:none;font-weight:700}
-table{width:100%;border-collapse:collapse}
-th{background:#f8fafc;text-align:left;font-size:12px;color:#667085;padding:14px 26px}
-td{border-top:1px solid #eef1f5;padding:15px 26px;font-size:13px}
-.badge{padding:5px 13px;border-radius:20px;font-size:11px;font-weight:700}
-.waiting{background:#e7f0ff;color:#3478f6}
-.responded{background:#e8faef;color:#20a95a}
-.closed{background:#e9eef7;color:#64748b}
-.view{color:#c9000b;text-decoration:none;font-weight:700}
-.articles-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-.articles-head h3{font-size:17px}
-.article-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.article{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.04)}
-.article-img{height:145px;background:linear-gradient(135deg,#122230,#396070);position:relative}
-.tag{position:absolute;top:12px;right:12px;background:#c9000b;color:#fff;padding:5px 10px;border-radius:20px;font-size:10px;font-weight:700}
-.article-body{padding:14px}
-.article-body h4{font-size:14px;margin-bottom:8px}
-.article-body p{font-size:11px;color:#667085;line-height:1.5}
-@media(max-width:950px){
-.sidebar{width:78px;padding:20px 10px}
-.logo{font-size:13px}
-.nav a span,.user-card,.logout{display:none}
-.main{margin-left:78px;width:calc(100% - 78px)}
-.stats,.article-grid{grid-template-columns:1fr}
-.search{width:220px}
-}
-.stat{
-  cursor:pointer;
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-  padding:20px;
-}
-
-.modal.show{
-  display:flex;
-}
-
-.modal-box{
-  width:100%;
-  max-width:850px;
-  max-height:80vh;
-  overflow:auto;
-  background:#fff;
-  border-radius:20px;
-  box-shadow:0 20px 60px rgba(0,0,0,.18);
-}
-
-.modal-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:22px 26px;
-  border-bottom:1px solid #eee;
-}
-
-.modal-head button{
-  border:none;
-  background:#c9000b;
-  color:#fff;
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  font-size:22px;
-  cursor:pointer;
-}
-
-.modal-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-.modal-table th,
-.modal-table td{
-  padding:15px 22px;
-  border-bottom:1px solid #eef1f5;
-  text-align:left;
-}
-.settings-modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:99999;
-  padding:20px;
-}
-
-.settings-modal.show{
-  display:flex;
-}
-
-.settings-box{
-  width:100%;
-  max-width:440px;
-  background:#fff;
-  border-radius:22px;
-  overflow:hidden;
-  box-shadow:0 20px 60px rgba(0,0,0,.18);
-}
-
-.settings-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:22px 26px;
-  border-bottom:1px solid #eee;
-}
-
-.settings-head button{
-  border:none;
-  background:#c9000b;
-  color:white;
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  font-size:22px;
-  cursor:pointer;
-}
-
-.settings-body{
-  padding:26px;
-}
-
-.profile-preview{
-  width:82px;
-  height:82px;
-  border-radius:50%;
-  background:#dce3ff;
-  color:#3745a4;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-  font-size:28px;
-  margin:0 auto 22px;
-  background-size:cover;
-  background-position:center;
-}
-
-.settings-body label{
-  display:block;
-  margin-bottom:8px;
-  font-size:13px;
-  font-weight:800;
-}
-
-.settings-body input{
-  width:100%;
-  height:46px;
-  border:1px solid #dfe3ea;
-  border-radius:12px;
-  padding:0 14px;
-  margin-bottom:16px;
-  outline:none;
-}
-
-.save-settings{
-  width:100%;
-  height:50px;
-  border:none;
-  background:#c9000b;
-  color:white;
-  border-radius:12px;
-  font-weight:800;
-  cursor:pointer;
-}
-
-.settings-status{
-  margin-top:12px;
-  font-size:13px;
-  color:#667085;
-}
-</style>
-</head>
-
-<body>
-
-<div class="app">
-
-  <aside class="sidebar">
-    <div>
-      <img src="images/logo.png" alt="W Zone Logo" style="width:180px;height:140px;">
-
-      <nav class="nav">
-        <a href="dashboard.html" class="active">▦ <span>Dashboard</span></a>
-        <a href="articles.html">▤ <span>Reports & Articles</span></a>
-        <a href="#" onclick="openSettings();return false;">⚙ <span>Settings</span></a>
-        
-      </nav>
-    </div>
-
-    <div>
-      <div class="logout" onclick="logout()">↩ Logout</div>
-
-      <div class="user-card">
-        <div class="avatar" id="sideAvatar">U</div>
-        <div>
-          <h4 id="sideName">User</h4>
-          <p>Pro Member</p>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <main class="main">
-
-    <header class="topbar">
-      <input class="search" id="dashboardSearch" placeholder="Search surveys or articles..." />
-      <div class="top-user">
-        <div>
-          <h4 id="topName">User</h4>
-          <p>ID #84210</p>
-        </div>
-        <div class="avatar" id="topAvatar">U</div>
-      </div>
-    </header>
-
-    <section class="content">
-
-      <div class="welcome">
-        <h1 id="welcomeName">Welcome back</h1>
-        <p>Track your survey activity and responses across all projects in real-time.</p>
-      </div>
-
-      <div class="stats">
-        <div class="stat" onclick="openSurveyModal('completed')">
-          <div class="icon">🚀</div>
-          <div>
-            <p>Submitted Surveys</p>
-            <h2 id="submittedSurveys">0</h2>
-          </div>
-        </div>
-
-        <div class="stat" onclick="openSurveyModal('pending')">
-          <div class="icon">⏳</div>
-          <div>
-            <p>Pending Responses</p>
-            <h2 id="pendingResponses">0</h2>
-          </div>
-        </div>
-
-        <div class="stat" onclick="openSurveyModal('all')">
-          <div class="icon">✉</div>
-          <div>
-            <p>Responses Received</p>
-            <h2 id="responsesReceived">0</h2>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-head">
-          <h3>My Submitted Surveys</h3>
-          <a href="#" onclick="openSurveyModal('all');return false;">View All ›</a>
-        </div>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Survey Name</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-
-          <tbody id="surveyTable">
-            <tr>
-                <td colspan="4">Loading surveys...</td>
-            </tr>
-            </tbody>
-        </table>
-      </div>
-
-      <div class="articles-head">
-        <h3>Monthly Published Articles</h3>
-        <div>‹ ›</div>
-      </div>
-
-      <div class="article-grid" id="dashboardArticles">
-  <div class="article">
-    <div class="article-body">
-      <h4>Loading articles...</h4>
-      <p>Please wait</p>
-    </div>
-  </div>
-</div>
-
-    </section>
-
-  </main>
-
-</div>
-<div class="settings-modal" id="settingsModal">
-  <div class="settings-box">
-    <div class="settings-head">
-      <h2>Settings</h2>
-      <button onclick="closeSettings()">×</button>
-    </div>
-
-    <div class="settings-body">
-      <div class="profile-preview" id="settingsImagePreview">U</div>
-
-      <label>Profile Image</label>
-      <input type="file" id="profileImageInput" accept="image/*">
-
-      <label>Name</label>
-      <input type="text" id="settingsName">
-
-      <label>Email</label>
-      <input type="email" id="settingsEmail" readonly>
-
-      <button class="save-settings" onclick="saveSettings()">Save Changes</button>
-
-      <div class="settings-status" id="settingsStatus"></div>
-    </div>
-  </div>
-</div>
-
-<script>
-const token = localStorage.getItem("portal_token");
-
-if(!token){
-  window.location.href = "login.html";
-}
-let allSurveys = [];
-let dashboardArticles = [];
-async function loadDashboard(){
-  try{
-    const res = await fetch("api/dashboard.php",{
-      headers:{
-        Authorization:"Bearer " + token
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
       }
-    });
+      body {
+        background: #f7f8fc;
+        color: #101828;
+      }
+      .app {
+        display: flex;
+        min-height: 100vh;
+      }
+      .sidebar {
+        width: 230px;
+        background: #fff;
+        border-right: 1px solid #eee;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        padding: 24px 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .logo {
+        margin-bottom: 20px;
+      }
+      .logo img {
+        max-height: 90px;
+        width: auto;
+        max-width: 100%;
+        display: block;
+        margin-top: -15px;
+        margin-bottom: -15px;
+      }
+      .nav a {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        text-decoration: none;
+        color: #667085;
+        padding: 12px 14px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+      .nav a.active {
+        background: #c9000b;
+        color: #fff;
+      }
+      .logout {
+        color: #c9000b;
+        font-size: 14px;
+        cursor: pointer;
+        margin-bottom: 18px;
+      }
+      .user-card {
+        border: 1px solid #c9000b;
+        border-radius: 14px;
+        padding: 10px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #dce3ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        color: #3745a4;
+      }
+      .user-card h4 {
+        font-size: 13px;
+      }
+      .user-card p {
+        font-size: 11px;
+        color: #667085;
+      }
+      .main {
+        margin-left: 230px;
+        width: calc(100% - 230px);
+      }
+      .topbar {
+        height: 58px;
+        background: #fff;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 34px;
+      }
+      .search {
+        width: 420px;
+        height: 36px;
+        border: 1px solid #d9dee8;
+        border-radius: 30px;
+        padding: 0 18px 0 42px;
+        background: #fafbff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2398a2b3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") no-repeat 18px center;
+        outline: none;
+      }
+      .top-user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .top-user h4 {
+        font-size: 13px;
+      }
+      .top-user p {
+        font-size: 10px;
+        color: #667085;
+        text-align: right;
+      }
+      .content {
+        padding: 42px 44px;
+      }
+      .welcome h1 {
+        font-size: 30px;
+        margin-bottom: 8px;
+      }
+      .welcome p {
+        font-size: 14px;
+        color: #667085;
+        margin-bottom: 28px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin-bottom: 34px;
+      }
+      .stat {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.04);
+      }
+      .icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        background: #fff3f3;
+        color: #c9000b;
+      }
+      .stat:nth-child(2) .icon {
+        background: #f2f4ff;
+        color: #6670d8;
+      }
+      .stat:nth-child(3) .icon {
+        background: #effaf3;
+        color: #2fbf6b;
+      }
+      .stat p {
+        font-size: 13px;
+        color: #667085;
+        margin-bottom: 6px;
+      }
+      .stat h2 {
+        font-size: 26px;
+      }
+      .panel {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        margin-bottom: 34px;
+      }
+      .panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 26px;
+      }
+      .panel-head h3 {
+        font-size: 17px;
+      }
+      .panel-head a {
+        font-size: 13px;
+        color: #c9000b;
+        text-decoration: none;
+        font-weight: 700;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        background: #f8fafc;
+        text-align: left;
+        font-size: 12px;
+        color: #667085;
+        padding: 14px 26px;
+      }
+      td {
+        border-top: 1px solid #eef1f5;
+        padding: 15px 26px;
+        font-size: 13px;
+      }
+      .badge {
+        padding: 5px 13px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .waiting {
+        background: #e7f0ff;
+        color: #3478f6;
+      }
+      .responded {
+        background: #e8faef;
+        color: #20a95a;
+      }
+      .closed {
+        background: #e9eef7;
+        color: #64748b;
+      }
+      .view {
+        color: #c9000b;
+        text-decoration: none;
+        font-weight: 700;
+      }
+      .articles-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+      }
+      .articles-head h3 {
+        font-size: 17px;
+      }
+      .article-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+      }
+      .article {
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.04);
+      }
+      .article-img {
+        height: 145px;
+        background: linear-gradient(135deg, #122230, #396070);
+        position: relative;
+      }
+      .tag {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: #c9000b;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 700;
+      }
+      .article-body {
+        padding: 14px;
+      }
+      .article-body h4 {
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      .article-body p {
+        font-size: 11px;
+        color: #667085;
+        line-height: 1.5;
+      }
+      @media (max-width: 950px) {
+        .sidebar {
+          width: 78px;
+          padding: 20px 10px;
+        }
+        .logo {
+          text-align: center;
+        }
+        .logo img {
+          margin: 0 auto;
+          max-height: 24px;
+        }
+        .nav a {
+          justify-content: center;
+          padding: 12px 0;
+        }
+        .nav a span,
+        .user-card,
+        .logout {
+          display: none;
+        }
+        .top-user > div:first-child {
+          display: none;
+        }
+        .main {
+          margin-left: 78px;
+          width: calc(100% - 78px);
+        }
+        .stats,
+        .article-grid {
+          grid-template-columns: 1fr;
+        }
+        .search {
+          width: 220px;
+        }
+      }
+      .stat {
+        cursor: pointer;
+      }
 
-    const data = await res.json();
-    allSurveys = data.surveys;
-    if(!data.success){
-      localStorage.clear();
-      window.location.href = "login.html";
-      
-      return;
-    }
-    
-    const name = data.user.name || "User";
-    localStorage.setItem("portal_user", JSON.stringify(data.user));
-    setAvatarImage(data.user);
-    const letter = name.charAt(0).toUpperCase();
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 20px;
+      }
 
-    document.getElementById("welcomeName").innerText = "Welcome back, " + name + "!";
-    document.getElementById("sideName").innerText = name;
-    document.getElementById("topName").innerText = name;
-    
+      .modal.show {
+        display: flex;
+      }
 
-    document.getElementById("submittedSurveys").innerText = data.stats.submittedSurveys;
-    document.getElementById("pendingResponses").innerText = data.stats.pendingResponses;
-    document.getElementById("responsesReceived").innerText = data.stats.responsesReceived;
-    const surveyTable = document.getElementById("surveyTable");
+      .modal-box {
+        width: 100%;
+        max-width: 850px;
+        max-height: 80vh;
+        overflow: auto;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+      }
 
-if(!data.surveys.length){
-  surveyTable.innerHTML = `
+      .modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 26px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .modal-head button {
+        border: none;
+        background: #c9000b;
+        color: #fff;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        font-size: 22px;
+        cursor: pointer;
+      }
+
+      .modal-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .modal-table th,
+      .modal-table td {
+        padding: 15px 22px;
+        border-bottom: 1px solid #eef1f5;
+        text-align: left;
+      }
+      .settings-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        padding: 20px;
+      }
+
+      .settings-modal.show {
+        display: flex;
+      }
+
+      .settings-box {
+        width: 100%;
+        max-width: 440px;
+        background: #fff;
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+      }
+
+      .settings-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 26px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .settings-head button {
+        border: none;
+        background: #c9000b;
+        color: white;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        font-size: 22px;
+        cursor: pointer;
+      }
+
+      .settings-body {
+        padding: 26px;
+      }
+
+      .profile-preview {
+        width: 82px;
+        height: 82px;
+        border-radius: 50%;
+        background: #dce3ff;
+        color: #3745a4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 28px;
+        margin: 0 auto 22px;
+        background-size: cover;
+        background-position: center;
+      }
+
+      .settings-body label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .settings-body input {
+        width: 100%;
+        height: 46px;
+        border: 1px solid #dfe3ea;
+        border-radius: 12px;
+        padding: 0 14px;
+        margin-bottom: 16px;
+        outline: none;
+      }
+
+      .save-settings {
+        width: 100%;
+        height: 50px;
+        border: none;
+        background: #c9000b;
+        color: white;
+        border-radius: 12px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .settings-status {
+        margin-top: 12px;
+        font-size: 13px;
+        color: #667085;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div>
+          <div class="logo"><img src="logo.png" alt="W zone"></div>
+
+          <nav class="nav">
+            <a href="dashboard.html" class="active">▦ <span>Dashboard</span></a>
+            <a href="articles.html">▤ <span>Reports & Articles</span></a>
+            <a
+              href="#"
+              onclick="
+                openSettings();
+                return false;
+              "
+              >⚙ <span>Settings</span></a
+            >
+            <a href="help.html">❓ <span>Help Center</span></a>
+          </nav>
+        </div>
+
+        <div>
+          <div class="logout" onclick="logout()">↩ Logout</div>
+
+          <div class="user-card">
+            <div class="avatar" id="sideAvatar">U</div>
+            <div>
+              <h4 id="sideName">User</h4>
+              <p>Pro Member</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <input
+            class="search"
+            id="dashboardSearch"
+            placeholder="Search surveys or articles..."
+          />
+          <div class="top-user">
+            <div>
+              <h4 id="topName">User</h4>
+              <p>ID #84210</p>
+            </div>
+            <div class="avatar" id="topAvatar">U</div>
+          </div>
+        </header>
+
+        <section class="content">
+          <div class="welcome">
+            <h1 id="welcomeName">Welcome back</h1>
+            <p>
+              Track your survey activity and responses across all projects in
+              real-time.
+            </p>
+          </div>
+
+          <div class="stats">
+            <div class="stat" onclick="openSurveyModal('completed')">
+              <div class="icon">🚀</div>
+              <div>
+                <p>Submitted Surveys</p>
+                <h2 id="submittedSurveys">0</h2>
+              </div>
+            </div>
+
+            <div class="stat" onclick="openSurveyModal('pending')">
+              <div class="icon">⏳</div>
+              <div>
+                <p>Pending Responses</p>
+                <h2 id="pendingResponses">0</h2>
+              </div>
+            </div>
+
+            <div class="stat" onclick="openSurveyModal('all')">
+              <div class="icon">✉</div>
+              <div>
+                <p>Responses Received</p>
+                <h2 id="responsesReceived">0</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h3>My Submitted Surveys</h3>
+              <a
+                href="#"
+                onclick="
+                  openSurveyModal('all');
+                  return false;
+                "
+                >View All ›</a
+              >
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Survey Name</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody id="surveyTable">
+                <tr>
+                  <td colspan="4">Loading surveys...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="articles-head">
+            <h3>Monthly Published Articles</h3>
+            <div>‹ ›</div>
+          </div>
+
+          <div class="article-grid" id="dashboardArticles">
+            <div class="article">
+              <div class="article-body">
+                <h4>Loading articles...</h4>
+                <p>Please wait</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div class="settings-modal" id="settingsModal">
+      <div class="settings-box">
+        <div class="settings-head">
+          <h2>Settings</h2>
+          <button onclick="closeSettings()">×</button>
+        </div>
+
+        <div class="settings-body">
+          <div class="profile-preview" id="settingsImagePreview">U</div>
+
+          <label>Profile Image</label>
+          <input type="file" id="profileImageInput" accept="image/*" />
+
+          <label>Name</label>
+          <input type="text" id="settingsName" />
+
+          <label>Email</label>
+          <input type="email" id="settingsEmail" readonly />
+
+          <button class="save-settings" onclick="saveSettings()">
+            Save Changes
+          </button>
+
+          <div class="settings-status" id="settingsStatus"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const token = localStorage.getItem("portal_token");
+
+      if (!token) {
+        window.location.href = "login.html";
+      }
+      let allSurveys = [];
+      let dashboardArticles = [];
+      async function loadDashboard() {
+        try {
+          const res = await fetch("api/dashboard.php", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          });
+
+          const data = await res.json();
+          allSurveys = data.surveys;
+          if (!data.success) {
+            localStorage.clear();
+            window.location.href = "login.html";
+
+            return;
+          }
+
+          const name = data.user.name || "User";
+          localStorage.setItem("portal_user", JSON.stringify(data.user));
+          setAvatarImage(data.user);
+          const letter = name.charAt(0).toUpperCase();
+
+          document.getElementById("welcomeName").innerText =
+            "Welcome back, " + name + "!";
+          document.getElementById("sideName").innerText = name;
+          document.getElementById("topName").innerText = name;
+
+          document.getElementById("submittedSurveys").innerText =
+            data.stats.submittedSurveys;
+          document.getElementById("pendingResponses").innerText =
+            data.stats.pendingResponses;
+          document.getElementById("responsesReceived").innerText =
+            data.stats.responsesReceived;
+          const surveyTable = document.getElementById("surveyTable");
+
+          if (!data.surveys.length) {
+            surveyTable.innerHTML = `
     <tr>
       <td colspan="4">No surveys assigned yet.</td>
     </tr>
   `;
-}else{
-  surveyTable.innerHTML = data.surveys.map(survey => {
+          } else {
+            surveyTable.innerHTML = data.surveys
+              .map((survey) => {
+                let statusClass = "waiting";
 
-    let statusClass = "waiting";
+                if (survey.status === "completed") {
+                  statusClass = "responded";
+                }
 
-    if(survey.status === "completed"){
-      statusClass = "responded";
-    }
+                if (survey.status === "closed") {
+                  statusClass = "closed";
+                }
 
-    if(survey.status === "closed"){
-      statusClass = "closed";
-    }
-
-    return `
+                return `
       <tr>
         <td>${survey.title}</td>
         <td>${survey.created_at}</td>
@@ -440,47 +721,43 @@ if(!data.surveys.length){
         </td>
       </tr>
     `;
-  }).join("");
-}
+              })
+              .join("");
+          }
+        } catch (error) {
+          alert("Dashboard connection error");
+        }
+      }
 
-  }catch(error){
-    alert("Dashboard connection error");
-  }
-}
+      function logout() {
+        localStorage.clear();
+        window.location.href = "login.html";
+      }
+      function openSurveyModal(type) {
+        const modal = document.getElementById("surveyModal");
+        const title = document.getElementById("modalTitle");
+        const content = document.getElementById("modalContent");
 
-function logout(){
-  localStorage.clear();
-  window.location.href = "login.html";
-}
-function openSurveyModal(type){
+        let filtered = allSurveys;
 
-  const modal = document.getElementById("surveyModal");
-  const title = document.getElementById("modalTitle");
-  const content = document.getElementById("modalContent");
+        if (type === "pending") {
+          filtered = allSurveys.filter((s) => s.status === "pending");
+          title.innerText = "Pending Responses";
+        } else if (type === "completed") {
+          filtered = allSurveys.filter((s) => s.status === "completed");
+          title.innerText = "Submitted Surveys";
+        } else {
+          title.innerText = "All Surveys";
+        }
 
-  let filtered = allSurveys;
-
-  if(type === "pending"){
-    filtered = allSurveys.filter(s => s.status === "pending");
-    title.innerText = "Pending Responses";
-  }
-  else if(type === "completed"){
-    filtered = allSurveys.filter(s => s.status === "completed");
-    title.innerText = "Submitted Surveys";
-  }
-  else{
-    title.innerText = "All Surveys";
-  }
-
-  if(!filtered.length){
-    content.innerHTML = `
+        if (!filtered.length) {
+          content.innerHTML = `
       <div style="padding:30px">
         No surveys found
       </div>
     `;
-  }else{
-
-    content.innerHTML = `
+        } else {
+          content.innerHTML = `
       <table class="modal-table">
         <thead>
           <tr>
@@ -492,7 +769,9 @@ function openSurveyModal(type){
         </thead>
 
         <tbody>
-          ${filtered.map(s => `
+          ${filtered
+            .map(
+              (s) => `
 
             <tr>
               <td>${s.title}</td>
@@ -505,35 +784,35 @@ function openSurveyModal(type){
               </td>
             </tr>
 
-          `).join("")}
+          `,
+            )
+            .join("")}
         </tbody>
       </table>
     `;
-  }
+        }
 
-  modal.classList.add("show");
-}
+        modal.classList.add("show");
+      }
 
-function closeSurveyModal(){
-  document.getElementById("surveyModal").classList.remove("show");
-}
-async function loadDashboardArticles(){
+      function closeSurveyModal() {
+        document.getElementById("surveyModal").classList.remove("show");
+      }
+      async function loadDashboardArticles() {
+        const box = document.getElementById("dashboardArticles");
 
-  const box = document.getElementById("dashboardArticles");
+        try {
+          const res = await fetch("api/articles.php", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          });
+          const data = await res.json();
 
-  try{
-
-    const res = await fetch("api/articles.php",{
-  headers:{
-    Authorization:"Bearer " + token
-  }
-});
-    const data = await res.json();
-
-    const articles = (data.result || []).slice(0, 3);
-    dashboardArticles = articles;
-    if(!articles.length){
-      box.innerHTML = `
+          const articles = (data.result || []).slice(0, 3);
+          dashboardArticles = articles;
+          if (!articles.length) {
+            box.innerHTML = `
         <div class="article">
           <div class="article-body">
             <h4>No articles yet</h4>
@@ -541,10 +820,12 @@ async function loadDashboardArticles(){
           </div>
         </div>
       `;
-      return;
-    }
+            return;
+          }
 
-    box.innerHTML = articles.map(article => `
+          box.innerHTML = articles
+            .map(
+              (article) => `
   <a 
     class="article" 
     href="${article.buttonLink || "#"}" 
@@ -563,11 +844,11 @@ async function loadDashboardArticles(){
       <p>${article.publishedDate || ""} · ${article.readTime || "5 min read"}</p>
     </div>
   </a>
-`).join("");
-
-  }catch(error){
-
-    box.innerHTML = `
+`,
+            )
+            .join("");
+        } catch (error) {
+          box.innerHTML = `
       <div class="article">
         <div class="article-body">
           <h4>Failed to load articles</h4>
@@ -575,144 +856,152 @@ async function loadDashboardArticles(){
         </div>
       </div>
     `;
-  }
-}
-function setAvatarImage(user){
-  const image = user.profile_image;
-  const name = user.name || "User";
-  const letter = name.charAt(0).toUpperCase();
+        }
+      }
+      function setAvatarImage(user) {
+        const image = user.profile_image;
+        const name = user.name || "User";
+        const letter = name.charAt(0).toUpperCase();
 
-  const avatars = [
-    document.getElementById("sideAvatar"),
-    document.getElementById("topAvatar")
-  ];
+        const avatars = [
+          document.getElementById("sideAvatar"),
+          document.getElementById("topAvatar"),
+        ];
 
-  avatars.forEach(avatar => {
-    if(!avatar) return;
+        avatars.forEach((avatar) => {
+          if (!avatar) return;
 
-    if(image){
-      avatar.innerText = "";
-      avatar.style.backgroundImage = `url('${image}')`;
-      avatar.style.backgroundSize = "cover";
-      avatar.style.backgroundPosition = "center";
-    }else{
-      avatar.innerText = letter;
-      avatar.style.backgroundImage = "";
-    }
-  });
-}
+          if (image) {
+            avatar.innerText = "";
+            avatar.style.backgroundImage = `url('${image}')`;
+            avatar.style.backgroundSize = "cover";
+            avatar.style.backgroundPosition = "center";
+          } else {
+            avatar.innerText = letter;
+            avatar.style.backgroundImage = "";
+          }
+        });
+      }
 
-function openSettings(){
-  const user = JSON.parse(localStorage.getItem("portal_user") || "{}");
+      function openSettings() {
+        const user = JSON.parse(localStorage.getItem("portal_user") || "{}");
 
-  document.getElementById("settingsName").value = user.name || "";
-  document.getElementById("settingsEmail").value = user.email || "";
+        document.getElementById("settingsName").value = user.name || "";
+        document.getElementById("settingsEmail").value = user.email || "";
 
-  const preview = document.getElementById("settingsImagePreview");
+        const preview = document.getElementById("settingsImagePreview");
 
-  if(user.profile_image){
-    preview.innerText = "";
-    preview.style.backgroundImage = `url('${user.profile_image}')`;
-  }else{
-    preview.innerText = (user.name || "U").charAt(0).toUpperCase();
-    preview.style.backgroundImage = "";
-  }
+        if (user.profile_image) {
+          preview.innerText = "";
+          preview.style.backgroundImage = `url('${user.profile_image}')`;
+        } else {
+          preview.innerText = (user.name || "U").charAt(0).toUpperCase();
+          preview.style.backgroundImage = "";
+        }
 
-  document.getElementById("settingsModal").classList.add("show");
-}
+        document.getElementById("settingsModal").classList.add("show");
+      }
 
-function closeSettings(){
-  document.getElementById("settingsModal").classList.remove("show");
-}
+      function closeSettings() {
+        document.getElementById("settingsModal").classList.remove("show");
+      }
 
-document.getElementById("profileImageInput").addEventListener("change", function(){
-  const file = this.files[0];
-  if(!file) return;
+      document
+        .getElementById("profileImageInput")
+        .addEventListener("change", function () {
+          const file = this.files[0];
+          if (!file) return;
 
-  const preview = document.getElementById("settingsImagePreview");
-  preview.innerText = "";
-  preview.style.backgroundImage = `url('${URL.createObjectURL(file)}')`;
-});
+          const preview = document.getElementById("settingsImagePreview");
+          preview.innerText = "";
+          preview.style.backgroundImage = `url('${URL.createObjectURL(file)}')`;
+        });
 
-async function saveSettings(){
-  const status = document.getElementById("settingsStatus");
-  status.innerText = "Saving...";
+      async function saveSettings() {
+        const status = document.getElementById("settingsStatus");
+        status.innerText = "Saving...";
 
-  const formData = new FormData();
-  formData.append("name", document.getElementById("settingsName").value.trim());
+        const formData = new FormData();
+        formData.append(
+          "name",
+          document.getElementById("settingsName").value.trim(),
+        );
 
-  const file = document.getElementById("profileImageInput").files[0];
-  if(file){
-    formData.append("profile_image", file);
-  }
+        const file = document.getElementById("profileImageInput").files[0];
+        if (file) {
+          formData.append("profile_image", file);
+        }
 
-  try{
-    const res = await fetch("api/update-profile.php",{
-      method:"POST",
-      headers:{
-        Authorization:"Bearer " + token
-      },
-      body:formData
-    });
+        try {
+          const res = await fetch("api/update-profile.php", {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+            body: formData,
+          });
 
-    const data = await res.json();
-    status.innerText = data.message;
+          const data = await res.json();
+          status.innerText = data.message;
 
-    if(data.success){
-      localStorage.setItem("portal_user", JSON.stringify(data.user));
+          if (data.success) {
+            localStorage.setItem("portal_user", JSON.stringify(data.user));
 
-      document.getElementById("sideName").innerText = data.user.name;
-      document.getElementById("topName").innerText = data.user.name;
+            document.getElementById("sideName").innerText = data.user.name;
+            document.getElementById("topName").innerText = data.user.name;
 
-      setAvatarImage(data.user);
+            setAvatarImage(data.user);
 
-      setTimeout(closeSettings, 700);
-    }
+            setTimeout(closeSettings, 700);
+          }
+        } catch (error) {
+          status.innerText = "Connection error";
+        }
+      }
+      document
+        .getElementById("dashboardSearch")
+        .addEventListener("input", function () {
+          const value = this.value.toLowerCase().trim();
 
-  }catch(error){
-    status.innerText = "Connection error";
-  }
-}
-document.getElementById("dashboardSearch").addEventListener("input", function(){
-  const value = this.value.toLowerCase().trim();
+          filterDashboardSurveys(value);
+          filterDashboardArticles(value);
+        });
 
-  filterDashboardSurveys(value);
-  filterDashboardArticles(value);
-});
+      function filterDashboardSurveys(value) {
+        const surveyTable = document.getElementById("surveyTable");
 
-function filterDashboardSurveys(value){
-  const surveyTable = document.getElementById("surveyTable");
+        let filtered = allSurveys;
 
-  let filtered = allSurveys;
+        if (value) {
+          filtered = allSurveys.filter(
+            (s) =>
+              (s.title || "").toLowerCase().includes(value) ||
+              (s.status || "").toLowerCase().includes(value),
+          );
+        }
 
-  if(value){
-    filtered = allSurveys.filter(s =>
-      (s.title || "").toLowerCase().includes(value) ||
-      (s.status || "").toLowerCase().includes(value)
-    );
-  }
-
-  if(!filtered.length){
-    surveyTable.innerHTML = `
+        if (!filtered.length) {
+          surveyTable.innerHTML = `
       <tr>
         <td colspan="4">No surveys found.</td>
       </tr>
     `;
-    return;
-  }
+          return;
+        }
 
-  surveyTable.innerHTML = filtered.map(survey => {
-    let statusClass = "waiting";
+        surveyTable.innerHTML = filtered
+          .map((survey) => {
+            let statusClass = "waiting";
 
-    if(survey.status === "completed"){
-      statusClass = "responded";
-    }
+            if (survey.status === "completed") {
+              statusClass = "responded";
+            }
 
-    if(survey.status === "closed"){
-      statusClass = "closed";
-    }
+            if (survey.status === "closed") {
+              statusClass = "closed";
+            }
 
-    return `
+            return `
       <tr>
         <td>${survey.title}</td>
         <td>${survey.created_at}</td>
@@ -728,24 +1017,26 @@ function filterDashboardSurveys(value){
         </td>
       </tr>
     `;
-  }).join("");
-}
+          })
+          .join("");
+      }
 
-function filterDashboardArticles(value){
-  const box = document.getElementById("dashboardArticles");
+      function filterDashboardArticles(value) {
+        const box = document.getElementById("dashboardArticles");
 
-  let filtered = dashboardArticles;
+        let filtered = dashboardArticles;
 
-  if(value){
-    filtered = dashboardArticles.filter(article =>
-      (article.title || "").toLowerCase().includes(value) ||
-      (article.description || "").toLowerCase().includes(value) ||
-      (article.category || "").toLowerCase().includes(value)
-    );
-  }
+        if (value) {
+          filtered = dashboardArticles.filter(
+            (article) =>
+              (article.title || "").toLowerCase().includes(value) ||
+              (article.description || "").toLowerCase().includes(value) ||
+              (article.category || "").toLowerCase().includes(value),
+          );
+        }
 
-  if(!filtered.length){
-    box.innerHTML = `
+        if (!filtered.length) {
+          box.innerHTML = `
       <div class="article">
         <div class="article-body">
           <h4>No articles found</h4>
@@ -753,10 +1044,12 @@ function filterDashboardArticles(value){
         </div>
       </div>
     `;
-    return;
-  }
+          return;
+        }
 
-  box.innerHTML = filtered.map(article => `
+        box.innerHTML = filtered
+          .map(
+            (article) => `
     <a 
       class="article" 
       href="${article.buttonLink || "#"}" 
@@ -775,20 +1068,22 @@ function filterDashboardArticles(value){
         <p>${article.publishedDate || ""} · ${article.readTime || "5 min read"}</p>
       </div>
     </a>
-  `).join("");
-}
-loadDashboard();
-loadDashboardArticles();
-</script>
-<div class="modal" id="surveyModal">
-  <div class="modal-box">
-    <div class="modal-head">
-      <h2 id="modalTitle">Surveys</h2>
-      <button onclick="closeSurveyModal()">×</button>
-    </div>
+  `,
+          )
+          .join("");
+      }
+      loadDashboard();
+      loadDashboardArticles();
+    </script>
+    <div class="modal" id="surveyModal">
+      <div class="modal-box">
+        <div class="modal-head">
+          <h2 id="modalTitle">Surveys</h2>
+          <button onclick="closeSurveyModal()">×</button>
+        </div>
 
-    <div id="modalContent"></div>
-  </div>
-</div>
-</body>
+        <div id="modalContent"></div>
+      </div>
+    </div>
+  </body>
 </html>

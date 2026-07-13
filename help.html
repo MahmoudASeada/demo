@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wzone - Help Center</title>
+    <meta name="description" content="Get help with Wzone. Browse guides, FAQs, and contact our support team." />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+      body {
+        background: #f7f8fc;
+        color: #101828;
+      }
+      .app {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* ── Sidebar (reused from dashboard) ── */
+      .sidebar {
+        width: 230px;
+        background: #fff;
+        border-right: 1px solid #eee;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        padding: 24px 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        z-index: 10;
+      }
+      .logo {
+        margin-bottom: 20px;
+      }
+      .logo img {
+        max-height: 90px;
+        width: auto;
+        max-width: 100%;
+        display: block;
+        margin-top: -15px;
+        margin-bottom: -15px;
+      }
+      .nav a {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        text-decoration: none;
+        color: #667085;
+        padding: 12px 14px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        font-size: 14px;
+        transition: background 0.2s, color 0.2s;
+      }
+      .nav a:hover {
+        background: #fff3f3;
+        color: #c9000b;
+      }
+      .nav a.active {
+        background: #c9000b;
+        color: #fff;
+      }
+      .logout {
+        color: #c9000b;
+        font-size: 14px;
+        cursor: pointer;
+        margin-bottom: 18px;
+      }
+      .user-card {
+        border: 1px solid #c9000b;
+        border-radius: 14px;
+        padding: 10px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #dce3ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        color: #3745a4;
+        flex-shrink: 0;
+      }
+      .user-card h4 {
+        font-size: 13px;
+      }
+      .user-card p {
+        font-size: 11px;
+        color: #667085;
+      }
+
+      /* ── Main Area ── */
+      .main {
+        margin-left: 230px;
+        width: calc(100% - 230px);
+      }
+
+      /* ── Topbar (reused from dashboard) ── */
+      .topbar {
+        height: 58px;
+        background: #fff;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 34px;
+      }
+      .search {
+        width: 420px;
+        height: 36px;
+        border: 1px solid #d9dee8;
+        border-radius: 30px;
+        padding: 0 18px 0 42px;
+        background: #fafbff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2398a2b3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") no-repeat 18px center;
+        outline: none;
+        font-size: 13px;
+      }
+      .top-user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .top-user h4 {
+        font-size: 13px;
+      }
+      .top-user p {
+        font-size: 10px;
+        color: #667085;
+        text-align: right;
+      }
+
+      /* ── Help Content ── */
+      .help-content {
+        padding: 42px 44px;
+        max-width: 100%;
+      }
+
+      /* Hero Banner */
+      .help-hero {
+        background: linear-gradient(135deg, #c9000b 0%, #8b0008 100%);
+        border-radius: 20px;
+        padding: 48px 42px;
+        color: #fff;
+        margin-bottom: 44px;
+        position: relative;
+        overflow: hidden;
+      }
+      .help-hero::after {
+        content: '';
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 50%;
+      }
+      .help-hero h1 {
+        font-size: 28px;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 1;
+      }
+      .help-hero p {
+        font-size: 14px;
+        opacity: 0.9;
+        line-height: 1.6;
+        max-width: 560px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Section Headers */
+      .section-label {
+        font-size: 12px;
+        font-weight: 800;
+        color: #c9000b;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+      }
+      .section-title {
+        font-size: 22px;
+        font-weight: 800;
+        margin-bottom: 28px;
+      }
+
+      /* How It Works Cards */
+      .how-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+        margin-bottom: 50px;
+      }
+      .how-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 28px 24px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+        border: 1px solid #f0f1f5;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .how-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      }
+      .how-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        margin-bottom: 16px;
+      }
+      .how-icon.red {
+        background: #fff3f3;
+        color: #c9000b;
+      }
+      .how-icon.blue {
+        background: #f0f0ff;
+        color: #6670d8;
+      }
+      .how-icon.orange {
+        background: #fff6ed;
+        color: #e8772e;
+      }
+      .how-icon.green {
+        background: #eefaf3;
+        color: #2fbf6b;
+      }
+      .how-card h3 {
+        font-size: 15px;
+        margin-bottom: 10px;
+      }
+      .how-card p {
+        font-size: 13px;
+        color: #667085;
+        line-height: 1.6;
+      }
+
+      /* FAQ Section */
+      .faq-section {
+        margin-bottom: 50px;
+      }
+      .faq-intro {
+        font-size: 13px;
+        color: #667085;
+        line-height: 1.6;
+        margin-top: -18px;
+        margin-bottom: 24px;
+      }
+      .faq-item {
+        background: #fff;
+        border: 1px solid #f0f1f5;
+        border-radius: 14px;
+        margin-bottom: 12px;
+        overflow: hidden;
+        transition: box-shadow 0.2s;
+      }
+      .faq-item:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+      }
+      .faq-question {
+        width: 100%;
+        border: none;
+        background: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        cursor: pointer;
+        text-align: left;
+        font-size: 14px;
+        font-weight: 700;
+        color: #101828;
+      }
+      .faq-question:hover {
+        background: #fafbff;
+      }
+      .faq-arrow {
+        font-size: 18px;
+        color: #667085;
+        transition: transform 0.3s;
+        flex-shrink: 0;
+        margin-left: 16px;
+      }
+      .faq-item.open .faq-arrow {
+        transform: rotate(180deg);
+      }
+      .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.35s ease, padding 0.35s ease;
+      }
+      .faq-item.open .faq-answer {
+        max-height: 300px;
+      }
+      .faq-answer-inner {
+        padding: 0 24px 22px;
+        font-size: 13px;
+        color: #667085;
+        line-height: 1.7;
+      }
+
+      /* Contact Section */
+      .contact-section {
+        margin-bottom: 50px;
+      }
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+      }
+      .contact-card {
+        background: #fff;
+        border: 1px solid #f0f1f5;
+        border-radius: 16px;
+        padding: 28px 24px;
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .contact-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      }
+      .contact-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #fff3f3;
+        color: #c9000b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+      }
+      .contact-card h4 {
+        font-size: 15px;
+        margin-bottom: 6px;
+      }
+      .contact-card p {
+        font-size: 12px;
+        color: #667085;
+        margin-bottom: 14px;
+        line-height: 1.5;
+      }
+      .contact-btn {
+        display: inline-block;
+        padding: 10px 22px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+      .contact-btn:hover {
+        opacity: 0.85;
+      }
+      .contact-btn.whatsapp {
+        background: #25d366;
+        color: #fff;
+      }
+      .contact-btn.email {
+        background: #c9000b;
+        color: #fff;
+      }
+
+      /* ── Settings Modal (reused from dashboard) ── */
+      .settings-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        padding: 20px;
+      }
+      .settings-modal.show {
+        display: flex;
+      }
+      .settings-box {
+        width: 100%;
+        max-width: 440px;
+        background: #fff;
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+      }
+      .settings-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 26px;
+        border-bottom: 1px solid #eee;
+      }
+      .settings-head button {
+        border: none;
+        background: #c9000b;
+        color: white;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        font-size: 22px;
+        cursor: pointer;
+      }
+      .settings-body {
+        padding: 26px;
+      }
+      .profile-preview {
+        width: 82px;
+        height: 82px;
+        border-radius: 50%;
+        background: #dce3ff;
+        color: #3745a4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 28px;
+        margin: 0 auto 22px;
+        background-size: cover;
+        background-position: center;
+      }
+      .settings-body label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 800;
+      }
+      .settings-body input {
+        width: 100%;
+        height: 46px;
+        border: 1px solid #dfe3ea;
+        border-radius: 12px;
+        padding: 0 14px;
+        margin-bottom: 16px;
+        outline: none;
+      }
+      .save-settings {
+        width: 100%;
+        height: 50px;
+        border: none;
+        background: #c9000b;
+        color: white;
+        border-radius: 12px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .settings-status {
+        margin-top: 12px;
+        font-size: 13px;
+        color: #667085;
+      }
+
+      /* ── Responsive ── */
+      @media (max-width: 950px) {
+        .sidebar {
+          width: 78px;
+          padding: 20px 10px;
+        }
+        .logo {
+          text-align: center;
+        }
+        .logo img {
+          margin: 0 auto;
+          max-height: 24px;
+        }
+        .nav a {
+          justify-content: center;
+          padding: 12px 0;
+        }
+        .nav a span,
+        .user-card,
+        .logout {
+          display: none;
+        }
+        .top-user > div:first-child {
+          display: none;
+        }
+        .main {
+          margin-left: 78px;
+          width: calc(100% - 78px);
+        }
+        .how-grid,
+        .contact-grid {
+          grid-template-columns: 1fr;
+        }
+        .search {
+          width: 220px;
+        }
+        .help-content {
+          padding: 28px 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+      <!-- ── Sidebar ── -->
+      <aside class="sidebar">
+        <div>
+          <div class="logo"><img src="logo.png" alt="W zone"></div>
+          <nav class="nav">
+            <a href="dashboard.html">▦ <span>Dashboard</span></a>
+            <a href="articles.html">▤ <span>Reports & Articles</span></a>
+            <a href="#" onclick="openSettings(); return false;">⚙ <span>Settings</span></a>
+            <a href="help.html" class="active">? <span>Help Center</span></a>
+          </nav>
+        </div>
+
+        <div>
+          <div class="logout" onclick="logout()">↩ Logout</div>
+          <div class="user-card">
+            <div class="avatar" id="sideAvatar">U</div>
+            <div>
+              <h4 id="sideName">User</h4>
+              <p>Pro Member</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ── Main ── -->
+      <main class="main">
+        <!-- Topbar -->
+        <header class="topbar">
+          <input
+            class="search"
+            id="helpSearch"
+            placeholder="Search surveys, files, or reports..."
+          />
+          <div class="top-user">
+            <div>
+              <h4 id="topName">User</h4>
+              <p>ID #84210</p>
+            </div>
+            <div class="avatar" id="topAvatar">U</div>
+          </div>
+        </header>
+
+        <!-- Help Body -->
+        <section class="help-content">
+
+          <!-- Hero Banner -->
+          <div class="help-hero" id="helpHero">
+            <h1>How can we help you?</h1>
+            <p>Find quick answers, browse detailed guides, or connect with our specialized support team to optimize your feedback ecosystem.</p>
+          </div>
+
+          <!-- How It Works -->
+          <div class="section-label">HOW IT WORKS</div>
+          <h2 class="section-title">The way we send you questions</h2>
+
+          <div class="how-grid">
+            <div class="how-card">
+              <div class="how-icon red">📋</div>
+              <h3>1. We prepare the questions</h3>
+              <p>Our team designs smart questions based on your industry and your customers' needs, then delivers them to you by email or straight into your dashboard.</p>
+            </div>
+            <div class="how-card">
+              <div class="how-icon blue">📤</div>
+              <h3>2. We send them to you</h3>
+              <p>Our team designs smart questions based on your industry and your customers' needs, then delivers them to you by email or straight into your dashboard.</p>
+            </div>
+            <div class="how-card">
+              <div class="how-icon orange">⏱</div>
+              <h3>3. You answer at your pace</h3>
+              <p>Reply from any device whenever it suits you. Save answers as drafts or submit them all in one go.</p>
+            </div>
+            <div class="how-card">
+              <div class="how-icon green">📊</div>
+              <h3>4. We analyze and report</h3>
+              <p>We turn your answers into clear insights and actionable recommendations, delivered as a ready-to-share report.</p>
+            </div>
+          </div>
+
+          <!-- FAQ Section -->
+          <div class="faq-section">
+            <h2 class="section-title">Questions we answer</h2>
+            <p class="faq-intro">We collected the most frequent questions from our customers. If you need more detail, our support team is available all week.</p>
+
+            <div class="faq-item" id="faq1">
+              <button class="faq-question" onclick="toggleFaq('faq1')">
+                How are survey questions sent to participants?
+                <span class="faq-arrow">▾</span>
+              </button>
+              <div class="faq-answer">
+                <div class="faq-answer-inner">
+                  Our platform utilizes a multi-channel orchestration engine. You can configure automated triggers based on API events, scheduled batches via CSV uploads, or direct integration with CRM platforms like Salesforce and HubSpot.
+                </div>
+              </div>
+            </div>
+
+            <div class="faq-item" id="faq2">
+              <button class="faq-question" onclick="toggleFaq('faq2')">
+                What are the questions about?
+                <span class="faq-arrow">▾</span>
+              </button>
+              <div class="faq-answer">
+                <div class="faq-answer-inner">
+                  Questions are tailored to your industry and focus on customer satisfaction, product feedback, service quality, and market research. Each survey is customized to match your specific business goals.
+                </div>
+              </div>
+            </div>
+
+            <div class="faq-item" id="faq3">
+              <button class="faq-question" onclick="toggleFaq('faq3')">
+                How long does a batch take to answer?
+                <span class="faq-arrow">▾</span>
+              </button>
+              <div class="faq-answer">
+                <div class="faq-answer-inner">
+                  Most batches take between 10–20 minutes to complete. You can save progress at any time and return later — there's no time limit on submissions.
+                </div>
+              </div>
+            </div>
+
+            <div class="faq-item" id="faq4">
+              <button class="faq-question" onclick="toggleFaq('faq4')">
+                Is my data and my answers secure?
+                <span class="faq-arrow">▾</span>
+              </button>
+              <div class="faq-answer">
+                <div class="faq-answer-inner">
+                  Absolutely. All data is encrypted in transit (TLS 1.3) and at rest (AES-256). We are fully GDPR compliant and regularly undergo third-party security audits.
+                </div>
+              </div>
+            </div>
+
+            <div class="faq-item" id="faq5">
+              <button class="faq-question" onclick="toggleFaq('faq5')">
+                What if I need urgent help?
+                <span class="faq-arrow">▾</span>
+              </button>
+              <div class="faq-answer">
+                <div class="faq-answer-inner">
+                  For urgent matters, use our WhatsApp support channel for live chat with a specialist. Response times are typically under 5 minutes during business hours.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Us -->
+          <div class="contact-section">
+            <div class="section-label">CONTACT US</div>
+            <h2 class="section-title">Still need help? Pick the channel that works for you</h2>
+
+            <div class="contact-grid">
+              <div class="contact-card">
+                <div class="contact-icon">💬</div>
+                <div>
+                  <h4>WhatsApp Support</h4>
+                  <p>Live chat with a specialist within minutes.</p>
+                  <a href="https://wa.me/447733366986" target="_blank" class="contact-btn whatsapp">Open Chat</a>
+                </div>
+              </div>
+
+              <div class="contact-card">
+                <div class="contact-icon">✉</div>
+                <div>
+                  <h4>Email</h4>
+                  <p>Send us the details and we will get back to you.</p>
+                  <a href="mailto:info@wzone.london" class="contact-btn email">Open Email</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+      </main>
+    </div>
+
+    <!-- Settings Modal (reused from dashboard) -->
+    <div class="settings-modal" id="settingsModal">
+      <div class="settings-box">
+        <div class="settings-head">
+          <h2>Settings</h2>
+          <button onclick="closeSettings()">×</button>
+        </div>
+        <div class="settings-body">
+          <div class="profile-preview" id="settingsImagePreview">U</div>
+          <label>Profile Image</label>
+          <input type="file" id="profileImageInput" accept="image/*" />
+          <label>Name</label>
+          <input type="text" id="settingsName" />
+          <label>Email</label>
+          <input type="email" id="settingsEmail" readonly />
+          <button class="save-settings" onclick="saveSettings()">Save Changes</button>
+          <div class="settings-status" id="settingsStatus"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* ── Auth Guard ── */
+      const token = localStorage.getItem("portal_token");
+      if (!token) {
+        window.location.href = "login.html";
+      }
+
+      /* ── Load User Info ── */
+      (function loadUser() {
+        const user = JSON.parse(localStorage.getItem("portal_user") || "{}");
+        const name = user.name || "User";
+
+        document.getElementById("sideName").innerText = name;
+        document.getElementById("topName").innerText = name;
+        setAvatarImage(user);
+      })();
+
+      function setAvatarImage(user) {
+        const image = user.profile_image;
+        const name = user.name || "User";
+        const letter = name.charAt(0).toUpperCase();
+
+        const avatars = [
+          document.getElementById("sideAvatar"),
+          document.getElementById("topAvatar"),
+        ];
+
+        avatars.forEach((avatar) => {
+          if (!avatar) return;
+          if (image) {
+            avatar.innerText = "";
+            avatar.style.backgroundImage = `url('${image}')`;
+            avatar.style.backgroundSize = "cover";
+            avatar.style.backgroundPosition = "center";
+          } else {
+            avatar.innerText = letter;
+            avatar.style.backgroundImage = "";
+          }
+        });
+      }
+
+      /* ── FAQ Accordion ── */
+      function toggleFaq(id) {
+        const item = document.getElementById(id);
+        item.classList.toggle("open");
+      }
+
+      /* ── Settings Modal ── */
+      function openSettings() {
+        const user = JSON.parse(localStorage.getItem("portal_user") || "{}");
+        document.getElementById("settingsName").value = user.name || "";
+        document.getElementById("settingsEmail").value = user.email || "";
+
+        const preview = document.getElementById("settingsImagePreview");
+        if (user.profile_image) {
+          preview.innerText = "";
+          preview.style.backgroundImage = `url('${user.profile_image}')`;
+        } else {
+          preview.innerText = (user.name || "U").charAt(0).toUpperCase();
+          preview.style.backgroundImage = "";
+        }
+        document.getElementById("settingsModal").classList.add("show");
+      }
+
+      function closeSettings() {
+        document.getElementById("settingsModal").classList.remove("show");
+      }
+
+      document
+        .getElementById("profileImageInput")
+        .addEventListener("change", function () {
+          const file = this.files[0];
+          if (!file) return;
+          const preview = document.getElementById("settingsImagePreview");
+          preview.innerText = "";
+          preview.style.backgroundImage = `url('${URL.createObjectURL(file)}')`;
+        });
+
+      async function saveSettings() {
+        const status = document.getElementById("settingsStatus");
+        status.innerText = "Saving...";
+
+        const formData = new FormData();
+        formData.append("name", document.getElementById("settingsName").value.trim());
+
+        const file = document.getElementById("profileImageInput").files[0];
+        if (file) formData.append("profile_image", file);
+
+        try {
+          const res = await fetch("api/update-profile.php", {
+            method: "POST",
+            headers: { Authorization: "Bearer " + token },
+            body: formData,
+          });
+          const data = await res.json();
+          status.innerText = data.message;
+
+          if (data.success) {
+            localStorage.setItem("portal_user", JSON.stringify(data.user));
+            document.getElementById("sideName").innerText = data.user.name;
+            document.getElementById("topName").innerText = data.user.name;
+            setAvatarImage(data.user);
+            setTimeout(closeSettings, 700);
+          }
+        } catch (error) {
+          status.innerText = "Connection error";
+        }
+      }
+
+      /* ── Logout ── */
+      function logout() {
+        localStorage.clear();
+        window.location.href = "login.html";
+      }
+    </script>
+  </body>
+</html>
