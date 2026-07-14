@@ -10,7 +10,8 @@
 body{background:#f7f8fc;color:#101828}
 .app{display:flex;min-height:100vh}
 .sidebar{width:230px;background:#fff;border-right:1px solid #eee;position:fixed;top:0;left:0;bottom:0;padding:24px 14px;display:flex;flex-direction:column;justify-content:space-between}
-.logo{font-size:22px;font-weight:800;color:#c9000b;margin-bottom:30px}
+.logo{margin-bottom:20px}
+.logo img{max-height:90px;width:auto;max-width:100%;display:block;margin-top:-15px;margin-bottom:-15px}
 .nav a{display:flex;gap:10px;align-items:center;text-decoration:none;color:#667085;padding:12px 14px;border-radius:12px;margin-bottom:8px;font-size:14px}
 .nav a.active{background:#c9000b;color:#fff}
 .logout{color:#c9000b;font-size:14px;cursor:pointer;margin-bottom:18px}
@@ -20,7 +21,7 @@ body{background:#f7f8fc;color:#101828}
 .user-card p{font-size:11px;color:#667085}
 .main{margin-left:230px;width:calc(100% - 230px)}
 .topbar{height:58px;background:#fff;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;padding:0 34px}
-.search{width:420px;height:36px;border:1px solid #d9dee8;border-radius:30px;padding:0 18px;background:#fafbff;outline:none}
+.search{width:420px;height:36px;border:1px solid #d9dee8;border-radius:30px;padding:0 18px 0 42px;background:#fafbff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2398a2b3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") no-repeat 18px center;outline:none}
 .top-user{display:flex;align-items:center;gap:10px}
 .top-user h4{font-size:13px}
 .top-user p{font-size:10px;color:#667085;text-align:right}
@@ -77,8 +78,12 @@ body{background:#f7f8fc;color:#101828}
 .empty{background:#fff;border-radius:18px;padding:30px;color:#667085}
 
 @media(max-width:950px){
-  .sidebar{width:78px}
+  .sidebar{width:78px;padding:20px 10px}
+  .logo{text-align:center}
+  .logo img{margin:0 auto;max-height:24px}
+  .nav a{justify-content:center;padding:12px 0}
   .nav a span,.user-card,.logout{display:none}
+  .top-user > div:first-child{display:none}
   .main{margin-left:78px;width:calc(100% - 78px)}
   .hero,.grid{grid-template-columns:1fr}
   .search{width:220px}
@@ -173,12 +178,12 @@ body{background:#f7f8fc;color:#101828}
 
 <aside class="sidebar">
   <div>
-    <div class="logo">W zone</div>
+    <div class="logo"><img src="logo.png" alt="W zone"></div>
     <nav class="nav">
       <a href="dashboard.html">▦ <span>Dashboard</span></a>
       <a href="articles.html" class="active">▤ <span>Reports & Articles</span></a>
       <a href="#" onclick="openSettings();return false;">⚙ <span>Settings</span></a>
-      
+      <a href="help.html">? <span>Help Center</span></a>
     </nav>
   </div>
 
