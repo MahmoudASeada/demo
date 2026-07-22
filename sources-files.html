@@ -24,6 +24,36 @@ input{width:100%;border:1px solid #dfe3ea;background:#f8fafc;border-radius:12px;
 .delete{background:#c9000b;color:#fff}
 .small{color:#667085;font-size:13px}
 .actions{display:flex;gap:8px;flex-wrap:wrap}
+.assigned-badge{
+    display:inline-block;
+    margin-top:8px;
+    padding:5px 12px;
+    border-radius:20px;
+    background:#e9f9ef;
+    color:#17803d;
+    font-size:12px;
+    font-weight:700;
+    border:1px solid #b8e7c8;
+}
+
+.local-badge{
+    display:inline-block;
+    margin-top:8px;
+    padding:5px 12px;
+    border-radius:20px;
+    background:#f3f4f6;
+    color:#6b7280;
+    font-size:12px;
+    font-weight:700;
+    border:1px solid #d1d5db;
+}
+.assigned-email{
+    display:block;
+    margin-top:3px;
+    font-size:11px;
+    font-weight:400;
+    color:#4b5563;
+}
 </style>
 </head>
 
@@ -235,11 +265,33 @@ async function loadFiles(){
     box.innerHTML = files.map(file => `
       <div class="file">
         <div>
-          <strong>${file.original_name}</strong>
-          <div class="small">
-            ${(Number(file.file_size || 0) / 1024).toFixed(1)} KB · ${file.uploaded_at}
-          </div>
+    <strong>${file.original_name}</strong>
+
+    <div class="small">
+        ${(Number(file.file_size || 0) / 1024).toFixed(1)}
+        KB · ${file.uploaded_at}
+    </div>
+
+    ${
+        file.assigned_user_name
+        ?
+        `
+        <div class="assigned-badge">
+    🟢 Assigned to ${file.assigned_user_name}
+    <br>
+    <span class="assigned-email">
+        ${file.assigned_user_email}
+    </span>
+</div>
+        `
+        :
+        `
+        <div class="local-badge">
+            ⚪ Not Assigned
         </div>
+        `
+    }
+</div>
 
         <div class="actions">
           <button class="btn download" onclick="downloadFile(${file.id})">Download</button>

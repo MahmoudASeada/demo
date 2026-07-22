@@ -37,12 +37,35 @@ if($method === "GET"){
   }
 
   $stmt = $pdo->prepare("
-    SELECT id,original_name,file_type,file_size,uploaded_at
-    FROM source_files
-    WHERE folder_id=? AND admin_id=?
-    ORDER BY uploaded_at DESC
-  ");
-  $stmt->execute([$folderId, $admin["id"]]);
+    SELECT
+        sf.id,
+        sf.original_name,
+        sf.file_type,
+        sf.file_size,
+        sf.uploaded_at,
+
+        u.id    AS assigned_user_id,
+        u.name  AS assigned_user_name,
+        u.email AS assigned_user_email
+
+    FROM source_files sf
+
+    LEFT JOIN user_source_files usf
+        ON sf.id = usf.file_id
+
+    LEFT JOIN users u
+        ON usf.user_id = u.id
+
+    WHERE sf.folder_id = ?
+      AND sf.admin_id = ?
+
+    ORDER BY sf.uploaded_at DESC
+");
+
+$stmt->execute([
+    $folderId,
+    $admin["id"]
+]);
 
   echo json_encode([
     "success"=>true,
