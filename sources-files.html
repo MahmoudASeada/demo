@@ -63,7 +63,23 @@ input{width:100%;border:1px solid #dfe3ea;background:#f8fafc;border-radius:12px;
   <h2 id="currentFolderTitle">Files</h2>
 
   <input type="file" id="fileInput" multiple>
-  <button class="primary" onclick="uploadFiles()">Upload Files</button>
+
+<label style="display:block;margin-top:15px;font-weight:bold">
+Send To User (Optional)
+</label>
+
+<select id="selectedUser" style="
+width:100%;
+padding:12px;
+border:1px solid #dfe3ea;
+border-radius:12px;
+margin:10px 0 15px;
+background:#f8fafc;
+">
+    <option value="">Only Upload (Don't Send)</option>
+</select>
+
+<button class="primary" onclick="uploadFiles()">Upload Files</button>
 
   <div id="uploadStatus" class="small"></div>
   <div id="filesBox" style="margin-top:20px;"></div>
@@ -87,6 +103,7 @@ if(adminUser.role !== "super_admin"){
 
 let folders = [];
 let currentFolderId = null;
+let users = [];
 
 function logoutAdmin(){
   localStorage.removeItem("admin_token");
@@ -252,6 +269,11 @@ async function uploadFiles(){
 
   const formData = new FormData();
   formData.append("folder_id", currentFolderId);
+  const selectedUser = document.getElementById("selectedUser").value;
+
+if(selectedUser){
+    formData.append("user_id", selectedUser);
+}
 
   Array.from(input.files).forEach(file => {
     formData.append("files[]", file);
@@ -310,7 +332,42 @@ async function deleteFile(fileId){
     alert("Connection error.");
   }
 }
+async function loadUsers(){
 
+  const select = document.getElementById("selectedUser");
+
+  try{
+
+    const res = await fetch("api/admin-users.php",{
+      headers:{
+        Authorization:"Bearer " + adminToken
+      }
+    });
+
+    const data = await res.json();
+
+    if(!data.success) return;
+
+    users = data.users || [];
+
+    users.forEach(user=>{
+
+      if(Number(user.approved)!==1) return;
+
+      select.innerHTML += `
+        <option value="${user.id}">
+          ${user.name} (${user.email})
+        </option>
+      `;
+
+    });
+
+  }catch(err){
+    console.log(err);
+  }
+
+}
+loadUsers();
 loadFolders();
 </script>
 

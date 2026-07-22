@@ -93,15 +93,32 @@ if($method === "POST"){
       ");
 
       $stmt->execute([
-        $folderId,
-        $admin["id"],
-        $name,
-        $storedName,
-        $path,
-        $type,
-        $size
-      ]);
-    }
+    $folderId,
+    $admin["id"],
+    $name,
+    $storedName,
+    $path,
+    $type,
+    $size
+]);
+
+$fileId = $pdo->lastInsertId();
+
+$userId = (int)($_POST["user_id"] ?? 0);
+
+if($userId){
+
+    $assign = $pdo->prepare("
+        INSERT INTO user_source_files
+        (file_id,user_id)
+        VALUES (?,?)
+    ");
+
+    $assign->execute([
+        $fileId,
+        $userId
+    ]);
+}
   }
 
   echo json_encode(["success"=>true,"message"=>"Files uploaded"]);
