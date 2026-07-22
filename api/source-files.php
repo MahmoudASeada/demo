@@ -119,11 +119,16 @@ if($userId){
         $userId
     ]);
 }
-  }
 
-  echo json_encode(["success"=>true,"message"=>"Files uploaded"]);
-  exit;
-}
+} // end if(move_uploaded_file)
+
+} // end foreach
+
+echo json_encode([
+    "success"=>true,
+    "message"=>"Files uploaded"
+]);
+exit;
 
 if($method === "DELETE"){
   $fileId = (int)($_GET["id"] ?? 0);
