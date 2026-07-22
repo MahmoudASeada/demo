@@ -598,7 +598,27 @@
               </tbody>
             </table>
           </div>
+          <div class="panel">
+  <div class="panel-head">
+    <h3>Assigned Files</h3>
+  </div>
 
+  <table>
+    <thead>
+      <tr>
+        <th>File Name</th>
+        <th>Uploaded</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody id="assignedFilesTable">
+      <tr>
+        <td colspan="3">Loading files...</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
           <div class="articles-head">
             <h3>Monthly Published Articles</h3>
             <div>‹ ›</div>
@@ -660,6 +680,7 @@
       }
       let allSurveys = [];
       let dashboardArticles = [];
+      let assignedFiles = [];
       async function loadDashboard() {
         try {
           const res = await fetch("api/dashboard.php", {
@@ -1081,8 +1102,79 @@
           )
           .join("");
       }
+      async function loadAssignedFiles(){
+
+    const table = document.getElementById("assignedFilesTable");
+
+    try{
+
+        const res = await fetch("api/user-source-files.php",{
+            headers:{
+                Authorization:"Bearer " + token
+            }
+        });
+
+        const data = await res.json();
+
+        if(!data.success){
+            table.innerHTML = `
+                <tr>
+                    <td colspan="3">No files found.</td>
+                </tr>
+            `;
+            return;
+        }
+
+        assignedFiles = data.files || [];
+
+        if(!assignedFiles.length){
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="3">No files assigned yet.</td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        table.innerHTML = assignedFiles.map(file=>`
+
+            <tr>
+
+                <td>${file.original_name}</td>
+
+                <td>${file.uploaded_at}</td>
+
+                <td>
+
+                    <a
+                        class="view"
+                        href="api/download-user-source-file.php?id=${file.id}&token=${encodeURIComponent(token)}"
+                    >
+                        Download
+                    </a>
+
+                </td>
+
+            </tr>
+
+        `).join("");
+
+    }catch(error){
+
+        table.innerHTML = `
+            <tr>
+                <td colspan="3">Connection error.</td>
+            </tr>
+        `;
+
+    }
+
+}
       loadDashboard();
       loadDashboardArticles();
+      loadAssignedFiles();
     </script>
     <div class="modal" id="surveyModal">
       <div class="modal-box">
