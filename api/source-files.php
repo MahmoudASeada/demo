@@ -131,7 +131,7 @@ echo json_encode([
     "message" => "Files uploaded"
 ]);
 exit;
-
+}
 if($method === "DELETE"){
   $fileId = (int)($_GET["id"] ?? 0);
 
