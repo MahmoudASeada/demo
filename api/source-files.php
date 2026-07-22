@@ -77,6 +77,7 @@ if($method === "POST"){
   }
 
   foreach($_FILES["files"]["name"] as $i => $name){
+
     $tmp = $_FILES["files"]["tmp_name"][$i];
     $type = $_FILES["files"]["type"][$i];
     $size = $_FILES["files"]["size"][$i];
@@ -86,47 +87,48 @@ if($method === "POST"){
     $path = $folderPath . "/" . $storedName;
 
     if(move_uploaded_file($tmp, $path)){
-      $stmt = $pdo->prepare("
-        INSERT INTO source_files
-        (folder_id,admin_id,original_name,stored_name,file_path,file_type,file_size)
-        VALUES (?,?,?,?,?,?,?)
-      ");
 
-      $stmt->execute([
-    $folderId,
-    $admin["id"],
-    $name,
-    $storedName,
-    $path,
-    $type,
-    $size
-]);
+        $stmt = $pdo->prepare("
+            INSERT INTO source_files
+            (folder_id,admin_id,original_name,stored_name,file_path,file_type,file_size)
+            VALUES (?,?,?,?,?,?,?)
+        ");
 
-$fileId = $pdo->lastInsertId();
+        $stmt->execute([
+            $folderId,
+            $admin["id"],
+            $name,
+            $storedName,
+            $path,
+            $type,
+            $size
+        ]);
 
-$userId = (int)($_POST["user_id"] ?? 0);
+        $fileId = $pdo->lastInsertId();
 
-if($userId){
+        $userId = (int)($_POST["user_id"] ?? 0);
 
-    $assign = $pdo->prepare("
-        INSERT INTO user_source_files
-        (file_id,user_id)
-        VALUES (?,?)
-    ");
+        if($userId > 0){
 
-    $assign->execute([
-        $fileId,
-        $userId
-    ]);
-}
+            $assign = $pdo->prepare("
+                INSERT INTO user_source_files
+                (file_id,user_id)
+                VALUES (?,?)
+            ");
 
-} // end if(move_uploaded_file)
+            $assign->execute([
+                $fileId,
+                $userId
+            ]);
+        }
+
+    } // end move_uploaded_file
 
 } // end foreach
 
 echo json_encode([
-    "success"=>true,
-    "message"=>"Files uploaded"
+    "success" => true,
+    "message" => "Files uploaded"
 ]);
 exit;
 
