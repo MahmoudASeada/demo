@@ -150,26 +150,37 @@ location.href="admin-login.html";
 
 async function savePassword(){
 
-    const status=document.getElementById("status");
+    const status = document.getElementById("status");
 
-    const current=document.getElementById("currentPassword").value;
-    const pass=document.getElementById("newPassword").value;
-    const confirm=document.getElementById("confirmPassword").value;
+    const current = document.getElementById("currentPassword").value.trim();
+    const pass = document.getElementById("newPassword").value.trim();
+    const confirm = document.getElementById("confirmPassword").value.trim();
 
-    status.innerText="Saving...";
+    status.innerText = "Saving...";
 
-    const res=await fetch("api/settings-password.php",{
+    const res = await fetch("api/settings.php",{
         method:"POST",
         headers:{
             "Content-Type":"application/json",
             Authorization:"Bearer "+adminToken
         },
-        body: JSON.stringify({
-    current_password: current,
-    new_password: pass,
-    confirm_password: confirm
-})
+        body:JSON.stringify({
+            current_password: current,
+            new_password: pass,
+            confirm_password: confirm
+        })
     });
+
+    const data = await res.json();
+
+    status.innerText = data.message;
+
+    if(data.success){
+        document.getElementById("currentPassword").value="";
+        document.getElementById("newPassword").value="";
+        document.getElementById("confirmPassword").value="";
+    }
+}
 
     
 </script>
