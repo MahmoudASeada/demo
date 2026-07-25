@@ -95,33 +95,28 @@ color:#c9000b;
 
 <div class="panel">
 
-<h2>Sources & Files Security</h2>
-
-<p class="small">
-Create or change the password required before opening the Sources & Files page.
-</p>
-
-<label>New Password</label>
+<h2>Sources & Files Password</h2>
 
 <input
 type="password"
-id="password"
-placeholder="Enter password">
+id="currentPassword"
+placeholder="Current Password">
 
-<label>Confirm Password</label>
+<input
+type="password"
+id="newPassword"
+placeholder="New Password">
 
 <input
 type="password"
 id="confirmPassword"
-placeholder="Confirm password">
-
-<br><br>
+placeholder="Confirm New Password">
 
 <button class="primary" onclick="savePassword()">
 Save Password
 </button>
 
-<div class="status" id="status"></div>
+<div id="status" class="small"></div>
 
 </div>
 
@@ -155,41 +150,41 @@ location.href="admin-login.html";
 
 async function savePassword(){
 
-const pass=document.getElementById("password").value.trim();
-const confirm=document.getElementById("confirmPassword").value.trim();
+    const status=document.getElementById("status");
 
-const status=document.getElementById("status");
+    const current=document.getElementById("currentPassword").value;
+    const pass=document.getElementById("newPassword").value;
+    const confirm=document.getElementById("confirmPassword").value;
 
-if(pass===""){
+    status.innerText="Saving...";
 
-status.innerHTML="Password required";
-return;
+    const res=await fetch("api/settings-password.php",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            Authorization:"Bearer "+adminToken
+        },
+        body:JSON.stringify({
+            current_password:current,
+            new_password:pass,
+            confirm_password:confirm
+        })
+    });
+
+    const data=await res.json();
+
+    status.innerText=data.message;
+
+    if(data.success){
+
+        document.getElementById("currentPassword").value="";
+        document.getElementById("newPassword").value="";
+        document.getElementById("confirmPassword").value="";
+
+        document.getElementById("currentPassword").style.display="block";
+    }
 
 }
-
-if(pass!==confirm){
-
-status.innerHTML="Passwords do not match";
-return;
-
-}
-
-status.innerHTML="Saving...";
-
-const res=await fetch("api/settings.php",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json",
-Authorization:"Bearer "+adminToken
-},
-
-body:JSON.stringify({
-password:pass
-})
-
-});
 
 const data=await res.json();
 
@@ -203,7 +198,7 @@ document.getElementById("confirmPassword").value="";
 }
 
 }
-
+checkPassword();
 </script>
 
 </body>
