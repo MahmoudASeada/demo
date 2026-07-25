@@ -127,7 +127,35 @@ color:#c9000b;
     <div id="status" class="small"></div>
 
 </div>
+<hr style="margin:40px 0">
 
+<h2>Website Logo</h2>
+
+<p class="small">
+Current logo used across the admin panel.
+</p>
+
+<img
+id="currentLogo"
+src="logo.png?"+Date.now()
+style="
+width:180px;
+display:block;
+margin:20px 0;
+">
+
+<input
+type="file"
+id="logoFile"
+accept=".png,.jpg,.jpeg,.svg">
+
+<button
+class="primary"
+onclick="uploadLogo()">
+Update Logo
+</button>
+
+<div id="logoStatus" class="small"></div>
 <script>
 
 const adminToken=localStorage.getItem("admin_token");
@@ -190,7 +218,39 @@ async function savePassword(){
     }
 }
 
-    
+async function uploadLogo(){
+
+    const file=document.getElementById("logoFile").files[0];
+
+    if(!file){
+        alert("Choose logo");
+        return;
+    }
+
+    const form=new FormData();
+    form.append("logo",file);
+
+    const res=await fetch("api/upload-logo.php",{
+        method:"POST",
+        headers:{
+            Authorization:"Bearer "+adminToken
+        },
+        body:form
+    });
+
+    const data=await res.json();
+
+    document.getElementById("logoStatus").innerText=data.message;
+
+    if(data.success){
+
+        document.getElementById("currentLogo").src=
+            "logo.png?"+new Date().getTime();
+
+        document.getElementById("logoFile").value="";
+    }
+
+}   
 </script>
 
 </body>
