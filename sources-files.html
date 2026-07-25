@@ -426,7 +426,7 @@ async function loadUsers(){
 }
 async function checkPassword(){
 
-    const res = await fetch("api/settings-password.php",{
+    const res = await fetch("api/settings.php",{
         headers:{
             Authorization:"Bearer "+adminToken
         }
