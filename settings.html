@@ -164,41 +164,14 @@ async function savePassword(){
             "Content-Type":"application/json",
             Authorization:"Bearer "+adminToken
         },
-        body:JSON.stringify({
-            current_password:current,
-            new_password:pass,
-            confirm_password:confirm
-        })
+        body: JSON.stringify({
+    current_password: current,
+    new_password: pass,
+    confirm_password: confirm
+})
     });
 
-    const data=await res.json();
-
-    status.innerText=data.message;
-
-    if(data.success){
-
-        document.getElementById("currentPassword").value="";
-        document.getElementById("newPassword").value="";
-        document.getElementById("confirmPassword").value="";
-
-        document.getElementById("currentPassword").style.display="block";
-    }
-
-}
-
-const data=await res.json();
-
-status.innerHTML=data.message;
-
-if(data.success){
-
-document.getElementById("password").value="";
-document.getElementById("confirmPassword").value="";
-
-}
-
-}
-checkPassword();
+    
 </script>
 
 </body>

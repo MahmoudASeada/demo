@@ -5,9 +5,9 @@ header("Content-Type: application/json");
 $headers = getallheaders();
 $token = str_replace("Bearer ","",$headers["Authorization"] ?? "");
 
-$stmt = $pdo->prepare("SELECT id,sources_password FROM admins WHERE session_token=? LIMIT 1");
+$stmt = $pdo->prepare("SELECT id FROM admins WHERE session_token=? LIMIT 1");
 $stmt->execute([$token]);
-$admin = $stmt->fetch();
+$admin=$stmt->fetch();
 
 if(!$admin){
     echo json_encode([
@@ -19,43 +19,96 @@ if(!$admin){
 
 if($_SERVER["REQUEST_METHOD"]=="GET"){
 
+    $stmt=$pdo->prepare("
+        SELECT sources_password
+        FROM admins
+        WHERE id=?
+    ");
+
+    $stmt->execute([$admin["id"]]);
+
+    $row=$stmt->fetch();
+
     echo json_encode([
         "success"=>true,
-        "hasPassword"=>!empty($admin["sources_password"])
+        "hasPassword"=>!empty($row["sources_password"])
     ]);
+
     exit;
 }
 
 if($_SERVER["REQUEST_METHOD"]=="POST"){
 
-    $input = json_decode(file_get_contents("php://input"),true);
+    $input=json_decode(file_get_contents("php://input"),true);
 
-    $current = trim($input["current_password"] ?? "");
-    $new = trim($input["new_password"] ?? "");
-    $confirm = trim($input["confirm_password"] ?? "");
+    // Verify Password
+    if(($input["action"] ?? "")=="verify"){
 
-    if(strlen($new) < 4){
-        echo json_encode([
-            "success"=>false,
-            "message"=>"Password must be at least 4 characters."
-        ]);
+        $stmt=$pdo->prepare("
+            SELECT sources_password
+            FROM admins
+            WHERE id=?
+        ");
+
+        $stmt->execute([$admin["id"]]);
+        $row=$stmt->fetch();
+
+        if(
+            $row &&
+            password_verify($input["password"] ?? "",$row["sources_password"])
+        ){
+
+            echo json_encode([
+                "success"=>true
+            ]);
+
+        }else{
+
+            echo json_encode([
+                "success"=>false,
+                "message"=>"Wrong password"
+            ]);
+
+        }
+
         exit;
     }
 
-    if($new !== $confirm){
-        echo json_encode([
-            "success"=>false,
-            "message"=>"Passwords do not match."
-        ]);
-        exit;
-    }
+    $current=trim($input["current_password"] ?? "");
+    $new=trim($input["new_password"] ?? "");
+    $confirm=trim($input["confirm_password"] ?? "");
+
+    $stmt=$pdo->prepare("
+        SELECT sources_password
+        FROM admins
+        WHERE id=?
+    ");
+
+    $stmt->execute([$admin["id"]]);
+    $row=$stmt->fetch();
 
     // أول مرة
-    if(empty($admin["sources_password"])){
+    if(empty($row["sources_password"])){
 
-        $hash = password_hash($new,PASSWORD_DEFAULT);
+        if(strlen($new)<4){
+            echo json_encode([
+                "success"=>false,
+                "message"=>"Minimum 4 characters"
+            ]);
+            exit;
+        }
 
-        $stmt = $pdo->prepare("
+        if($new!=$confirm){
+            echo json_encode([
+                "success"=>false,
+                "message"=>"Passwords do not match"
+            ]);
+            exit;
+        }
+
+        $hash=password_hash($new,PASSWORD_DEFAULT);
+
+        $stmt=$pdo->prepare("
             UPDATE admins
             SET sources_password=?
             WHERE id=?
@@ -68,24 +121,46 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
 
         echo json_encode([
             "success"=>true,
-            "message"=>"Password saved successfully."
+            "message"=>"Password saved"
         ]);
+
         exit;
     }
 
-    // تغيير كلمة المرور
-    if(!password_verify($current,$admin["sources_password"])){
+    // بعد أول مرة
+    if(!password_verify($current,$row["sources_password"])){
 
         echo json_encode([
             "success"=>false,
-            "message"=>"Current password is incorrect."
+            "message"=>"Current password is incorrect"
         ]);
+
         exit;
     }
 
-    $hash = password_hash($new,PASSWORD_DEFAULT);
+    if(strlen($new)<4){
 
-    $stmt = $pdo->prepare("
+        echo json_encode([
+            "success"=>false,
+            "message"=>"Minimum 4 characters"
+        ]);
+
+        exit;
+    }
+
+    if($new!=$confirm){
+
+        echo json_encode([
+            "success"=>false,
+            "message"=>"Passwords do not match"
+        ]);
+
+        exit;
+    }
+
+    $hash=password_hash($new,PASSWORD_DEFAULT);
+
+    $stmt=$pdo->prepare("
         UPDATE admins
         SET sources_password=?
         WHERE id=?
@@ -98,6 +173,8 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
 
     echo json_encode([
         "success"=>true,
-        "message"=>"Password updated successfully."
+        "message"=>"Password updated"
     ]);
+
+    exit;
 }
