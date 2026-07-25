@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings</title>
+
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f6f7fb;padding:35px;color:#101828}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+.logo{color:#c9000b;font-size:24px;font-weight:800}
+.logout,.primary{
+border:none;
+background:#c9000b;
+color:#fff;
+padding:12px 18px;
+border-radius:10px;
+font-weight:800;
+cursor:pointer;
+}
+
+.nav{
+margin-bottom:25px;
+display:flex;
+gap:12px;
+flex-wrap:wrap;
+}
+
+.nav a{
+background:#101828;
+color:#fff;
+padding:12px 18px;
+border-radius:10px;
+text-decoration:none;
+font-weight:800;
+}
+
+.nav a.active{
+background:#c9000b;
+}
+
+.panel{
+background:#fff;
+border-radius:20px;
+box-shadow:0 14px 35px rgba(0,0,0,.06);
+padding:30px;
+max-width:700px;
+}
+
+.small{
+color:#667085;
+font-size:14px;
+margin-bottom:20px;
+}
+
+label{
+display:block;
+font-weight:bold;
+margin-top:18px;
+margin-bottom:8px;
+}
+
+input{
+width:100%;
+padding:14px;
+border:1px solid #ddd;
+border-radius:10px;
+font-size:15px;
+}
+
+.status{
+margin-top:18px;
+font-weight:bold;
+color:#c9000b;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+<div class="logo">W zone Admin</div>
+<button class="logout" onclick="logoutAdmin()">Logout</button>
+</div>
+
+<div class="nav">
+<a href="admin.html">Surveys</a>
+<a href="responses.html">Responses</a>
+<a href="sources-files.html">Sources & Files</a>
+<a href="articles-assignment.html" id="articlesAssignmentLink">Articles Assignment</a>
+<a href="users-management.html" id="usersManagementLink">Users Management</a>
+<a href="settings.html" class="active">Settings</a>
+</div>
+
+<div class="panel">
+
+<h2>Sources & Files Security</h2>
+
+<p class="small">
+Create or change the password required before opening the Sources & Files page.
+</p>
+
+<label>New Password</label>
+
+<input
+type="password"
+id="password"
+placeholder="Enter password">
+
+<label>Confirm Password</label>
+
+<input
+type="password"
+id="confirmPassword"
+placeholder="Confirm password">
+
+<br><br>
+
+<button class="primary" onclick="savePassword()">
+Save Password
+</button>
+
+<div class="status" id="status"></div>
+
+</div>
+
+<script>
+
+const adminToken=localStorage.getItem("admin_token");
+const adminUser=JSON.parse(localStorage.getItem("admin_user")||"{}");
+
+if(!adminToken){
+location.href="admin-login.html";
+}
+
+if(adminUser.role!=="super_admin"){
+
+const a=document.getElementById("articlesAssignmentLink");
+const u=document.getElementById("usersManagementLink");
+
+if(a)a.style.display="none";
+if(u)u.style.display="none";
+
+}
+
+function logoutAdmin(){
+
+localStorage.removeItem("admin_token");
+localStorage.removeItem("admin_user");
+
+location.href="admin-login.html";
+
+}
+
+async function savePassword(){
+
+const pass=document.getElementById("password").value.trim();
+const confirm=document.getElementById("confirmPassword").value.trim();
+
+const status=document.getElementById("status");
+
+if(pass===""){
+
+status.innerHTML="Password required";
+return;
+
+}
+
+if(pass!==confirm){
+
+status.innerHTML="Passwords do not match";
+return;
+
+}
+
+status.innerHTML="Saving...";
+
+const res=await fetch("api/settings.php",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+Authorization:"Bearer "+adminToken
+},
+
+body:JSON.stringify({
+password:pass
+})
+
+});
+
+const data=await res.json();
+
+status.innerHTML=data.message;
+
+if(data.success){
+
+document.getElementById("password").value="";
+document.getElementById("confirmPassword").value="";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>

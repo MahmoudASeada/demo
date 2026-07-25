@@ -70,6 +70,9 @@ input{width:100%;border:1px solid #dfe3ea;background:#f8fafc;border-radius:12px;
   <a href="sources-files.html" class="active">Sources & Files</a>
   <a href="articles-assignment.html" id="articlesAssignmentLink">Articles Assignment</a>
   <a href="users-management.html" id="usersManagementLink">Users Management</a>
+  <a href="settings.html" style="background:#101828;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:800;">
+  Settings
+</a>
 </div>
 
 <div class="panel">
@@ -118,6 +121,8 @@ background:#f8fafc;
 <script>
 const adminToken = localStorage.getItem("admin_token");
 const adminUser = JSON.parse(localStorage.getItem("admin_user") || "{}");
+document.body.style.display="none";
+checkPassword();
 
 if(!adminToken){
   window.location.href = "admin-login.html";
@@ -417,6 +422,58 @@ async function loadUsers(){
   }catch(err){
     console.log(err);
   }
+
+}
+async function checkPassword(){
+
+    const res = await fetch("api/settings.php",{
+        headers:{
+            Authorization:"Bearer "+adminToken
+        }
+    });
+
+    const data = await res.json();
+
+    if(!data.hasPassword){
+        document.body.style.display="block";
+        return;
+    }
+
+    while(true){
+
+        const pass = prompt("Enter Sources & Files Password");
+
+        if(pass===null){
+            location.href="admin.html";
+            return;
+        }
+
+        const verify = await fetch("api/settings.php",{
+
+            method:"POST",
+
+            headers:{
+                Authorization:"Bearer "+adminToken,
+                "Content-Type":"application/json"
+            },
+
+            body:JSON.stringify({
+                action:"verify",
+                password:pass
+            })
+
+        });
+
+        const result = await verify.json();
+
+        if(result.success){
+            document.body.style.display="block";
+            break;
+        }
+
+        alert("Wrong Password");
+
+    }
 
 }
 loadUsers();
