@@ -10,7 +10,7 @@
 body{background:#f6f7fb;padding:35px;color:#101828}
 .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
 .logo{color:#c9000b;font-size:24px;font-weight:800}
-.logout,.primary{
+.logout{
 border:none;
 background:#c9000b;
 color:#fff;
@@ -55,10 +55,15 @@ margin-bottom:20px;
 }
 
 label{
-display:block;
-font-weight:bold;
-margin-top:18px;
-margin-bottom:8px;
+    display:block;
+    font-size:16px;
+    font-weight:700;
+    margin-top:18px;
+    margin-bottom:8px;
+}
+
+.primary{
+    margin-top:10px;
 }
 
 input{
@@ -95,28 +100,31 @@ color:#c9000b;
 
 <div class="panel">
 
-<h2>Sources & Files Password</h2>
+    <h2>Sources & Files Password</h2>
 
-<input
-type="password"
-id="currentPassword"
-placeholder="Current Password">
+    <label>Current Password</label>
+    <input
+        type="password"
+        id="currentPassword"
+        placeholder="Enter current password">
 
-<input
-type="password"
-id="newPassword"
-placeholder="New Password">
+    <label>New Password</label>
+    <input
+        type="password"
+        id="newPassword"
+        placeholder="Enter new password">
 
-<input
-type="password"
-id="confirmPassword"
-placeholder="Confirm New Password">
+    <label>Confirm New Password</label>
+    <input
+        type="password"
+        id="confirmPassword"
+        placeholder="Confirm new password">
 
-<button class="primary" onclick="savePassword()">
-Save Password
-</button>
+    <button class="primary" onclick="savePassword()">
+        Save Password
+    </button>
 
-<div id="status" class="small"></div>
+    <div id="status" class="small"></div>
 
 </div>
 
