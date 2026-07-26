@@ -134,7 +134,7 @@ th{
   </div>
 
 <script>
-const token = localStorage.getItem("user_token");
+const token = localStorage.getItem("portal_token");
 
 if (!token) {
   location.href = "login.html";
@@ -143,7 +143,8 @@ if (!token) {
 // Fetch Appointments Scheduled by Admin for Logged-in User
 async function loadScheduledAppointments() {
   try {
-    const res = await fetch("api/calendar.php?action=get_user_appointments", {
+    // تعديل الـ action ليصبح get_user_calendar
+    const res = await fetch("api/calendar.php?action=get_user_calendar", {
       headers: { Authorization: "Bearer " + token }
     });
     const data = await res.json();
