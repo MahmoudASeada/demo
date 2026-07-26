@@ -1,132 +1,339 @@
-<!-- ADMIN CALENDAR POPUP MODAL -->
-<div id="adminCalendarModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center;">
-  <div style="background:#fff; width:90%; max-width:800px; padding:25px; border-radius:15px; max-height:90vh; overflow-y:auto;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-      <h2>User Calendar Management</h2>
-      <button onclick="closeAdminCalendarModal()" style="border:none; background:#c9000b; color:#fff; width:30px; height:30px; border-radius:50%; font-weight:bold; cursor:pointer;">×</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendar Management - Admin</title>
+
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f6f7fb;padding:35px;color:#101828}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+.logo{color:#c9000b;font-size:24px;font-weight:800}
+
+.logout{
+  border:none;
+  background:#c9000b;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:10px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.nav{
+  margin-bottom:25px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.nav a{
+  background:#101828;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:800;
+}
+
+.nav a.active{
+  background:#c9000b;
+}
+
+.panel{
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 14px 35px rgba(0,0,0,.06);
+  padding:30px;
+  max-width:900px;
+  margin-bottom:25px;
+}
+
+.panel h2{
+  margin-bottom:15px;
+}
+
+label{
+  display:block;
+  font-weight:bold;
+  margin-bottom:8px;
+  font-size:14px;
+}
+
+select, input{
+  width:100%;
+  padding:12px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:14px;
+  outline:none;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap:15px;
+  margin-top:15px;
+  align-items:end;
+}
+
+.btn-primary{
+  background:#c9000b;
+  color:#fff;
+  border:none;
+  padding:12px 20px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.btn-primary:hover{
+  background:#a00009;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+
+th, td{
+  padding:12px 15px;
+  text-align:left;
+  border-bottom:1px solid #eef1f5;
+  font-size:14px;
+}
+
+th{
+  background:#f8fafc;
+  color:#667085;
+}
+
+.badge{
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+  display:inline-block;
+}
+
+.badge.pending{ background:#e7f0ff; color:#3478f6; }
+.badge.approved{ background:#e8faef; color:#20a95a; }
+.badge.rejected{ background:#ffe8e8; color:#c9000b; }
+
+.blocked-list{
+  margin:10px 0 0 20px;
+  color:#667085;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <div class="logo">W zone Admin</div>
+  <button class="logout" onclick="logoutAdmin()">Logout</button>
+</div>
+
+<!-- Navigation Tabs -->
+<div class="nav">
+  <a href="admin.html">Surveys</a>
+  <a href="responses.html">Responses</a>
+  <a href="sources-files.html">Sources & Files</a>
+  <a href="articles-assignment.html" id="articlesAssignmentLink">Articles Assignment</a>
+  <a href="users-management.html" id="usersManagementLink">Users Management</a>
+  <a href="admin-calendar.html" class="active">Calendar</a>
+  <a href="settings.html">Settings</a>
+</div>
+
+<!-- Step 1: User Selector -->
+<div class="panel">
+  <h2>Select User Calendar</h2>
+  <label for="calendarUserSelect">Choose a User to view/book appointments:</label>
+  <select id="calendarUserSelect" onchange="loadUserCalendarData()">
+    <option value="">-- Choose User --</option>
+  </select>
+</div>
+
+<!-- Step 2: Booking Form -->
+<div class="panel" id="bookingSection" style="display:none;">
+  <h2>Book New Appointment</h2>
+  <div class="form-grid">
+    <div>
+      <label>Appointment Title</label>
+      <input type="text" id="appTitle" placeholder="e.g. Project Discussion">
     </div>
-
-    <label style="font-weight:bold; display:block; margin-bottom:8px;">Select User:</label>
-    <select id="calendarUserSelect" onchange="loadUserCalendarForAdmin()" style="width:100%; padding:10px; border-radius:8px; margin-bottom:20px;">
-      <option value="">-- Choose User --</option>
-    </select>
-
-    <!-- Create Appointment Section -->
-    <div style="background:#f8fafc; padding:15px; border-radius:10px; margin-bottom:20px;">
-      <h4 style="margin-bottom:10px;">Book New Appointment</h4>
-      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px;">
-        <input type="text" id="appTitle" placeholder="Title (e.g. Follow-up)" style="padding:8px; border-radius:6px; border:1px solid #ddd;">
-        <input type="date" id="appDate" style="padding:8px; border-radius:6px; border:1px solid #ddd;">
-        <input type="time" id="appTime" style="padding:8px; border-radius:6px; border:1px solid #ddd;">
-        <button onclick="createNewAppointment()" style="background:#c9000b; color:#fff; border:none; padding:8px; border-radius:6px; font-weight:bold; cursor:pointer;">Book Slot</button>
-      </div>
+    <div>
+      <label>Date</label>
+      <input type="date" id="appDate">
     </div>
-
-    <!-- Calendar View / Lists -->
-    <h3>Blocked Slots (By User)</h3>
-    <ul id="userBlockedList" style="margin:10px 0 20px 20px; color:#667085;">
-      <li>Select a user first</li>
-    </ul>
-
-    <h3>Existing Appointments</h3>
-    <table style="width:100%; border-collapse:collapse; margin-top:10px;">
-      <thead>
-        <tr style="background:#f8fafc; text-align:left;">
-          <th style="padding:10px;">Title</th>
-          <th style="padding:10px;">Date</th>
-          <th style="padding:10px;">Time</th>
-          <th style="padding:10px;">Status</th>
-        </tr>
-      </thead>
-      <tbody id="adminAppointmentsTable">
-        <tr><td colspan="4" style="padding:10px;">Select a user to display appointments.</td></tr>
-      </tbody>
-    </table>
+    <div>
+      <label>Time</label>
+      <input type="time" id="appTime">
+    </div>
+    <div>
+      <button class="btn-primary" onclick="createNewAppointment()">Send Request</button>
+    </div>
   </div>
+</div>
+
+<!-- Step 3: Blocked Slots & Appointments Table -->
+<div class="panel" id="calendarDataSection" style="display:none;">
+  <h2>Blocked Slots by User</h2>
+  <p style="font-size:13px; color:#667085;">Times the user has marked as unavailable:</p>
+  <ul id="userBlockedList" class="blocked-list">
+    <li>No blocked slots set.</li>
+  </ul>
+
+  <h2 style="margin-top:30px;">Appointments List</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="adminAppointmentsTable">
+      <tr><td colspan="4">No appointments found.</td></tr>
+    </tbody>
+  </table>
 </div>
 
 <script>
 const adminToken = localStorage.getItem("admin_token");
+const adminUser = JSON.parse(localStorage.getItem("admin_user") || "{}");
 
-async function openAdminCalendarModal() {
-  document.getElementById("adminCalendarModal").style.display = "flex";
-  
-  // تحميل قائمة المستخدمين في Dropdown
-  const res = await fetch("api/users.php", {
-    headers: { Authorization: "Bearer " + adminToken }
-  });
-  const data = await res.json();
-  const select = document.getElementById("calendarUserSelect");
-  select.innerHTML = `<option value="">-- Choose User --</option>`;
-  
-  if(data.users) {
-    data.users.forEach(u => {
-      select.innerHTML += `<option value="${u.id}">${u.name} (${u.email})</option>`;
+if (!adminToken) {
+  location.href = "admin-login.html";
+}
+
+// Role Check
+if (adminUser.role !== "super_admin") {
+  const a = document.getElementById("articlesAssignmentLink");
+  const u = document.getElementById("usersManagementLink");
+  if (a) a.style.display = "none";
+  if (u) u.style.display = "none";
+}
+
+function logoutAdmin() {
+  localStorage.removeItem("admin_token");
+  localStorage.removeItem("admin_user");
+  location.href = "admin-login.html";
+}
+
+// 1. Fetch Users Dropdown
+async function loadUsersDropdown() {
+  try {
+    const res = await fetch("api/users.php", {
+      headers: { Authorization: "Bearer " + adminToken }
     });
+    const data = await res.json();
+    const select = document.getElementById("calendarUserSelect");
+    select.innerHTML = `<option value="">-- Choose User --</option>`;
+    
+    if (data.users && data.users.length) {
+      data.users.forEach(u => {
+        select.innerHTML += `<option value="${u.id}">${u.name} (${u.email})</option>`;
+      });
+    }
+  } catch (err) {
+    alert("Error fetching users list");
   }
 }
 
-function closeAdminCalendarModal() {
-  document.getElementById("adminCalendarModal").style.display = "none";
-}
-
-async function loadUserCalendarForAdmin() {
+// 2. Fetch User's Calendar & Blocked Slots
+async function loadUserCalendarData() {
   const userId = document.getElementById("calendarUserSelect").value;
-  if (!userId) return;
+  const bookingSection = document.getElementById("bookingSection");
+  const dataSection = document.getElementById("calendarDataSection");
 
-  const res = await fetch(`api/calendar.php?action=get_admin_calendar_data&user_id=${userId}`, {
-    headers: { Authorization: "Bearer " + adminToken }
-  });
-  const data = await res.json();
-
-  // عرض الأوقات القابلة/غير القابلة للحجز
-  const blockedList = document.getElementById("userBlockedList");
-  if (!data.blocked.length) {
-    blockedList.innerHTML = `<li>No blocked slots set by user.</li>`;
-  } else {
-    blockedList.innerHTML = data.blocked.map(b => `<li>Date: <b>${b.date}</b> | (${b.start_time} - ${b.end_time})</li>`).join("");
+  if (!userId) {
+    bookingSection.style.display = "none";
+    dataSection.style.display = "none";
+    return;
   }
 
-  // عرض الجدول والمواعيد
-  const tbody = document.getElementById("adminAppointmentsTable");
-  if (!data.appointments.length) {
-    tbody.innerHTML = `<tr><td colspan="4" style="padding:10px;">No appointments found for this user.</td></tr>`;
-  } else {
-    tbody.innerHTML = data.appointments.map(a => `
-      <tr style="border-top:1px solid #eee;">
-        <td style="padding:10px;">${a.title}</td>
-        <td style="padding:10px;">${a.date}</td>
-        <td style="padding:10px;">${a.time}</td>
-        <td style="padding:10px;"><b>${a.status}</b></td>
-      </tr>
-    `).join("");
+  bookingSection.style.display = "block";
+  dataSection.style.display = "block";
+
+  try {
+    const res = await fetch(`api/calendar.php?action=get_admin_calendar_data&user_id=${userId}`, {
+      headers: { Authorization: "Bearer " + adminToken }
+    });
+    const data = await res.json();
+
+    // Render Blocked Slots
+    const blockedList = document.getElementById("userBlockedList");
+    if (!data.blocked || !data.blocked.length) {
+      blockedList.innerHTML = `<li>No unavailable times set by user.</li>`;
+    } else {
+      blockedList.innerHTML = data.blocked.map(b => 
+        `<li>Date: <b>${b.date}</b> | Unavailable from <b>${b.start_time}</b> to <b>${b.end_time}</b></li>`
+      ).join("");
+    }
+
+    // Render Appointments Table
+    const tbody = document.getElementById("adminAppointmentsTable");
+    if (!data.appointments || !data.appointments.length) {
+      tbody.innerHTML = `<tr><td colspan="4">No appointments recorded for this user.</td></tr>`;
+    } else {
+      tbody.innerHTML = data.appointments.map(a => `
+        <tr>
+          <td>${a.title}</td>
+          <td>${a.date}</td>
+          <td>${a.time}</td>
+          <td><span class="badge ${a.status}">${a.status}</span></td>
+        </tr>
+      `).join("");
+    }
+  } catch (err) {
+    alert("Error loading user calendar data");
   }
 }
 
+// 3. Create Appointment from Admin
 async function createNewAppointment() {
   const userId = document.getElementById("calendarUserSelect").value;
-  const title = document.getElementById("appTitle").value;
+  const title = document.getElementById("appTitle").value.trim();
   const date = document.getElementById("appDate").value;
   const time = document.getElementById("appTime").value;
 
   if (!userId || !title || !date || !time) {
-    alert("Please fill all appointment details and select a user!");
+    alert("Please fill all appointment details!");
     return;
   }
 
-  const res = await fetch("api/calendar.php?action=create_appointment", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + adminToken
-    },
-    body: JSON.stringify({ user_id: userId, title, date, time })
-  });
+  try {
+    const res = await fetch("api/calendar.php?action=create_appointment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + adminToken
+      },
+      body: JSON.stringify({ user_id: userId, title, date, time })
+    });
 
-  const data = await res.json();
-  alert(data.message);
-  if (data.success) {
-    loadUserCalendarForAdmin();
+    const data = await res.json();
+    alert(data.message);
+
+    if (data.success) {
+      document.getElementById("appTitle").value = "";
+      document.getElementById("appDate").value = "";
+      document.getElementById("appTime").value = "";
+      loadUserCalendarData(); // Refresh list
+    }
+  } catch (err) {
+    alert("Error creating appointment");
   }
 }
+
+loadUsersDropdown();
 </script>
+
+</body>
+</html>
