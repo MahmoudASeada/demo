@@ -451,6 +451,26 @@
               </div>
             </div>
           </div>
+          <!-- SURVEYS TABLE -->
+          <div class="panel">
+            <div class="panel-head">
+              <h3>My Submitted Surveys</h3>
+              <a href="#" onclick="openSurveyModal('all'); return false;">View All ›</a>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Survey Name</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="surveyTable">
+                <tr><td colspan="4">Loading surveys...</td></tr>
+              </tbody>
+            </table>
+          </div>
 
 
           <!-- 2. PART TWO: APPOINTMENTS RECEIVED FROM ADMIN (المواعيد المرسلة) -->
@@ -474,27 +494,7 @@
             </table>
           </div>
 
-          <!-- SURVEYS TABLE -->
-          <div class="panel">
-            <div class="panel-head">
-              <h3>My Submitted Surveys</h3>
-              <a href="#" onclick="openSurveyModal('all'); return false;">View All ›</a>
-            </div>
-            <table>
-              <thead>
-                <tr>
-                  <th>Survey Name</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="surveyTable">
-                <tr><td colspan="4">Loading surveys...</td></tr>
-              </tbody>
-            </table>
-          </div>
-
+          
           <!-- ASSIGNED FILES -->
           <div class="panel">
             <div class="panel-head">
