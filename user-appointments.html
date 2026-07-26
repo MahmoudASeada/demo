@@ -131,6 +131,7 @@ th{
 .badge.pending{ background:#e7f0ff; color:#3478f6; }
 .badge.approved{ background:#e8faef; color:#20a95a; }
 .badge.rejected{ background:#ffe8e8; color:#c9000b; }
+.badge.blocked{ background:#fff3f3; color:#c9000b; }
 
 .btn-accept {
   background: #20a95a;
@@ -194,7 +195,27 @@ th{
       </div>
     </div>
 
-    <!-- 2. APPOINTMENTS SCHEDULED BY ADMIN -->
+    <!-- 2. MY BLOCKED SLOTS TABLE -->
+    <div class="card">
+      <h3>My Blocked Slots (Unavailability)</h3>
+      <p style="color:#667085; font-size:14px; margin-top:5px;">List of dates and time ranges you have blocked.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>From Time</th>
+            <th>To Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="blockedSlotsTable">
+          <tr><td colspan="4">Loading blocked slots...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3. APPOINTMENTS SCHEDULED BY ADMIN -->
     <div class="card">
       <h3>Appointments Scheduled by Admin</h3>
       <p style="color:#667085; font-size:14px; margin-top:5px;">List of meeting requests and appointments assigned to you.</p>
@@ -217,52 +238,67 @@ th{
   </div>
 
 <script>
-// توحيد المفتاح ليكون portal_token متوافقاً مع الداشبورد
 const token = localStorage.getItem("portal_token");
 
 if (!token) {
   location.href = "login.html";
 }
 
-// 1. دالة جلب المواعيد
-async function loadScheduledAppointments() {
+// 1. دالة جلب بيانات التقويم (المواعيد والأوقات المغلقة)
+async function loadUserCalendar() {
   try {
     const res = await fetch("api/calendar.php?action=get_user_calendar", {
       headers: { Authorization: "Bearer " + token }
     });
     const data = await res.json();
 
-    const tbody = document.getElementById("userAppointmentsTable");
-
-    if (!data.appointments || !data.appointments.length) {
-      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888;">No scheduled appointments yet.</td></tr>`;
-      return;
+    // -- عرض الأوقات المحجوزة/المغلقة من المستخدم --
+    const blockedTbody = document.getElementById("blockedSlotsTable");
+    if (!data.blocked || !data.blocked.length) {
+      blockedTbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888;">No blocked slots added yet.</td></tr>`;
+    } else {
+      blockedTbody.innerHTML = data.blocked.map(b => `
+        <tr>
+          <td><b>${b.date}</b></td>
+          <td>${b.start_time}</td>
+          <td>${b.end_time}</td>
+          <td><span class="badge blocked">Blocked</span></td>
+        </tr>
+      `).join("");
     }
 
-    tbody.innerHTML = data.appointments.map(a => {
-      let actions = `-`;
-      if (a.status === "pending") {
-        actions = `
-          <button class="btn-accept" onclick="respondAppointment(${a.id}, 'approved')">Accept</button>
-          <button class="btn-reject" onclick="respondAppointment(${a.id}, 'rejected')">Reject</button>
-        `;
-      }
+    // -- عرض مواعيد الأدمن --
+    const appointmentsTbody = document.getElementById("userAppointmentsTable");
+    if (!data.appointments || !data.appointments.length) {
+      appointmentsTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888;">No scheduled appointments yet.</td></tr>`;
+    } else {
+      appointmentsTbody.innerHTML = data.appointments.map(a => {
+        let actions = `-`;
+        if (a.status === "pending") {
+          actions = `
+            <button class="btn-accept" onclick="respondAppointment(${a.id}, 'approved')">Accept</button>
+            <button class="btn-reject" onclick="respondAppointment(${a.id}, 'rejected')">Reject</button>
+          `;
+        }
 
-      return `
-        <tr>
-          <td><b>${a.title}</b></td>
-          <td>${a.date}</td>
-          <td>${a.time}</td>
-          <td><span class="badge ${a.status || 'pending'}">${a.status || 'pending'}</span></td>
-          <td>${actions}</td>
-        </tr>
-      `;
-    }).join("");
+        return `
+          <tr>
+            <td><b>${a.title}</b></td>
+            <td>${a.date}</td>
+            <td>${a.time}</td>
+            <td><span class="badge ${a.status || 'pending'}">${a.status || 'pending'}</span></td>
+            <td>${actions}</td>
+          </tr>
+        `;
+      }).join("");
+    }
 
   } catch (err) {
     console.error(err);
+    document.getElementById("blockedSlotsTable").innerHTML = 
+      `<tr><td colspan="4" style="color:red;">Error loading data.</td></tr>`;
     document.getElementById("userAppointmentsTable").innerHTML = 
-      `<tr><td colspan="5" style="color:red;">Error loading appointments.</td></tr>`;
+      `<tr><td colspan="5" style="color:red;">Error loading data.</td></tr>`;
   }
 }
 
@@ -290,6 +326,7 @@ async function setUnavailability() {
     alert(data.message);
     if (data.success) {
       document.getElementById("blockDate").value = "";
+      loadUserCalendar(); // إعادة تحمييل البيانات لتظهر الفترة المحجوزة في الجدول مباشرة
     }
   } catch (err) {
     alert("Failed to block time slot");
@@ -309,13 +346,13 @@ async function respondAppointment(id, status) {
     });
     const data = await res.json();
     alert(data.message);
-    loadScheduledAppointments();
+    loadUserCalendar();
   } catch (err) {
     alert("Failed to update status");
   }
 }
 
-loadScheduledAppointments();
+loadUserCalendar();
 </script>
 
 </body>
