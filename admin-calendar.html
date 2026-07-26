@@ -227,22 +227,36 @@ function logoutAdmin() {
 }
 
 // 1. Fetch Users Dropdown
+// 1. Fetch Users Dropdown
 async function loadUsersDropdown() {
   try {
-    const res = await fetch("api/users.php", {
+    const res = await fetch("api/admin-users.php", {
       headers: { Authorization: "Bearer " + adminToken }
     });
+    
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
     const data = await res.json();
     const select = document.getElementById("calendarUserSelect");
     select.innerHTML = `<option value="">-- Choose User --</option>`;
-    
-    if (data.users && data.users.length) {
-      data.users.forEach(u => {
-        select.innerHTML += `<option value="${u.id}">${u.name} (${u.email})</option>`;
+
+    // دعم مختلف تسميات المفاتيح التي قد يرجعها admin-users.php (users أو data)
+    const usersList = data.users || data.data || [];
+
+    if (usersList.length > 0) {
+      usersList.forEach(u => {
+        // يعرض الاسم والإيميل المتاحين
+        const name = u.name || u.full_name || u.username || u.email;
+        select.innerHTML += `<option value="${u.id}">${name} (${u.email})</option>`;
       });
+    } else {
+      select.innerHTML = `<option value="">-- No Users Found --</option>`;
     }
   } catch (err) {
-    alert("Error fetching users list");
+    console.error("Error fetching users:", err);
+    alert("Error fetching users list. Check console for details.");
   }
 }
 
