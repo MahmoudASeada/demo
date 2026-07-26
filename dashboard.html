@@ -388,6 +388,7 @@
 
           <nav class="nav">
             <a href="dashboard.html" class="active">▦ <span>Dashboard</span></a>
+            <a href="user-appointments.html" class="active">▦ <span>Appointments</span></a>
             <a href="articles.html">▤ <span>Reports & Articles</span></a>
             <a href="#" onclick="openSettings(); return false;">⚙ <span>Settings</span></a>
             <a href="help.html">? <span>Help Center</span></a>
@@ -451,27 +452,6 @@
             </div>
           </div>
 
-          <!-- 1. PART ONE: SET UNAVAILABILITY (اليوزر يقفل أيام/أوقات) -->
-          <div class="panel">
-            <div class="panel-head">
-              <h3>Set Unavailability (Block Dates & Times)</h3>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Date</label>
-                <input type="date" id="blockDate" />
-              </div>
-              <div class="form-group">
-                <label>From Time</label>
-                <input type="time" id="blockStartTime" value="09:00" />
-              </div>
-              <div class="form-group">
-                <label>To Time</label>
-                <input type="time" id="blockEndTime" value="17:00" />
-              </div>
-              <button class="btn-primary" onclick="setUnavailability()">Block Slot</button>
-            </div>
-          </div>
 
           <!-- 2. PART TWO: APPOINTMENTS RECEIVED FROM ADMIN (المواعيد المرسلة) -->
           <div class="panel">

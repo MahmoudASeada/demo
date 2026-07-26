@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scheduled Appointments</title>
+
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif;margin:0;padding:0}
+body{background:#f6f7fb;display:flex;min-height:100vh;color:#101828}
+
+/* Sidebar Layout */
+.sidebar{
+  width:250px;
+  background:#101828;
+  color:#fff;
+  padding:25px 15px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.sidebar .logo{
+  color:#c9000b;
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:20px;
+  padding-left:10px;
+}
+
+.sidebar a{
+  color:#a0aec0;
+  text-decoration:none;
+  padding:12px 15px;
+  border-radius:10px;
+  font-weight:600;
+  display:block;
+  transition:all .2s;
+}
+
+.sidebar a:hover, .sidebar a.active{
+  background:#c9000b;
+  color:#fff;
+}
+
+/* Main Content */
+.main-content{
+  flex:1;
+  padding:35px;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:25px;
+  box-shadow:0 10px 30px rgba(0,0,0,.05);
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+
+th, td{
+  padding:14px 16px;
+  text-align:left;
+  border-bottom:1px solid #eef1f5;
+  font-size:14px;
+}
+
+th{
+  background:#f8fafc;
+  color:#667085;
+  font-weight:600;
+}
+
+.badge{
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+  display:inline-block;
+}
+
+.badge.pending{ background:#e7f0ff; color:#3478f6; }
+.badge.approved{ background:#e8faef; color:#20a95a; }
+.badge.rejected{ background:#ffe8e8; color:#c9000b; }
+</style>
+</head>
+
+<body>
+
+  <!-- Sidebar Container -->
+  <div class="sidebar">
+    <div class="logo">W ZONE</div>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="user-appointments.html" class="active">Appointments</a>
+    <a href="calendar.html">My Availability</a>
+    <!-- أضف بقية وروابط السايدبار المعتادة عندك هنا -->
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <div class="header">
+      <h2>Scheduled Appointments</h2>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom: 10px;">Appointments Scheduled by Admin</h3>
+      <p style="color:#667085; font-size:14px; margin-bottom:20px;">List of meeting requests and appointments assigned to you.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="userAppointmentsTable">
+          <tr><td colspan="4">Loading appointments...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+<script>
+const token = localStorage.getItem("user_token");
+
+if (!token) {
+  location.href = "login.html";
+}
+
+// Fetch Appointments Scheduled by Admin for Logged-in User
+async function loadScheduledAppointments() {
+  try {
+    const res = await fetch("api/calendar.php?action=get_user_appointments", {
+      headers: { Authorization: "Bearer " + token }
+    });
+    const data = await res.json();
+
+    const tbody = document.getElementById("userAppointmentsTable");
+
+    if (!data.appointments || !data.appointments.length) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888;">No scheduled appointments yet.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.appointments.map(a => `
+      <tr>
+        <td><b>${a.title}</b></td>
+        <td>${a.date}</td>
+        <td>${a.time}</td>
+        <td><span class="badge ${a.status || 'pending'}">${a.status || 'pending'}</span></td>
+      </tr>
+    `).join("");
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("userAppointmentsTable").innerHTML = 
+      `<tr><td colspan="4" style="color:red;">Error loading appointments.</td></tr>`;
+  }
+}
+
+loadScheduledAppointments();
+</script>
+
+</body>
+</html>
