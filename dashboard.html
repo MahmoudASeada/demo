@@ -152,6 +152,7 @@
         gap: 18px;
         align-items: center;
         box-shadow: 0 14px 30px rgba(0, 0, 0, 0.04);
+        cursor: pointer;
       }
       .icon {
         width: 48px;
@@ -236,100 +237,66 @@
         background: #e9eef7;
         color: #64748b;
       }
+      .rejected {
+        background: #ffe8e8;
+        color: #c9000b;
+      }
       .view {
         color: #c9000b;
         text-decoration: none;
         font-weight: 700;
       }
-      .articles-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 18px;
+      .btn-accept {
+        background: #20a95a;
+        color: #fff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
       }
-      .articles-head h3 {
-        font-size: 17px;
-      }
-      .article-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 22px;
-      }
-      .article {
-        background: #fff;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.04);
-      }
-      .article-img {
-        height: 145px;
-        background: linear-gradient(135deg, #122230, #396070);
-        position: relative;
-      }
-      .tag {
-        position: absolute;
-        top: 12px;
-        right: 12px;
+      .btn-reject {
         background: #c9000b;
         color: #fff;
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-size: 10px;
-        font-weight: 700;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-left: 5px;
       }
-      .article-body {
-        padding: 14px;
+      .form-row {
+        display: flex;
+        gap: 15px;
+        padding: 20px 26px;
+        align-items: flex-end;
       }
-      .article-body h4 {
-        font-size: 14px;
-        margin-bottom: 8px;
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
       }
-      .article-body p {
-        font-size: 11px;
+      .form-group label {
+        font-size: 12px;
+        font-weight: bold;
         color: #667085;
-        line-height: 1.5;
       }
-      @media (max-width: 950px) {
-        .sidebar {
-          width: 78px;
-          padding: 20px 10px;
-        }
-        .logo {
-          text-align: center;
-        }
-        .logo img {
-          margin: 0 auto;
-          max-height: 24px;
-        }
-        .nav a {
-          justify-content: center;
-          padding: 12px 0;
-        }
-        .nav a span,
-        .user-card,
-        .logout {
-          display: none;
-        }
-        .top-user > div:first-child {
-          display: none;
-        }
-        .main {
-          margin-left: 78px;
-          width: calc(100% - 78px);
-        }
-        .stats,
-        .article-grid {
-          grid-template-columns: 1fr;
-        }
-        .search {
-          width: 220px;
-        }
+      .form-group input {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        outline: none;
       }
-      .stat {
+      .btn-primary {
+        background: #c9000b;
+        color: #fff;
+        border: none;
+        padding: 11px 18px;
+        border-radius: 8px;
+        font-weight: bold;
         cursor: pointer;
       }
-
-      .modal {
+      .settings-modal, .modal {
         position: fixed;
         inset: 0;
         background: rgba(0, 0, 0, 0.45);
@@ -339,84 +306,25 @@
         z-index: 9999;
         padding: 20px;
       }
-
-      .modal.show {
+      .settings-modal.show, .modal.show {
         display: flex;
       }
-
-      .modal-box {
+      .settings-box, .modal-box {
         width: 100%;
-        max-width: 850px;
-        max-height: 80vh;
-        overflow: auto;
+        max-width: 500px;
         background: #fff;
         border-radius: 20px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
-      }
-
-      .modal-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 22px 26px;
-        border-bottom: 1px solid #eee;
-      }
-
-      .modal-head button {
-        border: none;
-        background: #c9000b;
-        color: #fff;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        font-size: 22px;
-        cursor: pointer;
-      }
-
-      .modal-table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-
-      .modal-table th,
-      .modal-table td {
-        padding: 15px 22px;
-        border-bottom: 1px solid #eef1f5;
-        text-align: left;
-      }
-      .settings-modal {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.45);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 99999;
-        padding: 20px;
-      }
-
-      .settings-modal.show {
-        display: flex;
-      }
-
-      .settings-box {
-        width: 100%;
-        max-width: 440px;
-        background: #fff;
-        border-radius: 22px;
         overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
       }
-
-      .settings-head {
+      .settings-head, .modal-head {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 22px 26px;
         border-bottom: 1px solid #eee;
       }
-
-      .settings-head button {
+      .settings-head button, .modal-head button {
         border: none;
         background: #c9000b;
         color: white;
@@ -426,11 +334,9 @@
         font-size: 22px;
         cursor: pointer;
       }
-
       .settings-body {
         padding: 26px;
       }
-
       .profile-preview {
         width: 82px;
         height: 82px;
@@ -446,14 +352,12 @@
         background-size: cover;
         background-position: center;
       }
-
       .settings-body label {
         display: block;
         margin-bottom: 8px;
         font-size: 13px;
         font-weight: 800;
       }
-
       .settings-body input {
         width: 100%;
         height: 46px;
@@ -463,7 +367,6 @@
         margin-bottom: 16px;
         outline: none;
       }
-
       .save-settings {
         width: 100%;
         height: 50px;
@@ -473,12 +376,6 @@
         border-radius: 12px;
         font-weight: 800;
         cursor: pointer;
-      }
-
-      .settings-status {
-        margin-top: 12px;
-        font-size: 13px;
-        color: #667085;
       }
     </style>
   </head>
@@ -492,14 +389,7 @@
           <nav class="nav">
             <a href="dashboard.html" class="active">▦ <span>Dashboard</span></a>
             <a href="articles.html">▤ <span>Reports & Articles</span></a>
-            <a
-              href="#"
-              onclick="
-                openSettings();
-                return false;
-              "
-              >⚙ <span>Settings</span></a
-            >
+            <a href="#" onclick="openSettings(); return false;">⚙ <span>Settings</span></a>
             <a href="help.html">? <span>Help Center</span></a>
           </nav>
         </div>
@@ -519,11 +409,7 @@
 
       <main class="main">
         <header class="topbar">
-          <input
-            class="search"
-            id="dashboardSearch"
-            placeholder="Search surveys or articles..."
-          />
+          <input class="search" id="dashboardSearch" placeholder="Search surveys or articles..." />
           <div class="top-user">
             <div>
               <h4 id="topName">User</h4>
@@ -536,10 +422,7 @@
         <section class="content">
           <div class="welcome">
             <h1 id="welcomeName">Welcome back</h1>
-            <p>
-              Track your survey activity and responses across all projects in
-              real-time.
-            </p>
+            <p>Track your survey activity and responses across all projects in real-time.</p>
           </div>
 
           <div class="stats">
@@ -568,19 +451,55 @@
             </div>
           </div>
 
+          <!-- 1. PART ONE: SET UNAVAILABILITY (اليوزر يقفل أيام/أوقات) -->
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Set Unavailability (Block Dates & Times)</h3>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="blockDate" />
+              </div>
+              <div class="form-group">
+                <label>From Time</label>
+                <input type="time" id="blockStartTime" value="09:00" />
+              </div>
+              <div class="form-group">
+                <label>To Time</label>
+                <input type="time" id="blockEndTime" value="17:00" />
+              </div>
+              <button class="btn-primary" onclick="setUnavailability()">Block Slot</button>
+            </div>
+          </div>
+
+          <!-- 2. PART TWO: APPOINTMENTS RECEIVED FROM ADMIN (المواعيد المرسلة) -->
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Scheduled Appointments from Admin</h3>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="appointmentsTable">
+                <tr><td colspan="5">Loading appointments...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- SURVEYS TABLE -->
           <div class="panel">
             <div class="panel-head">
               <h3>My Submitted Surveys</h3>
-              <a
-                href="#"
-                onclick="
-                  openSurveyModal('all');
-                  return false;
-                "
-                >View All ›</a
-              >
+              <a href="#" onclick="openSurveyModal('all'); return false;">View All ›</a>
             </div>
-
             <table>
               <thead>
                 <tr>
@@ -590,51 +509,36 @@
                   <th>Action</th>
                 </tr>
               </thead>
-
               <tbody id="surveyTable">
-                <tr>
-                  <td colspan="4">Loading surveys...</td>
-                </tr>
+                <tr><td colspan="4">Loading surveys...</td></tr>
               </tbody>
             </table>
           </div>
+
+          <!-- ASSIGNED FILES -->
           <div class="panel">
-  <div class="panel-head">
-    <h3>Assigned Files</h3>
-  </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th>File Name</th>
-        <th>Uploaded</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-
-    <tbody id="assignedFilesTable">
-      <tr>
-        <td colspan="3">Loading files...</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-          <div class="articles-head">
-            <h3>Monthly Published Articles</h3>
-            <div>‹ ›</div>
-          </div>
-
-          <div class="article-grid" id="dashboardArticles">
-            <div class="article">
-              <div class="article-body">
-                <h4>Loading articles...</h4>
-                <p>Please wait</p>
-              </div>
+            <div class="panel-head">
+              <h3>Assigned Files</h3>
             </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>File Name</th>
+                  <th>Uploaded</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="assignedFilesTable">
+                <tr><td colspan="3">Loading files...</td></tr>
+              </tbody>
+            </table>
           </div>
+
         </section>
       </main>
     </div>
+
+    <!-- SETTINGS MODAL -->
     <div class="settings-modal" id="settingsModal">
       <div class="settings-box">
         <div class="settings-head">
@@ -644,291 +548,175 @@
 
         <div class="settings-body">
           <div class="profile-preview" id="settingsImagePreview">U</div>
-
           <label>Profile Image</label>
           <input type="file" id="profileImageInput" accept="image/*" />
-
           <label>Name</label>
           <input type="text" id="settingsName" />
-
           <label>Email</label>
           <input type="email" id="settingsEmail" readonly />
-          
-          <label>Company Name</label>
-          <input type="text" id="settingsCompany" />
-
-          <label>Website</label>
-          <input type="url" id="settingsWebsite" />
-
-          <label>Location</label>
-          <input type="text" id="settingsLocation" />
-
-          <button class="save-settings" onclick="saveSettings()">
-            Save Changes
-          </button>
-
-          <div class="settings-status" id="settingsStatus"></div>
+          <button class="save-settings" onclick="saveSettings()">Save Changes</button>
+          <div style="margin-top:10px; font-size:13px;" id="settingsStatus"></div>
         </div>
       </div>
     </div>
 
     <script>
       const token = localStorage.getItem("portal_token");
+      if (!token) window.location.href = "login.html";
 
-      if (!token) {
-        window.location.href = "login.html";
-      }
       let allSurveys = [];
-      let dashboardArticles = [];
-      let assignedFiles = [];
+
       async function loadDashboard() {
         try {
           const res = await fetch("api/dashboard.php", {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
+            headers: { Authorization: "Bearer " + token }
           });
-
           const data = await res.json();
-          allSurveys = data.surveys;
           if (!data.success) {
             localStorage.clear();
             window.location.href = "login.html";
-
             return;
           }
 
+          allSurveys = data.surveys;
           const name = data.user.name || "User";
           localStorage.setItem("portal_user", JSON.stringify(data.user));
           setAvatarImage(data.user);
-          const letter = name.charAt(0).toUpperCase();
 
-          document.getElementById("welcomeName").innerText =
-            "Welcome back, " + name + "!";
+          document.getElementById("welcomeName").innerText = "Welcome back, " + name + "!";
           document.getElementById("sideName").innerText = name;
           document.getElementById("topName").innerText = name;
 
-          document.getElementById("submittedSurveys").innerText =
-            data.stats.submittedSurveys;
-          document.getElementById("pendingResponses").innerText =
-            data.stats.pendingResponses;
-          document.getElementById("responsesReceived").innerText =
-            data.stats.responsesReceived;
+          document.getElementById("submittedSurveys").innerText = data.stats.submittedSurveys;
+          document.getElementById("pendingResponses").innerText = data.stats.pendingResponses;
+          document.getElementById("responsesReceived").innerText = data.stats.responsesReceived;
+
           const surveyTable = document.getElementById("surveyTable");
-
           if (!data.surveys.length) {
-            surveyTable.innerHTML = `
-    <tr>
-      <td colspan="4">No surveys assigned yet.</td>
-    </tr>
-  `;
+            surveyTable.innerHTML = `<tr><td colspan="4">No surveys assigned yet.</td></tr>`;
           } else {
-            surveyTable.innerHTML = data.surveys
-              .map((survey) => {
-                let statusClass = "waiting";
-
-                if (survey.status === "completed") {
-                  statusClass = "responded";
-                }
-
-                if (survey.status === "closed") {
-                  statusClass = "closed";
-                }
-
-                return `
-      <tr>
-        <td>${survey.title}</td>
-        <td>${survey.created_at}</td>
-        <td>
-          <span class="badge ${statusClass}">
-            ${survey.status}
-          </span>
-        </td>
-        <td>
-          <a class="view" href="survey.html?id=${survey.id}">
-            View Details
-          </a>
-        </td>
-      </tr>
-    `;
-              })
-              .join("");
+            surveyTable.innerHTML = data.surveys.map(s => `
+              <tr>
+                <td>${s.title}</td>
+                <td>${s.created_at}</td>
+                <td><span class="badge ${s.status === 'completed' ? 'responded' : 'waiting'}">${s.status}</span></td>
+                <td><a class="view" href="survey.html?id=${s.id}">View Details</a></td>
+              </tr>
+            `).join("");
           }
-        } catch (error) {
-          alert("Dashboard connection error");
+        } catch (e) {
+          alert("Error loading dashboard");
         }
+      }
+
+      // ------- CALENDAR LOGIC FOR USER -------
+      async function loadUserCalendar() {
+        try {
+          const res = await fetch("api/calendar.php?action=get_user_calendar", {
+            headers: { Authorization: "Bearer " + token }
+          });
+          const data = await res.json();
+          if (data.success) {
+            const tbody = document.getElementById("appointmentsTable");
+            if (!data.appointments.length) {
+              tbody.innerHTML = `<tr><td colspan="5">No scheduled appointments from admin yet.</td></tr>`;
+              return;
+            }
+
+            tbody.innerHTML = data.appointments.map(app => {
+              let badgeClass = "waiting";
+              if (app.status === "approved") badgeClass = "responded";
+              if (app.status === "rejected") badgeClass = "rejected";
+
+              let actions = `-`;
+              if (app.status === "pending") {
+                actions = `
+                  <button class="btn-accept" onclick="respondAppointment(${app.id}, 'approved')">Accept</button>
+                  <button class="btn-reject" onclick="respondAppointment(${app.id}, 'rejected')">Reject</button>
+                `;
+              }
+
+              return `
+                <tr>
+                  <td>${app.title}</td>
+                  <td>${app.date}</td>
+                  <td>${app.time}</td>
+                  <td><span class="badge ${badgeClass}">${app.status}</span></td>
+                  <td>${actions}</td>
+                </tr>
+              `;
+            }).join("");
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      async function setUnavailability() {
+        const date = document.getElementById("blockDate").value;
+        const startTime = document.getElementById("blockStartTime").value;
+        const endTime = document.getElementById("blockEndTime").value;
+
+        if (!date) {
+          alert("Please select a date to block!");
+          return;
+        }
+
+        const res = await fetch("api/calendar.php?action=set_unavailability", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token
+          },
+          body: JSON.stringify({ date, start_time: startTime, end_time: endTime })
+        });
+        const data = await res.json();
+        alert(data.message);
+        if (data.success) {
+          document.getElementById("blockDate").value = "";
+        }
+      }
+
+      async function respondAppointment(id, status) {
+        const res = await fetch("api/calendar.php?action=respond_appointment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token
+          },
+          body: JSON.stringify({ id, status })
+        });
+        const data = await res.json();
+        alert(data.message);
+        loadUserCalendar();
       }
 
       function logout() {
         localStorage.clear();
         window.location.href = "login.html";
       }
-      function openSurveyModal(type) {
-        const modal = document.getElementById("surveyModal");
-        const title = document.getElementById("modalTitle");
-        const content = document.getElementById("modalContent");
 
-        let filtered = allSurveys;
-
-        if (type === "pending") {
-          filtered = allSurveys.filter((s) => s.status === "pending");
-          title.innerText = "Pending Responses";
-        } else if (type === "completed") {
-          filtered = allSurveys.filter((s) => s.status === "completed");
-          title.innerText = "Submitted Surveys";
-        } else {
-          title.innerText = "All Surveys";
-        }
-
-        if (!filtered.length) {
-          content.innerHTML = `
-      <div style="padding:30px">
-        No surveys found
-      </div>
-    `;
-        } else {
-          content.innerHTML = `
-      <table class="modal-table">
-        <thead>
-          <tr>
-            <th>Survey</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          ${filtered
-            .map(
-              (s) => `
-
-            <tr>
-              <td>${s.title}</td>
-              <td>${s.created_at}</td>
-              <td>${s.status}</td>
-              <td>
-                <a class="view" href="survey.html?id=${s.id}">
-                  View Details
-                </a>
-              </td>
-            </tr>
-
-          `,
-            )
-            .join("")}
-        </tbody>
-      </table>
-    `;
-        }
-
-        modal.classList.add("show");
-      }
-
-      function closeSurveyModal() {
-        document.getElementById("surveyModal").classList.remove("show");
-      }
-      async function loadDashboardArticles() {
-        const box = document.getElementById("dashboardArticles");
-
-        try {
-          const res = await fetch("api/articles.php", {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          });
-          const data = await res.json();
-
-          const articles = (data.result || []).slice(0, 3);
-          dashboardArticles = articles;
-          if (!articles.length) {
-            box.innerHTML = `
-        <div class="article">
-          <div class="article-body">
-            <h4>No articles yet</h4>
-            <p>No articles found in Sanity.</p>
-          </div>
-        </div>
-      `;
-            return;
-          }
-
-          box.innerHTML = articles
-            .map(
-              (article) => `
-  <a 
-    class="article" 
-    href="${article.buttonLink || "#"}" 
-    target="_blank"
-    style="text-decoration:none;color:inherit;display:block;"
-  >
-    <div
-      class="article-img"
-      style="${article.imageUrl ? `background:url('${article.imageUrl}') center/cover` : ""}"
-    >
-      <span class="tag">${article.category || "Article"}</span>
-    </div>
-
-    <div class="article-body">
-      <h4>${article.title || ""}</h4>
-      <p>${article.publishedDate || ""} · ${article.readTime || "5 min read"}</p>
-    </div>
-  </a>
-`,
-            )
-            .join("");
-        } catch (error) {
-          box.innerHTML = `
-      <div class="article">
-        <div class="article-body">
-          <h4>Failed to load articles</h4>
-          <p>Try again later.</p>
-        </div>
-      </div>
-    `;
-        }
-      }
       function setAvatarImage(user) {
         const image = user.profile_image;
         const name = user.name || "User";
         const letter = name.charAt(0).toUpperCase();
 
-        const avatars = [
-          document.getElementById("sideAvatar"),
-          document.getElementById("topAvatar"),
-        ];
-
-        avatars.forEach((avatar) => {
+        [document.getElementById("sideAvatar"), document.getElementById("topAvatar")].forEach(avatar => {
           if (!avatar) return;
-
           if (image) {
             avatar.innerText = "";
             avatar.style.backgroundImage = `url('${image}')`;
             avatar.style.backgroundSize = "cover";
-            avatar.style.backgroundPosition = "center";
           } else {
             avatar.innerText = letter;
-            avatar.style.backgroundImage = "";
           }
         });
       }
 
       function openSettings() {
         const user = JSON.parse(localStorage.getItem("portal_user") || "{}");
-
         document.getElementById("settingsName").value = user.name || "";
         document.getElementById("settingsEmail").value = user.email || "";
-
-        const preview = document.getElementById("settingsImagePreview");
-
-        if (user.profile_image) {
-          preview.innerText = "";
-          preview.style.backgroundImage = `url('${user.profile_image}')`;
-        } else {
-          preview.innerText = (user.name || "U").charAt(0).toUpperCase();
-          preview.style.backgroundImage = "";
-        }
-
         document.getElementById("settingsModal").classList.add("show");
       }
 
@@ -936,255 +724,8 @@
         document.getElementById("settingsModal").classList.remove("show");
       }
 
-      document
-        .getElementById("profileImageInput")
-        .addEventListener("change", function () {
-          const file = this.files[0];
-          if (!file) return;
-
-          const preview = document.getElementById("settingsImagePreview");
-          preview.innerText = "";
-          preview.style.backgroundImage = `url('${URL.createObjectURL(file)}')`;
-        });
-
-      async function saveSettings() {
-        const status = document.getElementById("settingsStatus");
-        status.innerText = "Saving...";
-
-        const formData = new FormData();
-        formData.append(
-          "name",
-          document.getElementById("settingsName").value.trim(),
-        );
-
-        const file = document.getElementById("profileImageInput").files[0];
-        if (file) {
-          formData.append("profile_image", file);
-        }
-
-        try {
-          const res = await fetch("api/update-profile.php", {
-            method: "POST",
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-            body: formData,
-          });
-
-          const data = await res.json();
-          status.innerText = data.message;
-
-          if (data.success) {
-            localStorage.setItem("portal_user", JSON.stringify(data.user));
-
-            document.getElementById("sideName").innerText = data.user.name;
-            document.getElementById("topName").innerText = data.user.name;
-
-            setAvatarImage(data.user);
-
-            setTimeout(closeSettings, 700);
-          }
-        } catch (error) {
-          status.innerText = "Connection error";
-        }
-      }
-      document
-        .getElementById("dashboardSearch")
-        .addEventListener("input", function () {
-          const value = this.value.toLowerCase().trim();
-
-          filterDashboardSurveys(value);
-          filterDashboardArticles(value);
-        });
-
-      function filterDashboardSurveys(value) {
-        const surveyTable = document.getElementById("surveyTable");
-
-        let filtered = allSurveys;
-
-        if (value) {
-          filtered = allSurveys.filter(
-            (s) =>
-              (s.title || "").toLowerCase().includes(value) ||
-              (s.status || "").toLowerCase().includes(value),
-          );
-        }
-
-        if (!filtered.length) {
-          surveyTable.innerHTML = `
-      <tr>
-        <td colspan="4">No surveys found.</td>
-      </tr>
-    `;
-          return;
-        }
-
-        surveyTable.innerHTML = filtered
-          .map((survey) => {
-            let statusClass = "waiting";
-
-            if (survey.status === "completed") {
-              statusClass = "responded";
-            }
-
-            if (survey.status === "closed") {
-              statusClass = "closed";
-            }
-
-            return `
-      <tr>
-        <td>${survey.title}</td>
-        <td>${survey.created_at}</td>
-        <td>
-          <span class="badge ${statusClass}">
-            ${survey.status}
-          </span>
-        </td>
-        <td>
-          <a class="view" href="survey.html?id=${survey.id}">
-            View Details
-          </a>
-        </td>
-      </tr>
-    `;
-          })
-          .join("");
-      }
-
-      function filterDashboardArticles(value) {
-        const box = document.getElementById("dashboardArticles");
-
-        let filtered = dashboardArticles;
-
-        if (value) {
-          filtered = dashboardArticles.filter(
-            (article) =>
-              (article.title || "").toLowerCase().includes(value) ||
-              (article.description || "").toLowerCase().includes(value) ||
-              (article.category || "").toLowerCase().includes(value),
-          );
-        }
-
-        if (!filtered.length) {
-          box.innerHTML = `
-      <div class="article">
-        <div class="article-body">
-          <h4>No articles found</h4>
-          <p>Try another keyword.</p>
-        </div>
-      </div>
-    `;
-          return;
-        }
-
-        box.innerHTML = filtered
-          .map(
-            (article) => `
-    <a 
-      class="article" 
-      href="${article.buttonLink || "#"}" 
-      target="_blank"
-      style="text-decoration:none;color:inherit;display:block;"
-    >
-      <div
-        class="article-img"
-        style="${article.imageUrl ? `background:url('${article.imageUrl}') center/cover` : ""}"
-      >
-        <span class="tag">${article.category || "Article"}</span>
-      </div>
-
-      <div class="article-body">
-        <h4>${article.title || ""}</h4>
-        <p>${article.publishedDate || ""} · ${article.readTime || "5 min read"}</p>
-      </div>
-    </a>
-  `,
-          )
-          .join("");
-      }
-      async function loadAssignedFiles(){
-
-    const table = document.getElementById("assignedFilesTable");
-
-    try{
-
-        const res = await fetch("api/user-source-files.php",{
-            headers:{
-                Authorization:"Bearer " + token
-            }
-        });
-
-        const data = await res.json();
-
-        if(!data.success){
-            table.innerHTML = `
-                <tr>
-                    <td colspan="3">No files found.</td>
-                </tr>
-            `;
-            return;
-        }
-
-        assignedFiles = data.files || [];
-
-        if(!assignedFiles.length){
-
-            table.innerHTML = `
-                <tr>
-                    <td colspan="3">No files assigned yet.</td>
-                </tr>
-            `;
-
-            return;
-        }
-
-        table.innerHTML = assignedFiles.map(file=>`
-
-            <tr>
-
-                <td>${file.original_name}</td>
-
-                <td>${file.uploaded_at}</td>
-
-                <td>
-
-                    <a
-                        class="view"
-                        href="api/download-user-source-file.php?id=${file.id}&token=${encodeURIComponent(token)}"
-                    >
-                        Download
-                    </a>
-
-                </td>
-
-            </tr>
-
-        `).join("");
-
-    }catch(error){
-
-        table.innerHTML = `
-            <tr>
-                <td colspan="3">Connection error.</td>
-            </tr>
-        `;
-
-    }
-
-}
       loadDashboard();
-      loadDashboardArticles();
-      loadAssignedFiles();
+      loadUserCalendar();
     </script>
-    <div class="modal" id="surveyModal">
-      <div class="modal-box">
-        <div class="modal-head">
-          <h2 id="modalTitle">Surveys</h2>
-          <button onclick="closeSurveyModal()">×</button>
-        </div>
-
-        <div id="modalContent"></div>
-      </div>
-    </div>
   </body>
 </html>

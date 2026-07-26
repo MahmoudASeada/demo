@@ -1,0 +1,132 @@
+<!-- ADMIN CALENDAR POPUP MODAL -->
+<div id="adminCalendarModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center;">
+  <div style="background:#fff; width:90%; max-width:800px; padding:25px; border-radius:15px; max-height:90vh; overflow-y:auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h2>User Calendar Management</h2>
+      <button onclick="closeAdminCalendarModal()" style="border:none; background:#c9000b; color:#fff; width:30px; height:30px; border-radius:50%; font-weight:bold; cursor:pointer;">×</button>
+    </div>
+
+    <label style="font-weight:bold; display:block; margin-bottom:8px;">Select User:</label>
+    <select id="calendarUserSelect" onchange="loadUserCalendarForAdmin()" style="width:100%; padding:10px; border-radius:8px; margin-bottom:20px;">
+      <option value="">-- Choose User --</option>
+    </select>
+
+    <!-- Create Appointment Section -->
+    <div style="background:#f8fafc; padding:15px; border-radius:10px; margin-bottom:20px;">
+      <h4 style="margin-bottom:10px;">Book New Appointment</h4>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px;">
+        <input type="text" id="appTitle" placeholder="Title (e.g. Follow-up)" style="padding:8px; border-radius:6px; border:1px solid #ddd;">
+        <input type="date" id="appDate" style="padding:8px; border-radius:6px; border:1px solid #ddd;">
+        <input type="time" id="appTime" style="padding:8px; border-radius:6px; border:1px solid #ddd;">
+        <button onclick="createNewAppointment()" style="background:#c9000b; color:#fff; border:none; padding:8px; border-radius:6px; font-weight:bold; cursor:pointer;">Book Slot</button>
+      </div>
+    </div>
+
+    <!-- Calendar View / Lists -->
+    <h3>Blocked Slots (By User)</h3>
+    <ul id="userBlockedList" style="margin:10px 0 20px 20px; color:#667085;">
+      <li>Select a user first</li>
+    </ul>
+
+    <h3>Existing Appointments</h3>
+    <table style="width:100%; border-collapse:collapse; margin-top:10px;">
+      <thead>
+        <tr style="background:#f8fafc; text-align:left;">
+          <th style="padding:10px;">Title</th>
+          <th style="padding:10px;">Date</th>
+          <th style="padding:10px;">Time</th>
+          <th style="padding:10px;">Status</th>
+        </tr>
+      </thead>
+      <tbody id="adminAppointmentsTable">
+        <tr><td colspan="4" style="padding:10px;">Select a user to display appointments.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const adminToken = localStorage.getItem("admin_token");
+
+async function openAdminCalendarModal() {
+  document.getElementById("adminCalendarModal").style.display = "flex";
+  
+  // تحميل قائمة المستخدمين في Dropdown
+  const res = await fetch("api/users.php", {
+    headers: { Authorization: "Bearer " + adminToken }
+  });
+  const data = await res.json();
+  const select = document.getElementById("calendarUserSelect");
+  select.innerHTML = `<option value="">-- Choose User --</option>`;
+  
+  if(data.users) {
+    data.users.forEach(u => {
+      select.innerHTML += `<option value="${u.id}">${u.name} (${u.email})</option>`;
+    });
+  }
+}
+
+function closeAdminCalendarModal() {
+  document.getElementById("adminCalendarModal").style.display = "none";
+}
+
+async function loadUserCalendarForAdmin() {
+  const userId = document.getElementById("calendarUserSelect").value;
+  if (!userId) return;
+
+  const res = await fetch(`api/calendar.php?action=get_admin_calendar_data&user_id=${userId}`, {
+    headers: { Authorization: "Bearer " + adminToken }
+  });
+  const data = await res.json();
+
+  // عرض الأوقات القابلة/غير القابلة للحجز
+  const blockedList = document.getElementById("userBlockedList");
+  if (!data.blocked.length) {
+    blockedList.innerHTML = `<li>No blocked slots set by user.</li>`;
+  } else {
+    blockedList.innerHTML = data.blocked.map(b => `<li>Date: <b>${b.date}</b> | (${b.start_time} - ${b.end_time})</li>`).join("");
+  }
+
+  // عرض الجدول والمواعيد
+  const tbody = document.getElementById("adminAppointmentsTable");
+  if (!data.appointments.length) {
+    tbody.innerHTML = `<tr><td colspan="4" style="padding:10px;">No appointments found for this user.</td></tr>`;
+  } else {
+    tbody.innerHTML = data.appointments.map(a => `
+      <tr style="border-top:1px solid #eee;">
+        <td style="padding:10px;">${a.title}</td>
+        <td style="padding:10px;">${a.date}</td>
+        <td style="padding:10px;">${a.time}</td>
+        <td style="padding:10px;"><b>${a.status}</b></td>
+      </tr>
+    `).join("");
+  }
+}
+
+async function createNewAppointment() {
+  const userId = document.getElementById("calendarUserSelect").value;
+  const title = document.getElementById("appTitle").value;
+  const date = document.getElementById("appDate").value;
+  const time = document.getElementById("appTime").value;
+
+  if (!userId || !title || !date || !time) {
+    alert("Please fill all appointment details and select a user!");
+    return;
+  }
+
+  const res = await fetch("api/calendar.php?action=create_appointment", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + adminToken
+    },
+    body: JSON.stringify({ user_id: userId, title, date, time })
+  });
+
+  const data = await res.json();
+  alert(data.message);
+  if (data.success) {
+    loadUserCalendarForAdmin();
+  }
+}
+</script>
