@@ -570,7 +570,19 @@
           document.getElementById("submittedSurveys").innerText = data.stats.submittedSurveys;
           document.getElementById("pendingResponses").innerText = data.stats.pendingResponses;
           document.getElementById("responsesReceived").innerText = data.stats.responsesReceived;
-
+          // عرض الملفات في جدول Assigned Files
+const filesTable = document.getElementById("assignedFilesTable");
+if (data.files && data.files.length > 0) {
+  filesTable.innerHTML = data.files.map(f => `
+    <tr>
+      <td><b>${f.original_name}</b></td>
+      <td>${f.uploaded_at}</td>
+      <td><a class="view" href="api/download_file.php?id=${f.id}" target="_blank">Download</a></td>
+    </tr>
+  `).join("");
+} else {
+  filesTable.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#888;">No files assigned yet.</td></tr>`;
+}
           const surveyTable = document.getElementById("surveyTable");
           if (!data.surveys.length) {
             surveyTable.innerHTML = `<tr><td colspan="4">No surveys assigned yet.</td></tr>`;

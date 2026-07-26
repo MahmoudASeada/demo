@@ -2,6 +2,9 @@
 
 require_once "db.php";
 
+// إرجاع الاستجابة بترميز JSON
+header("Content-Type: application/json");
+
 $headers = getallheaders();
 $authHeader = $headers["Authorization"] ?? "";
 $token = str_replace("Bearer ", "", $authHeader);
@@ -34,6 +37,7 @@ if (!$user || (int)$user["approved"] !== 1) {
 
 $userId = $user["id"];
 
+// 1. حساب إحصائيات الاستبيانات
 $stmt = $pdo->prepare("
     SELECT COUNT(*) AS total
     FROM surveys
@@ -58,6 +62,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$userId]);
 $completedSurveys = (int)$stmt->fetch()["total"];
 
+// 2. جلب قائمة الاستبيانات
 $stmt = $pdo->prepare("
     SELECT id, title, status, created_at
     FROM surveys
@@ -67,6 +72,22 @@ $stmt = $pdo->prepare("
 $stmt->execute([$userId]);
 $surveys = $stmt->fetchAll();
 
+// 3. 💥 الجزء الجديد: جلب الملفات المسندة للمستخدم 💥
+$stmtFiles = $pdo->prepare("
+    SELECT
+        sf.id,
+        sf.original_name,
+        sf.file_size,
+        sf.uploaded_at
+    FROM user_source_files usf
+    JOIN source_files sf ON sf.id = usf.file_id
+    WHERE usf.user_id = ?
+    ORDER BY usf.assigned_at DESC
+");
+$stmtFiles->execute([$userId]);
+$assignedFiles = $stmtFiles->fetchAll();
+
+// 4. إرجاع النتيجة الكاملة مع قائمة الملفات
 echo json_encode([
     "success" => true,
     "user" => [
@@ -82,5 +103,6 @@ echo json_encode([
         "articles" => 0
     ],
     "surveys" => $surveys,
+    "files" => $assignedFiles, // تم إضافتها هنا لتصل للفرونت إند
     "articles" => []
 ]);
