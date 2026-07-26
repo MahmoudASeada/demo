@@ -8,76 +8,90 @@
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
 body{background:#f6f7fb;padding:35px;color:#101828}
+
 .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
 .logo{color:#c9000b;font-size:24px;font-weight:800}
+
 .logout{
-border:none;
-background:#c9000b;
-color:#fff;
-padding:12px 18px;
-border-radius:10px;
-font-weight:800;
-cursor:pointer;
+  border:none;
+  background:#c9000b;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:10px;
+  font-weight:800;
+  cursor:pointer;
 }
 
 .nav{
-margin-bottom:25px;
-display:flex;
-gap:12px;
-flex-wrap:wrap;
+  margin-bottom:25px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
 }
 
 .nav a{
-background:#101828;
-color:#fff;
-padding:12px 18px;
-border-radius:10px;
-text-decoration:none;
-font-weight:800;
+  background:#101828;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:800;
 }
 
 .nav a.active{
-background:#c9000b;
+  background:#c9000b;
 }
 
 .panel{
-background:#fff;
-border-radius:20px;
-box-shadow:0 14px 35px rgba(0,0,0,.06);
-padding:30px;
-max-width:700px;
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 14px 35px rgba(0,0,0,.06);
+  padding:30px;
+  max-width:700px;
+  margin-bottom:30px;
 }
 
 .small{
-color:#667085;
-font-size:14px;
-margin-bottom:20px;
+  color:#667085;
+  font-size:14px;
+  margin-bottom:15px;
 }
 
 label{
-    display:block;
-    font-size:16px;
-    font-weight:700;
-    margin-top:18px;
-    margin-bottom:8px;
+  display:block;
+  font-size:16px;
+  font-weight:700;
+  margin-top:18px;
+  margin-bottom:8px;
+}
+
+input[type="password"], input[type="file"]{
+  width:100%;
+  padding:14px;
+  border:1px solid #ddd;
+  border-radius:10px;
+  font-size:15px;
 }
 
 .primary{
-    margin-top:10px;
+  margin-top:20px;
+  background:#101828;
+  color:#fff;
+  border:none;
+  padding:12px 20px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
 }
 
-input{
-width:100%;
-padding:14px;
-border:1px solid #ddd;
-border-radius:10px;
-font-size:15px;
+.primary:hover{
+  background:#1f2937;
 }
 
 .status{
-margin-top:18px;
-font-weight:bold;
-color:#c9000b;
+  margin-top:15px;
+  font-weight:bold;
+  color:#c9000b;
 }
 </style>
 </head>
@@ -85,172 +99,149 @@ color:#c9000b;
 <body>
 
 <div class="topbar">
-<div class="logo">W zone Admin</div>
-<button class="logout" onclick="logoutAdmin()">Logout</button>
+  <div class="logo">W zone Admin</div>
+  <button class="logout" onclick="logoutAdmin()">Logout</button>
 </div>
 
 <div class="nav">
-<a href="admin.html">Surveys</a>
-<a href="responses.html">Responses</a>
-<a href="sources-files.html">Sources & Files</a>
-<a href="articles-assignment.html" id="articlesAssignmentLink">Articles Assignment</a>
-<a href="users-management.html" id="usersManagementLink">Users Management</a>
-<a href="settings.html" class="active">Settings</a>
+  <a href="admin.html">Surveys</a>
+  <a href="responses.html">Responses</a>
+  <a href="sources-files.html">Sources & Files</a>
+  <a href="articles-assignment.html" id="articlesAssignmentLink">Articles Assignment</a>
+  <a href="users-management.html" id="usersManagementLink">Users Management</a>
+  <a href="settings.html" class="active">Settings</a>
 </div>
 
+<!-- Password Panel -->
 <div class="panel">
+  <h2>Sources & Files Password</h2>
 
-    <h2>Sources & Files Password</h2>
+  <label>Current Password</label>
+  <input type="password" id="currentPassword" placeholder="Enter current password">
 
-    <label>Current Password</label>
-    <input
-        type="password"
-        id="currentPassword"
-        placeholder="Enter current password">
+  <label>New Password</label>
+  <input type="password" id="newPassword" placeholder="Enter new password">
 
-    <label>New Password</label>
-    <input
-        type="password"
-        id="newPassword"
-        placeholder="Enter new password">
+  <label>Confirm New Password</label>
+  <input type="password" id="confirmPassword" placeholder="Confirm new password">
 
-    <label>Confirm New Password</label>
-    <input
-        type="password"
-        id="confirmPassword"
-        placeholder="Confirm new password">
+  <button class="primary" onclick="savePassword()">Save Password</button>
 
-    <button class="primary" onclick="savePassword()">
-        Save Password
-    </button>
-
-    <div id="status" class="small"></div>
-
+  <div id="status" class="status"></div>
 </div>
-<hr style="margin:40px 0">
 
-<h2>Website Logo</h2>
+<!-- Logo Panel -->
+<div class="panel">
+  <h2>Website Logo</h2>
+  <p class="small">Current logo used across the admin panel.</p>
 
-<p class="small">
-Current logo used across the admin panel.
-</p>
+  <img id="currentLogo" src="logo.png" alt="Logo" style="width:180px; display:block; margin:20px 0;">
 
-<img
-id="currentLogo"
-src="logo.png?"+Date.now()
-style="
-width:180px;
-display:block;
-margin:20px 0;
-">
+  <input type="file" id="logoFile" accept=".png,.jpg,.jpeg,.svg">
 
-<input
-type="file"
-id="logoFile"
-accept=".png,.jpg,.jpeg,.svg">
+  <button class="primary" onclick="uploadLogo()">Update Logo</button>
 
-<button
-class="primary"
-onclick="uploadLogo()">
-Update Logo
-</button>
+  <div id="logoStatus" class="status"></div>
+</div>
 
-<div id="logoStatus" class="small"></div>
 <script>
+const adminToken = localStorage.getItem("admin_token");
+const adminUser = JSON.parse(localStorage.getItem("admin_user") || "{}");
 
-const adminToken=localStorage.getItem("admin_token");
-const adminUser=JSON.parse(localStorage.getItem("admin_user")||"{}");
-
-if(!adminToken){
-location.href="admin-login.html";
+if (!adminToken) {
+  location.href = "admin-login.html";
 }
 
-if(adminUser.role!=="super_admin"){
-
-const a=document.getElementById("articlesAssignmentLink");
-const u=document.getElementById("usersManagementLink");
-
-if(a)a.style.display="none";
-if(u)u.style.display="none";
-
+if (adminUser.role !== "super_admin") {
+  const a = document.getElementById("articlesAssignmentLink");
+  const u = document.getElementById("usersManagementLink");
+  if (a) a.style.display = "none";
+  if (u) u.style.display = "none";
 }
 
-function logoutAdmin(){
+// تحديث اللوجو عند تحميل الصفحة لمنع الـ Caching
+document.getElementById("currentLogo").src = "logo.png?" + Date.now();
 
-localStorage.removeItem("admin_token");
-localStorage.removeItem("admin_user");
-
-location.href="admin-login.html";
-
+function logoutAdmin() {
+  localStorage.removeItem("admin_token");
+  localStorage.removeItem("admin_user");
+  location.href = "admin-login.html";
 }
 
-async function savePassword(){
+async function savePassword() {
+  const status = document.getElementById("status");
+  const current = document.getElementById("currentPassword").value.trim();
+  const pass = document.getElementById("newPassword").value.trim();
+  const confirm = document.getElementById("confirmPassword").value.trim();
 
-    const status = document.getElementById("status");
+  if (!current || !pass || !confirm) {
+    status.innerText = "Please fill in all fields.";
+    return;
+  }
 
-    const current = document.getElementById("currentPassword").value.trim();
-    const pass = document.getElementById("newPassword").value.trim();
-    const confirm = document.getElementById("confirmPassword").value.trim();
+  status.innerText = "Saving...";
 
-    status.innerText = "Saving...";
-
-    const res = await fetch("api/settings.php",{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json",
-            Authorization:"Bearer "+adminToken
-        },
-        body:JSON.stringify({
-            current_password: current,
-            new_password: pass,
-            confirm_password: confirm
-        })
+  try {
+    const res = await fetch("api/settings.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + adminToken
+      },
+      body: JSON.stringify({
+        current_password: current,
+        new_password: pass,
+        confirm_password: confirm
+      })
     });
 
     const data = await res.json();
-
     status.innerText = data.message;
 
-    if(data.success){
-        document.getElementById("currentPassword").value="";
-        document.getElementById("newPassword").value="";
-        document.getElementById("confirmPassword").value="";
+    if (data.success) {
+      document.getElementById("currentPassword").value = "";
+      document.getElementById("newPassword").value = "";
+      document.getElementById("confirmPassword").value = "";
     }
+  } catch (err) {
+    status.innerText = "An error occurred while saving.";
+  }
 }
 
-async function uploadLogo(){
+async function uploadLogo() {
+  const status = document.getElementById("logoStatus");
+  const file = document.getElementById("logoFile").files[0];
 
-    const file=document.getElementById("logoFile").files[0];
+  if (!file) {
+    alert("Please select a logo file first.");
+    return;
+  }
 
-    if(!file){
-        alert("Choose logo");
-        return;
-    }
+  status.innerText = "Uploading...";
 
-    const form=new FormData();
-    form.append("logo",file);
+  const form = new FormData();
+  form.append("logo", file);
 
-    const res=await fetch("api/upload-logo.php",{
-        method:"POST",
-        headers:{
-            Authorization:"Bearer "+adminToken
-        },
-        body:form
+  try {
+    const res = await fetch("api/upload-logo.php", {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + adminToken
+      },
+      body: form
     });
 
-    const data=await res.json();
+    const data = await res.json();
+    status.innerText = data.message;
 
-    document.getElementById("logoStatus").innerText=data.message;
-
-    if(data.success){
-
-        document.getElementById("currentLogo").src=
-            "logo.png?"+new Date().getTime();
-
-        document.getElementById("logoFile").value="";
+    if (data.success) {
+      document.getElementById("currentLogo").src = "logo.png?" + new Date().getTime();
+      document.getElementById("logoFile").value = "";
     }
-
-}   
+  } catch (err) {
+    status.innerText = "An error occurred while uploading.";
+  }
+}
 </script>
 
 </body>

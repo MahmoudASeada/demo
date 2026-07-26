@@ -3,10 +3,10 @@ require_once "db.php";
 
 header("Content-Type: application/json");
 
-$headers=getallheaders();
-$token=str_replace("Bearer ","",$headers["Authorization"] ?? "");
+$headers = getallheaders();
+$token = str_replace("Bearer ", "", $headers["Authorization"] ?? "");
 
-$stmt=$pdo->prepare("
+$stmt = $pdo->prepare("
 SELECT id
 FROM admins
 WHERE session_token=?
@@ -17,39 +17,41 @@ $stmt->execute([$token]);
 
 if(!$stmt->fetch()){
     exit(json_encode([
-        "success"=>false,
-        "message"=>"Unauthorized"
+        "success" => false,
+        "message" => "Unauthorized"
     ]));
 }
 
-if(empty($_FILES["logo"])){
-
+if(empty($_FILES["logo"]["tmp_name"])){
     exit(json_encode([
-        "success"=>false,
-        "message"=>"Choose image"
+        "success" => false,
+        "message" => "Choose image"
     ]));
 }
 
-$tmp=$_FILES["logo"]["tmp_name"];
+$tmp = $_FILES["logo"]["tmp_name"];
+$ext = strtolower(pathinfo($_FILES["logo"]["name"], PATHINFO_EXTENSION));
 
-$ext=strtolower(pathinfo($_FILES["logo"]["name"],PATHINFO_EXTENSION));
+$allowed = ["png", "jpg", "jpeg", "svg"];
 
-$allowed=["png"];
-
-if(!in_array($ext,$allowed)){
-
+if(!in_array($ext, $allowed)){
     exit(json_encode([
-        "success"=>false,
-        "message"=>"Invalid image"
+        "success" => false,
+        "message" => "Invalid image. Only PNG, JPG, JPEG, and SVG allowed."
     ]));
 }
 
-move_uploaded_file(
-    $tmp,
-    __DIR__."/../logo.png".$ext
-);
+// المسار الصحيح لاستبدال ملف logo.png
+$targetPath = __DIR__ . "/../logo.png";
 
-echo json_encode([
-    "success"=>true,
-    "message"=>"Logo updated successfully"
-]);
+if (move_uploaded_file($tmp, $targetPath)) {
+    echo json_encode([
+        "success" => true,
+        "message" => "Logo updated successfully"
+    ]);
+} else {
+    echo json_encode([
+        "success" => false,
+        "message" => "Failed to save file. Check folder permissions."
+    ]);
+}
