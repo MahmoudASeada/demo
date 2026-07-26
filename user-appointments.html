@@ -61,6 +61,44 @@ body{background:#f6f7fb;display:flex;min-height:100vh;color:#101828}
   border-radius:16px;
   padding:25px;
   box-shadow:0 10px 30px rgba(0,0,0,.05);
+  margin-bottom: 25px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #667085;
+}
+
+.form-group input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+}
+
+.btn-primary {
+  background: #c9000b;
+  color: #fff;
+  border: none;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 table{
@@ -93,6 +131,27 @@ th{
 .badge.pending{ background:#e7f0ff; color:#3478f6; }
 .badge.approved{ background:#e8faef; color:#20a95a; }
 .badge.rejected{ background:#ffe8e8; color:#c9000b; }
+
+.btn-accept {
+  background: #20a95a;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-reject {
+  background: #c9000b;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 5px;
+}
 </style>
 </head>
 
@@ -103,19 +162,42 @@ th{
     <div class="logo">W ZONE</div>
     <a href="dashboard.html">Dashboard</a>
     <a href="user-appointments.html" class="active">Appointments</a>
-    <a href="calendar.html">My Availability</a>
-    <!-- أضف بقية وروابط السايدبار المعتادة عندك هنا -->
+    <a href="articles.html">Reports & Articles</a>
+    <a href="help.html">Help Center</a>
   </div>
 
   <!-- Main Content Area -->
   <div class="main-content">
     <div class="header">
-      <h2>Scheduled Appointments</h2>
+      <h2>Scheduled Appointments & Availability</h2>
     </div>
 
+    <!-- 1. SET UNAVAILABILITY PANEL -->
     <div class="card">
-      <h3 style="margin-bottom: 10px;">Appointments Scheduled by Admin</h3>
-      <p style="color:#667085; font-size:14px; margin-bottom:20px;">List of meeting requests and appointments assigned to you.</p>
+      <h3>Set Unavailability (Block Dates & Times)</h3>
+      <p style="color:#667085; font-size:14px; margin-top:5px;">Select dates and times you are unavailable for meetings.</p>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="blockDate" />
+        </div>
+        <div class="form-group">
+          <label>From Time</label>
+          <input type="time" id="blockStartTime" value="09:00" />
+        </div>
+        <div class="form-group">
+          <label>To Time</label>
+          <input type="time" id="blockEndTime" value="17:00" />
+        </div>
+        <button class="btn-primary" onclick="setUnavailability()">Block Slot</button>
+      </div>
+    </div>
+
+    <!-- 2. APPOINTMENTS SCHEDULED BY ADMIN -->
+    <div class="card">
+      <h3>Appointments Scheduled by Admin</h3>
+      <p style="color:#667085; font-size:14px; margin-top:5px;">List of meeting requests and appointments assigned to you.</p>
 
       <table>
         <thead>
@@ -124,26 +206,27 @@ th{
             <th>Date</th>
             <th>Time</th>
             <th>Status</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody id="userAppointmentsTable">
-          <tr><td colspan="4">Loading appointments...</td></tr>
+          <tr><td colspan="5">Loading appointments...</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
 <script>
+// توحيد المفتاح ليكون portal_token متوافقاً مع الداشبورد
 const token = localStorage.getItem("portal_token");
 
 if (!token) {
   location.href = "login.html";
 }
 
-// Fetch Appointments Scheduled by Admin for Logged-in User
+// 1. دالة جلب المواعيد
 async function loadScheduledAppointments() {
   try {
-    // تعديل الـ action ليصبح get_user_calendar
     const res = await fetch("api/calendar.php?action=get_user_calendar", {
       headers: { Authorization: "Bearer " + token }
     });
@@ -152,23 +235,83 @@ async function loadScheduledAppointments() {
     const tbody = document.getElementById("userAppointmentsTable");
 
     if (!data.appointments || !data.appointments.length) {
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888;">No scheduled appointments yet.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888;">No scheduled appointments yet.</td></tr>`;
       return;
     }
 
-    tbody.innerHTML = data.appointments.map(a => `
-      <tr>
-        <td><b>${a.title}</b></td>
-        <td>${a.date}</td>
-        <td>${a.time}</td>
-        <td><span class="badge ${a.status || 'pending'}">${a.status || 'pending'}</span></td>
-      </tr>
-    `).join("");
+    tbody.innerHTML = data.appointments.map(a => {
+      let actions = `-`;
+      if (a.status === "pending") {
+        actions = `
+          <button class="btn-accept" onclick="respondAppointment(${a.id}, 'approved')">Accept</button>
+          <button class="btn-reject" onclick="respondAppointment(${a.id}, 'rejected')">Reject</button>
+        `;
+      }
+
+      return `
+        <tr>
+          <td><b>${a.title}</b></td>
+          <td>${a.date}</td>
+          <td>${a.time}</td>
+          <td><span class="badge ${a.status || 'pending'}">${a.status || 'pending'}</span></td>
+          <td>${actions}</td>
+        </tr>
+      `;
+    }).join("");
 
   } catch (err) {
     console.error(err);
     document.getElementById("userAppointmentsTable").innerHTML = 
-      `<tr><td colspan="4" style="color:red;">Error loading appointments.</td></tr>`;
+      `<tr><td colspan="5" style="color:red;">Error loading appointments.</td></tr>`;
+  }
+}
+
+// 2. دالة حظر وقت/يوم غير متاح
+async function setUnavailability() {
+  const date = document.getElementById("blockDate").value;
+  const startTime = document.getElementById("blockStartTime").value;
+  const endTime = document.getElementById("blockEndTime").value;
+
+  if (!date) {
+    alert("Please select a date to block!");
+    return;
+  }
+
+  try {
+    const res = await fetch("api/calendar.php?action=set_unavailability", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token
+      },
+      body: JSON.stringify({ date, start_time: startTime, end_time: endTime })
+    });
+    const data = await res.json();
+    alert(data.message);
+    if (data.success) {
+      document.getElementById("blockDate").value = "";
+    }
+  } catch (err) {
+    alert("Failed to block time slot");
+  }
+}
+
+// 3. دالة قبول أو رفض الموعد
+async function respondAppointment(id, status) {
+  try {
+    const res = await fetch("api/calendar.php?action=respond_appointment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token
+      },
+      body: JSON.stringify({ id, status })
+    });
+    const data = await res.json();
+    alert(data.message);
+    loadScheduledAppointments();
+  } catch (err) {
+    alert("Failed to update status");
   }
 }
 
