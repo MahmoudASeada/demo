@@ -3,126 +3,378 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Content Calendar - W ZONE</title>
+<title>Calendar - W ZONE</title>
 
 <style>
-*{box-sizing:border-box;font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;margin:0;padding:0}
-body{background:#f8fafc;display:flex;min-height:100vh;color:#101828}
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: #f7f8fc;
+  display: flex;
+  min-height: 100vh;
+  color: #101828;
+}
 
 /* Sidebar Layout */
-.sidebar{
-  width:260px;
-  background:#ffffff;
-  border-right:1px solid #eaecf0;
-  padding:28px 20px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  position:fixed;
-  top:0;
-  bottom:0;
-  left:0;
-  z-index:100;
+.sidebar {
+  width: 230px;
+  background: #ffffff;
+  border-right: 1px solid #eee;
+  padding: 24px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
 }
 
-.sidebar-top{ display:flex; flex-direction:column; gap:24px; }
-.logo-container{ padding:0 8px; display:flex; align-items:center; gap:10px; }
-.logo-text{ font-size:22px; font-weight:900; color:#000; letter-spacing:-0.5px; }
-.logo-text span{ color:#c9000b; }
-.nav-menu{ display:flex; flex-direction:column; gap:6px; }
-
-.nav-item{
-  display:flex; align-items:center; gap:12px; color:#475467;
-  text-decoration:none; padding:12px 16px; border-radius:12px;
-  font-weight:600; font-size:14px; transition:all .2s ease;
-}
-.nav-item:hover{ background:#f8fafc; color:#101828; }
-.nav-item.active{ background:#b30008; color:#ffffff; box-shadow:0 4px 12px rgba(179,0,8,0.25); }
-
-.sidebar-bottom{ display:flex; flex-direction:column; gap:16px; }
-.logout-btn{
-  display:flex; align-items:center; gap:8px; color:#c9000b;
-  text-decoration:none; font-weight:700; font-size:14px; padding:8px;
-  cursor:pointer; border:none; background:none;
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
 }
 
-.user-card{ display:flex; align-items:center; gap:12px; padding:12px; border:1px solid #eaecf0; border-radius:16px; background:#fff; }
-.user-avatar{ width:38px; height:38px; border-radius:50%; background:#6366f1; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px; }
-.user-info{ flex:1; overflow:hidden; }
-.user-name{ font-weight:700; font-size:13px; color:#101828; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.user-role{ font-size:11px; color:#667085; }
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-left: 6px;
+}
+.logo-text {
+  font-size: 22px;
+  font-weight: 900;
+  color: #000000;
+  letter-spacing: -0.5px;
+}
+.logo-text span {
+  color: #c9000b;
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #667085;
+  text-decoration: none;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+}
+.nav-item:hover {
+  background: #f8fafc;
+  color: #101828;
+}
+.nav-item.active {
+  background: #c9000b;
+  color: #ffffff;
+}
+
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+}
+
+.logout-btn {
+  color: #c9000b;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 18px;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 6px;
+  font-weight: bold;
+}
+
+.user-card {
+  border: 1px solid #eaecf0;
+  border-radius: 14px;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #ffffff;
+}
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #6366f1;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  background-size: cover;
+  background-position: center;
+}
+.user-info .user-name {
+  font-size: 13px;
+  font-weight: bold;
+  color: #101828;
+}
+.user-info .user-role {
+  font-size: 11px;
+  color: #667085;
+}
 
 /* Main Content Area */
-.main-wrapper{ margin-left:260px; flex:1; display:flex; flex-direction:column; }
-.top-bar{ height:72px; background:#fff; border-bottom:1px solid #eaecf0; padding:0 35px; display:flex; align-items:center; justify-content:space-between; }
-.search-box{ position:relative; width:360px; }
-.search-box input{ width:100%; padding:10px 16px 10px 40px; border-radius:24px; border:1px solid #eaecf0; background:#f8fafc; font-size:13px; outline:none; }
-.search-icon{ position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#667085; }
-.top-right{ display:flex; align-items:center; gap:20px; }
-.notification-bell{ position:relative; cursor:pointer; color:#475467; }
-.bell-dot{ position:absolute; top:-2px; right:-2px; width:8px; height:8px; background:#c9000b; border-radius:50%; border:2px solid #fff; }
-.user-profile-header{ display:flex; align-items:center; gap:10px; }
-
-.main-content{ padding:35px; }
-.page-header{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:25px; }
-.page-title h1{ font-size:26px; font-weight:800; color:#101828; }
-.page-title p{ color:#667085; font-size:13px; margin-top:4px; }
-
-/* Panel & Card Styles */
-.card{ background:#fff; border-radius:20px; padding:24px; border:1px solid #eaecf0; box-shadow:0 4px 20px rgba(0,0,0,.02); margin-bottom:25px; }
-.card-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-.calendar-controls{ display:flex; align-items:center; gap:12px; }
-.month-title{ font-size:20px; font-weight:800; color:#101828; min-width: 180px; }
-
-.nav-arrow{ border:1px solid #eaecf0; background:#fff; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; font-size:16px; user-select:none; }
-.nav-arrow:hover{ background:#f1f5f9; }
-.btn-today{ border:1px solid #eaecf0; background:#fff; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; }
-.btn-today:hover{ background:#f1f5f9; }
-
-.btn-primary{ background:#b30008; color:#fff; border:none; padding:10px 18px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; }
-.btn-primary:hover{ background:#8e0006; }
-
-/* Calendar Dynamic Grid */
-.calendar-grid{
-  display:grid;
-  grid-template-columns:repeat(7, 1fr);
-  border-top:1px solid #eaecf0;
-  border-left:1px solid #eaecf0;
-  border-radius:12px;
-  overflow:hidden;
+.main-wrapper {
+  margin-left: 230px;
+  width: calc(100% - 230px);
+  display: flex;
+  flex-direction: column;
 }
 
-.day-header{ background:#f8fafc; padding:12px; font-size:12px; font-weight:700; color:#64748b; border-right:1px solid #eaecf0; border-bottom:1px solid #eaecf0; text-align:center; }
-.day-cell{ min-height:110px; padding:8px; border-right:1px solid #eaecf0; border-bottom:1px solid #eaecf0; background:#fff; font-size:12px; font-weight:600; color:#64748b; display:flex; flex-direction:column; gap:4px; }
-.day-cell.other-month{ background:#fdfdfd; color:#cbd5e1; }
-.day-cell.today-cell{ background:#f0f9ff; }
-.day-cell.today-cell > span{ background:#0284c7; color:#fff; padding:2px 6px; border-radius:12px; width:max-content; }
+.top-bar {
+  height: 58px;
+  background: #ffffff;
+  border-bottom: 1px solid #eee;
+  padding: 0 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-.event-card{ padding:6px; border-radius:6px; font-size:10.5px; font-weight:500; line-height:1.3; }
-.event-card.approved{ background:#e8faef; border:1px solid #b8e7c8; color:#17803d; }
-.event-card.pending{ background:#fef3c7; border:1px solid #fde68a; color:#b45309; }
-.event-card.rejected{ background:#fef2f2; border:1px solid #fecaca; color:#dc2626; }
-.event-card.blocked{ background:#ffe8e8; border:1px solid #fca5a5; color:#c9000b; }
+.search-box input {
+  width: 420px;
+  height: 36px;
+  border: 1px solid #d9dee8;
+  border-radius: 30px;
+  padding: 0 18px 0 42px;
+  background: #fafbff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2398a2b3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") no-repeat 18px center;
+  outline: none;
+  font-size: 13px;
+}
+
+.user-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-profile-header .user-text {
+  text-align: right;
+}
+.user-profile-header .user-name {
+  font-size: 13px;
+  font-weight: bold;
+}
+.user-profile-header .user-id {
+  font-size: 10px;
+  color: #667085;
+}
+
+.main-content {
+  padding: 42px 44px;
+}
+.page-header {
+  margin-bottom: 28px;
+}
+.page-title h1 {
+  font-size: 30px;
+  font-weight: bold;
+  color: #101828;
+  margin-bottom: 8px;
+}
+.page-title p {
+  color: #667085;
+  font-size: 14px;
+}
+
+/* Panel & Card Styles */
+.card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.04);
+  margin-bottom: 34px;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.calendar-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.month-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #101828;
+  min-width: 180px;
+}
+
+.nav-arrow {
+  border: 1px solid #eaecf0;
+  background: #ffffff;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  user-select: none;
+}
+.nav-arrow:hover { background: #f1f5f9; }
+.btn-today {
+  border: 1px solid #eaecf0;
+  background: #ffffff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-today:hover { background: #f1f5f9; }
+
+.btn-primary {
+  background: #c9000b;
+  color: #ffffff;
+  border: none;
+  padding: 11px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.btn-primary:hover { background: #a80009; }
+
+/* Calendar Dynamic Grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-top: 1px solid #eaecf0;
+  border-left: 1px solid #eaecf0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.day-header {
+  background: #f8fafc;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  border-right: 1px solid #eaecf0;
+  border-bottom: 1px solid #eaecf0;
+  text-align: center;
+}
+.day-cell {
+  min-height: 110px;
+  padding: 8px;
+  border-right: 1px solid #eaecf0;
+  border-bottom: 1px solid #eaecf0;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.day-cell.other-month { background: #fdfdfd; color: #cbd5e1; }
+.day-cell.today-cell { background: #f0f9ff; }
+.day-cell.today-cell > span {
+  background: #0284c7;
+  color: #ffffff;
+  padding: 2px 6px;
+  border-radius: 12px;
+  width: max-content;
+}
+
+.event-card {
+  padding: 6px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.event-card.approved { background: #e8faef; border: 1px solid #b8e7c8; color: #17803d; }
+.event-card.pending { background: #fef3c7; border: 1px solid #fde68a; color: #b45309; }
+.event-card.rejected { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+.event-card.blocked { background: #ffe8e8; border: 1px solid #fca5a5; color: #c9000b; }
 
 /* Form Styles */
-.form-row { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; margin-top: 15px; }
-.form-group { display: flex; flex-direction: column; gap: 6px; }
-.form-group label { font-size: 12px; font-weight: bold; color: #667085; }
-.form-group input { padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+.form-row {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-group label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #667085;
+}
+.form-group input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+}
 
 /* Data Tables */
-table{ width:100%; border-collapse:collapse; margin-top:15px; }
-th, td{ padding:14px 16px; text-align:left; border-bottom:1px solid #eef1f5; font-size:14px; }
-th{ background:#f8fafc; color:#667085; font-weight:600; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+th, td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #eef1f5;
+  font-size: 13px;
+}
+th {
+  background: #f8fafc;
+  color: #667085;
+  font-weight: 600;
+}
 
-.badge{ padding:4px 10px; border-radius:20px; font-size:11px; font-weight:bold; display:inline-block; text-transform:capitalize; }
-.badge.pending{ background:#fef3c7; color:#b45309; }
-.badge.approved{ background:#e8faef; color:#17803d; }
-.badge.rejected{ background:#ffe8e8; color:#c9000b; }
-.badge.blocked{ background:#fff3f3; color:#c9000b; }
+.badge {
+  padding: 5px 13px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: bold;
+  display: inline-block;
+  text-transform: capitalize;
+}
+.badge.pending { background: #fef3c7; color: #b45309; }
+.badge.approved { background: #e8faef; color: #17803d; }
+.badge.rejected { background: #ffe8e8; color: #c9000b; }
+.badge.blocked { background: #fff3f3; color: #c9000b; }
 
-.btn-accept { background: #20a95a; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-.btn-reject { background: #c9000b; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-left: 5px; }
+.btn-accept { background: #20a95a; color: #ffffff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.btn-reject { background: #c9000b; color: #ffffff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-left: 5px; }
 </style>
 </head>
 
@@ -137,19 +389,19 @@ th{ background:#f8fafc; color:#667085; font-weight:600; }
       </div>
 
       <nav class="nav-menu">
-        <a href="dashboard.html" class="nav-item">Dashboard</a>
-        <a href="articles.html" class="nav-item">Reports & Articles</a>
-        <a href="user-appointments.html" class="nav-item active">Calendar</a>
-        <a href="settings.html" class="nav-item">Settings</a>
+        <a href="dashboard.html" class="nav-item">▦ <span>Dashboard</span></a>
+        <a href="user-appointments.html" class="nav-item active">▦ <span>Appointments</span></a>
+        <a href="articles.html" class="nav-item">▤ <span>Reports & Articles</span></a>
+        <a href="help.html" class="nav-item">? <span>Help Center</span></a>
       </nav>
     </div>
 
     <div class="sidebar-bottom">
-      <button class="logout-btn" onclick="localStorage.removeItem('portal_token'); location.href='login.html';">Logout</button>
+      <button class="logout-btn" onclick="logout()">↩ Logout</button>
       <div class="user-card">
-        <div class="user-avatar">JD</div>
+        <div class="user-avatar" id="sideAvatar">U</div>
         <div class="user-info">
-          <div class="user-name">Jameson Dunn</div>
+          <div class="user-name" id="sideName">User</div>
           <div class="user-role">Pro Member</div>
         </div>
       </div>
@@ -160,16 +412,14 @@ th{ background:#f8fafc; color:#667085; font-weight:600; }
   <div class="main-wrapper">
     <header class="top-bar">
       <div class="search-box">
-        <input type="text" placeholder="Search surveys, files, or reports...">
+        <input type="text" placeholder="Search surveys, files, or reports..." id="dashboardSearch">
       </div>
-      <div class="top-right">
-        <div class="user-profile-header">
-          <div style="text-align:right">
-            <div style="font-size:13px; font-weight:700">Jameson Dunn</div>
-            <div style="font-size:11px; color:#667085">ID: #854210</div>
-          </div>
-          <div class="user-avatar" style="width:34px; height:34px;">JD</div>
+      <div class="user-profile-header">
+        <div class="user-text">
+          <div class="user-name" id="topName">User</div>
+          <div class="user-id">ID #854210</div>
         </div>
+        <div class="user-avatar" id="topAvatar" style="width:34px; height:34px;">U</div>
       </div>
     </header>
 
@@ -192,7 +442,6 @@ th{ background:#f8fafc; color:#667085; font-weight:600; }
           </div>
         </div>
 
-        <!-- The Calendar Grid render container -->
         <div class="calendar-grid" id="calendarGrid"></div>
       </div>
 
@@ -259,27 +508,18 @@ th{ background:#f8fafc; color:#667085; font-weight:600; }
 
 <script>
 const token = localStorage.getItem("portal_token");
+if (!token) window.location.href = "login.html";
 
-if (!token) {
-  location.href = "login.html";
-}
-
-// تاريخ التقويم والبيانات المخزنة
 let currentDate = new Date();
 let calendarEvents = { blocked: [], appointments: [] };
 
-// 1. جلب البيانات من الـ Backend
 async function fetchCalendarData() {
   try {
     const res = await fetch("api/calendar.php?action=get_user_calendar", {
       headers: { Authorization: "Bearer " + token }
     });
 
-    // التأكد من أن السيرفر رد بطلب ناجح HTTP 200 قبل التحويل لـ JSON
-    if (!res.ok) {
-      throw new Error(`HTTP Error! Status: ${res.status}`);
-    }
-
+    if (!res.ok) throw new Error(`HTTP Error! Status: ${res.status}`);
     const data = await res.json();
 
     if (data.success) {
@@ -295,7 +535,7 @@ async function fetchCalendarData() {
     console.error("Error fetching data:", err.message);
   }
 }
-// 2. دالة رسم التقويم التفاعلي dynamic 100%
+
 function renderCalendar() {
   const grid = document.getElementById("calendarGrid");
   const monthTitle = document.getElementById("calendarMonthTitle");
@@ -309,7 +549,6 @@ function renderCalendar() {
                       "July", "August", "September", "October", "November", "December"];
   monthTitle.innerText = `${monthNames[month]} ${year}`;
 
-  // تفريغ وإضافة هيدر الأسبوع
   grid.innerHTML = `
     <div class="day-header">Mon</div>
     <div class="day-header">Tue</div>
@@ -329,11 +568,9 @@ function renderCalendar() {
   const totalDays = lastDayOfMonth.getDate();
   const prevMonthLastDay = new Date(year, month, 0).getDate();
 
-  // اليوم الحالي للتحديد المميز
   const today = new Date();
   const isCurrentMonthReal = today.getFullYear() === year && today.getMonth() === month;
 
-  // رسم أيام الشهر السابق
   for (let i = startingDay; i > 0; i--) {
     const dayDiv = document.createElement("div");
     dayDiv.className = "day-cell other-month";
@@ -341,10 +578,8 @@ function renderCalendar() {
     grid.appendChild(dayDiv);
   }
 
-  // رسم أيام الشهر الحقيقي المحسوب
   for (let day = 1; day <= totalDays; day++) {
     const dayDiv = document.createElement("div");
-    
     const isToday = isCurrentMonthReal && day === today.getDate();
     dayDiv.className = `day-cell ${isToday ? 'today-cell' : ''}`;
     dayDiv.innerHTML = `<span>${day}</span>`;
@@ -353,7 +588,6 @@ function renderCalendar() {
     const formattedDay = String(day).padStart(2, '0');
     const dateStr = `${year}-${formattedMonth}-${formattedDay}`;
 
-    // إدراج الحجوزات والمواعيد
     const dayApps = calendarEvents.appointments.filter(a => a.date === dateStr);
     dayApps.forEach(app => {
       const statusClass = app.status || 'pending';
@@ -364,7 +598,6 @@ function renderCalendar() {
       `;
     });
 
-    // إدراج الأيام المحظورة (Blocked)
     const dayBlocked = calendarEvents.blocked.filter(b => b.date === dateStr);
     dayBlocked.forEach(b => {
       const startTime = b.start_time ? b.start_time.substring(0,5) : '';
@@ -379,7 +612,6 @@ function renderCalendar() {
     grid.appendChild(dayDiv);
   }
 
-  // المتبقي من الخانات لضبط الشكل الجمالي
   const totalCells = grid.children.length - 7;
   const remainingCells = (7 - (totalCells % 7)) % 7;
   for (let i = 1; i <= remainingCells; i++) {
@@ -390,16 +622,15 @@ function renderCalendar() {
   }
 }
 
-// 3. ربط أزرار التحكم بالتنقل (مع تصليح مشكلة قفز الشهور)
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("prevMonthBtn").onclick = () => {
-    currentDate.setDate(1); // ضبط اليوم على 1 لتفادي تخطي الشهور القصيرة
+    currentDate.setDate(1);
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar();
   };
 
   document.getElementById("nextMonthBtn").onclick = () => {
-    currentDate.setDate(1); // ضبط اليوم على 1 لتفادي تخطي الشهور القصيرة
+    currentDate.setDate(1);
     currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar();
   };
@@ -409,10 +640,16 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCalendar();
   };
 
+  const storedUser = JSON.parse(localStorage.getItem("portal_user") || "{}");
+  if (storedUser.name) {
+    document.getElementById("sideName").innerText = storedUser.name;
+    document.getElementById("topName").innerText = storedUser.name;
+  }
+  setAvatarImage(storedUser);
+
   fetchCalendarData();
 });
 
-// 4. بناء الجداول
 function renderTables() {
   const blockedTbody = document.getElementById("blockedSlotsTable");
   if (blockedTbody) {
@@ -457,7 +694,6 @@ function renderTables() {
   }
 }
 
-// 5. حظر تاريخ جديد
 async function setUnavailability() {
   const date = document.getElementById("blockDate").value;
   const startTime = document.getElementById("blockStartTime").value;
@@ -483,7 +719,7 @@ async function setUnavailability() {
 
     if (data.success) {
       document.getElementById("blockDate").value = "";
-      await fetchCalendarData(); // تحديث فوري للبيانات ورسم الكالندر
+      await fetchCalendarData();
     }
   } catch (err) {
     console.error(err);
@@ -491,10 +727,9 @@ async function setUnavailability() {
   }
 }
 
-// 6. الاستجابة للمواعيد
 async function respondAppointment(id, status) {
   try {
-    const res = await fetch("calendar.php?action=respond_appointment", {
+    const res = await fetch("api/calendar.php?action=respond_appointment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -505,11 +740,33 @@ async function respondAppointment(id, status) {
 
     const data = await res.json();
     alert(data.message || "Status updated!");
-    await fetchCalendarData(); // تحديث فوري بعد الحجز والتعديل
+    await fetchCalendarData();
   } catch (err) {
     console.error(err);
     alert("Failed to update status");
   }
+}
+
+function setAvatarImage(user) {
+  const image = user.profile_image;
+  const name = user.name || "User";
+  const letter = name.charAt(0).toUpperCase();
+
+  [document.getElementById("sideAvatar"), document.getElementById("topAvatar")].forEach(avatar => {
+    if (!avatar) return;
+    if (image) {
+      avatar.innerText = "";
+      avatar.style.backgroundImage = `url('${image}')`;
+      avatar.style.backgroundSize = "cover";
+    } else {
+      avatar.innerText = letter;
+    }
+  });
+}
+
+function logout() {
+  localStorage.clear();
+  window.location.href = "login.html";
 }
 </script>
 </body>
