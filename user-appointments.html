@@ -25,320 +25,64 @@ body{background:#f8fafc;display:flex;min-height:100vh;color:#101828}
   z-index:100;
 }
 
-.sidebar-top{
-  display:flex;
-  flex-direction:column;
-  gap:24px;
-}
-
-.logo-container{
-  padding:0 8px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.logo-text{
-  font-size:22px;
-  font-weight:900;
-  color:#000;
-  letter-spacing:-0.5px;
-}
-
-.logo-text span{
-  color:#c9000b;
-}
-
-.nav-menu{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
+.sidebar-top{ display:flex; flex-direction:column; gap:24px; }
+.logo-container{ padding:0 8px; display:flex; align-items:center; gap:10px; }
+.logo-text{ font-size:22px; font-weight:900; color:#000; letter-spacing:-0.5px; }
+.logo-text span{ color:#c9000b; }
+.nav-menu{ display:flex; flex-direction:column; gap:6px; }
 
 .nav-item{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  color:#475467;
-  text-decoration:none;
-  padding:12px 16px;
-  border-radius:12px;
-  font-weight:600;
-  font-size:14px;
-  transition:all .2s ease;
+  display:flex; align-items:center; gap:12px; color:#475467;
+  text-decoration:none; padding:12px 16px; border-radius:12px;
+  font-weight:600; font-size:14px; transition:all .2s ease;
 }
+.nav-item:hover{ background:#f8fafc; color:#101828; }
+.nav-item.active{ background:#b30008; color:#ffffff; box-shadow:0 4px 12px rgba(179,0,8,0.25); }
 
-.nav-item:hover{
-  background:#f8fafc;
-  color:#101828;
-}
-
-.nav-item.active{
-  background:#b30008;
-  color:#ffffff;
-  box-shadow:0 4px 12px rgba(179,0,8,0.25);
-}
-
-.sidebar-bottom{
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-}
-
+.sidebar-bottom{ display:flex; flex-direction:column; gap:16px; }
 .logout-btn{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  color:#c9000b;
-  text-decoration:none;
-  font-weight:700;
-  font-size:14px;
-  padding:8px;
-  cursor:pointer;
-  border:none;
-  background:none;
+  display:flex; align-items:center; gap:8px; color:#c9000b;
+  text-decoration:none; font-weight:700; font-size:14px; padding:8px;
+  cursor:pointer; border:none; background:none;
 }
 
-.user-card{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:12px;
-  border:1px solid #eaecf0;
-  border-radius:16px;
-  background:#fff;
-}
-
-.user-avatar{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  background:#6366f1;
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:bold;
-  font-size:14px;
-}
-
-.user-info{
-  flex:1;
-  overflow:hidden;
-}
-
-.user-name{
-  font-weight:700;
-  font-size:13px;
-  color:#101828;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.user-role{
-  font-size:11px;
-  color:#667085;
-}
+.user-card{ display:flex; align-items:center; gap:12px; padding:12px; border:1px solid #eaecf0; border-radius:16px; background:#fff; }
+.user-avatar{ width:38px; height:38px; border-radius:50%; background:#6366f1; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px; }
+.user-info{ flex:1; overflow:hidden; }
+.user-name{ font-weight:700; font-size:13px; color:#101828; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.user-role{ font-size:11px; color:#667085; }
 
 /* Main Content Area */
-.main-wrapper{
-  margin-left:260px;
-  flex:1;
-  display:flex;
-  flex-direction:column;
-}
+.main-wrapper{ margin-left:260px; flex:1; display:flex; flex-direction:column; }
+.top-bar{ height:72px; background:#fff; border-bottom:1px solid #eaecf0; padding:0 35px; display:flex; align-items:center; justify-content:space-between; }
+.search-box{ position:relative; width:360px; }
+.search-box input{ width:100%; padding:10px 16px 10px 40px; border-radius:24px; border:1px solid #eaecf0; background:#f8fafc; font-size:13px; outline:none; }
+.search-icon{ position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#667085; }
+.top-right{ display:flex; align-items:center; gap:20px; }
+.notification-bell{ position:relative; cursor:pointer; color:#475467; }
+.bell-dot{ position:absolute; top:-2px; right:-2px; width:8px; height:8px; background:#c9000b; border-radius:50%; border:2px solid #fff; }
+.user-profile-header{ display:flex; align-items:center; gap:10px; }
 
-.top-bar{
-  height:72px;
-  background:#fff;
-  border-bottom:1px solid #eaecf0;
-  padding:0 35px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.search-box{
-  position:relative;
-  width:360px;
-}
-
-.search-box input{
-  width:100%;
-  padding:10px 16px 10px 40px;
-  border-radius:24px;
-  border:1px solid #eaecf0;
-  background:#f8fafc;
-  font-size:13px;
-  outline:none;
-}
-
-.search-icon{
-  position:absolute;
-  left:14px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#667085;
-}
-
-.top-right{
-  display:flex;
-  align-items:center;
-  gap:20px;
-}
-
-.notification-bell{
-  position:relative;
-  cursor:pointer;
-  color:#475467;
-}
-
-.bell-dot{
-  position:absolute;
-  top:-2px;
-  right:-2px;
-  width:8px;
-  height:8px;
-  background:#c9000b;
-  border-radius:50%;
-  border:2px solid #fff;
-}
-
-.user-profile-header{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.main-content{
-  padding:35px;
-}
-
-.page-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  margin-bottom:25px;
-}
-
-.page-title h1{
-  font-size:26px;
-  font-weight:800;
-  color:#101828;
-}
-
-.page-title p{
-  color:#667085;
-  font-size:13px;
-  margin-top:4px;
-}
-
-.view-toggle{
-  display:flex;
-  background:#f1f5f9;
-  padding:4px;
-  border-radius:12px;
-  gap:4px;
-}
-
-.view-btn{
-  border:none;
-  background:transparent;
-  padding:6px 16px;
-  border-radius:8px;
-  font-size:13px;
-  font-weight:600;
-  color:#64748b;
-  cursor:pointer;
-}
-
-.view-btn.active{
-  background:#b30008;
-  color:#fff;
-}
+.main-content{ padding:35px; }
+.page-header{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:25px; }
+.page-title h1{ font-size:26px; font-weight:800; color:#101828; }
+.page-title p{ color:#667085; font-size:13px; margin-top:4px; }
 
 /* Panel & Card Styles */
-.card{
-  background:#fff;
-  border-radius:20px;
-  padding:24px;
-  border:1px solid #eaecf0;
-  box-shadow:0 4px 20px rgba(0,0,0,.02);
-  margin-bottom:25px;
-}
+.card{ background:#fff; border-radius:20px; padding:24px; border:1px solid #eaecf0; box-shadow:0 4px 20px rgba(0,0,0,.02); margin-bottom:25px; }
+.card-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.calendar-controls{ display:flex; align-items:center; gap:12px; }
+.month-title{ font-size:20px; font-weight:800; color:#101828; min-width: 180px; }
 
-.card-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
-}
+.nav-arrow{ border:1px solid #eaecf0; background:#fff; width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; font-size:16px; user-select:none; }
+.nav-arrow:hover{ background:#f1f5f9; }
+.btn-today{ border:1px solid #eaecf0; background:#fff; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; }
+.btn-today:hover{ background:#f1f5f9; }
 
-.calendar-controls{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
+.btn-primary{ background:#b30008; color:#fff; border:none; padding:10px 18px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; }
+.btn-primary:hover{ background:#8e0006; }
 
-.month-title{
-  font-size:20px;
-  font-weight:800;
-  color:#101828;
-}
-
-.nav-arrow{
-  border:1px solid #eaecf0;
-  background:#fff;
-  width:32px;
-  height:32px;
-  border-radius:8px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-}
-
-.btn-today{
-  border:1px solid #eaecf0;
-  background:#fff;
-  padding:6px 14px;
-  border-radius:8px;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-}
-
-.action-buttons{
-  display:flex;
-  gap:10px;
-}
-
-.btn-filter{
-  border:1px solid #eaecf0;
-  background:#fff;
-  padding:8px 16px;
-  border-radius:10px;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-.btn-primary{
-  background:#b30008;
-  color:#fff;
-  border:none;
-  padding:9px 18px;
-  border-radius:10px;
-  font-size:13px;
-  font-weight:700;
-  cursor:pointer;
-}
-
-/* Calendar Grid Mockup */
+/* Calendar Dynamic Grid */
 .calendar-grid{
   display:grid;
   grid-template-columns:repeat(7, 1fr);
@@ -348,154 +92,37 @@ body{background:#f8fafc;display:flex;min-height:100vh;color:#101828}
   overflow:hidden;
 }
 
-.day-header{
-  background:#f8fafc;
-  padding:12px;
-  font-size:12px;
-  font-weight:700;
-  color:#64748b;
-  border-right:1px solid #eaecf0;
-  border-bottom:1px solid #eaecf0;
-}
+.day-header{ background:#f8fafc; padding:12px; font-size:12px; font-weight:700; color:#64748b; border-right:1px solid #eaecf0; border-bottom:1px solid #eaecf0; text-align:center; }
+.day-cell{ min-height:110px; padding:8px; border-right:1px solid #eaecf0; border-bottom:1px solid #eaecf0; background:#fff; font-size:12px; font-weight:600; color:#64748b; display:flex; flex-direction:column; gap:4px; }
+.day-cell.other-month{ background:#fdfdfd; color:#cbd5e1; }
+.day-cell.today-cell{ background:#f0f9ff; }
+.day-cell.today-cell > span{ background:#0284c7; color:#fff; padding:2px 6px; border-radius:12px; width:max-content; }
 
-.day-cell{
-  min-height:100px;
-  padding:8px;
-  border-right:1px solid #eaecf0;
-  border-bottom:1px solid #eaecf0;
-  background:#fff;
-  font-size:12px;
-  font-weight:600;
-  color:#64748b;
-}
-
-.day-cell.other-month{
-  color:#cbd5e1;
-}
-
-.event-card{
-  margin-top:6px;
-  padding:8px;
-  border-radius:8px;
-  font-size:11px;
-}
-
-.event-card.published{ background:#e8faef; border:1px solid #b8e7c8; color:#17803d; }
+.event-card{ padding:6px; border-radius:6px; font-size:10.5px; font-weight:500; line-height:1.3; }
+.event-card.approved{ background:#e8faef; border:1px solid #b8e7c8; color:#17803d; }
 .event-card.pending{ background:#fef3c7; border:1px solid #fde68a; color:#b45309; }
-.event-card.in-progress{ background:#e0f2fe; border:1px solid #bae6fd; color:#0369a1; }
+.event-card.rejected{ background:#fef2f2; border:1px solid #fecaca; color:#dc2626; }
+.event-card.blocked{ background:#ffe8e8; border:1px solid #fca5a5; color:#c9000b; }
 
 /* Form Styles */
-.form-row {
-  display: flex;
-  gap: 15px;
-  align-items: flex-end;
-  flex-wrap: wrap;
-  margin-top: 15px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.form-group label {
-  font-size: 12px;
-  font-weight: bold;
-  color: #667085;
-}
-
-.form-group input {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  outline: none;
-}
+.form-row { display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; margin-top: 15px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 12px; font-weight: bold; color: #667085; }
+.form-group input { padding: 10px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
 
 /* Data Tables */
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:15px;
-}
+table{ width:100%; border-collapse:collapse; margin-top:15px; }
+th, td{ padding:14px 16px; text-align:left; border-bottom:1px solid #eef1f5; font-size:14px; }
+th{ background:#f8fafc; color:#667085; font-weight:600; }
 
-th, td{
-  padding:14px 16px;
-  text-align:left;
-  border-bottom:1px solid #eef1f5;
-  font-size:14px;
-}
-
-th{
-  background:#f8fafc;
-  color:#667085;
-  font-weight:600;
-}
-
-.badge{
-  padding:6px 12px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:bold;
-  display:inline-block;
-}
-
-.badge.pending{ background:#e7f0ff; color:#3478f6; }
-.badge.approved{ background:#e8faef; color:#20a95a; }
+.badge{ padding:4px 10px; border-radius:20px; font-size:11px; font-weight:bold; display:inline-block; text-transform:capitalize; }
+.badge.pending{ background:#fef3c7; color:#b45309; }
+.badge.approved{ background:#e8faef; color:#17803d; }
 .badge.rejected{ background:#ffe8e8; color:#c9000b; }
 .badge.blocked{ background:#fff3f3; color:#c9000b; }
 
-.btn-accept {
-  background: #20a95a;
-  color: #fff;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.btn-reject {
-  background: #c9000b;
-  color: #fff;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-left: 5px;
-}
-
-/* Footer Stats Cards */
-.stats-grid{
-  display:grid;
-  grid-template-columns:repeat(3, 1fr);
-  gap:20px;
-  margin-top:25px;
-}
-
-.stat-card{
-  background:#fff;
-  border-radius:18px;
-  padding:20px;
-  border:1px solid #eaecf0;
-}
-
-.stat-card.red-cta{
-  background:#b30008;
-  color:#fff;
-}
-
-.stat-card.red-cta button{
-  background:#fff;
-  color:#b30008;
-  border:none;
-  padding:10px 20px;
-  border-radius:10px;
-  font-weight:700;
-  margin-top:15px;
-  cursor:pointer;
-}
+.btn-accept { background: #20a95a; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+.btn-reject { background: #c9000b; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-left: 5px; }
 </style>
 </head>
 
@@ -510,35 +137,15 @@ th{
       </div>
 
       <nav class="nav-menu">
-        <a href="dashboard.html" class="nav-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          Dashboard
-        </a>
-        <a href="articles.html" class="nav-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          Reports & Articles
-        </a>
-        <a href="user-appointments.html" class="nav-item active">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          Calendar
-        </a>
-        <a href="settings.html" class="nav-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          Settings
-        </a>
-        <a href="help.html" class="nav-item">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          Help Center
-        </a>
+        <a href="dashboard.html" class="nav-item">Dashboard</a>
+        <a href="articles.html" class="nav-item">Reports & Articles</a>
+        <a href="user-appointments.html" class="nav-item active">Calendar</a>
+        <a href="settings.html" class="nav-item">Settings</a>
       </nav>
     </div>
 
     <div class="sidebar-bottom">
-      <button class="logout-btn" onclick="localStorage.removeItem('portal_token'); location.href='login.html';">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Logout
-      </button>
-
+      <button class="logout-btn" onclick="localStorage.removeItem('portal_token'); location.href='login.html';">Logout</button>
       <div class="user-card">
         <div class="user-avatar">JD</div>
         <div class="user-info">
@@ -551,19 +158,11 @@ th{
 
   <!-- Main Section Wrap -->
   <div class="main-wrapper">
-    <!-- Top Bar Header -->
     <header class="top-bar">
       <div class="search-box">
-        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" placeholder="Search surveys, files, or reports...">
       </div>
-
       <div class="top-right">
-        <div class="notification-bell">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          <span class="bell-dot"></span>
-        </div>
-
         <div class="user-profile-header">
           <div style="text-align:right">
             <div style="font-size:13px; font-weight:700">Jameson Dunn</div>
@@ -574,80 +173,27 @@ th{
       </div>
     </header>
 
-    <!-- Main View Content -->
     <main class="main-content">
       <div class="page-header">
         <div class="page-title">
-          <h1>Content Calendar</h1>
+          <h1>Dynamic Content Calendar</h1>
           <p>Manage and schedule your enterprise article releases and appointments.</p>
-        </div>
-
-        <div class="view-toggle">
-          <button class="view-btn">Day</button>
-          <button class="view-btn">Week</button>
-          <button class="view-btn active">Month</button>
         </div>
       </div>
 
-      <!-- Main Calendar Grid Interface (As in Reference Design) -->
+      <!-- Main Dynamic Calendar Grid -->
       <div class="card">
         <div class="card-header">
           <div class="calendar-controls">
-            <span class="month-title">February 2026</span>
-            <button class="nav-arrow">&lt;</button>
-            <button class="nav-arrow">&gt;</button>
-            <button class="btn-today">Today</button>
-          </div>
-
-          <div class="action-buttons">
-            <button class="btn-filter">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-              Filter
-            </button>
-            <button class="btn-primary" onclick="document.getElementById('blockDate').focus();">+ New Entry</button>
+            <button class="nav-arrow" id="prevMonthBtn">&lt;</button>
+            <span class="month-title" id="calendarMonthTitle">Loading...</span>
+            <button class="nav-arrow" id="nextMonthBtn">&gt;</button>
+            <button class="btn-today" id="todayBtn">Today</button>
           </div>
         </div>
 
-        <!-- Month Grid Mock View -->
-        <div class="calendar-grid">
-          <div class="day-header">Mon</div>
-          <div class="day-header">Tue</div>
-          <div class="day-header">Wed</div>
-          <div class="day-header">Thu</div>
-          <div class="day-header">Fri</div>
-          <div class="day-header">Sat</div>
-          <div class="day-header">Sun</div>
-
-          <div class="day-cell other-month">26</div>
-          <div class="day-cell other-month">27</div>
-          <div class="day-cell other-month">28</div>
-          <div class="day-cell">1
-            <div class="event-card published">● Published<br><b>Feedback Loop</b></div>
-          </div>
-          <div class="day-cell">2</div>
-          <div class="day-cell">3</div>
-          <div class="day-cell">4</div>
-
-          <div class="day-cell">5</div>
-          <div class="day-cell">6</div>
-          <div class="day-cell">7
-            <div class="event-card pending">● Pending<br><b>B2B Review</b></div>
-          </div>
-          <div class="day-cell">8</div>
-          <div class="day-cell">9</div>
-          <div class="day-cell">10</div>
-          <div class="day-cell">11</div>
-
-          <div class="day-cell">12</div>
-          <div class="day-cell">13</div>
-          <div class="day-cell">14</div>
-          <div class="day-cell">15
-            <div class="event-card in-progress">● In Progress<br><b>Sentiment</b></div>
-          </div>
-          <div class="day-cell">16</div>
-          <div class="day-cell">17</div>
-          <div class="day-cell">18</div>
-        </div>
+        <!-- The Calendar Grid render container -->
+        <div class="calendar-grid" id="calendarGrid"></div>
       </div>
 
       <!-- 1. SET UNAVAILABILITY PANEL -->
@@ -662,11 +208,11 @@ th{
           </div>
           <div class="form-group">
             <label>From Time</label>
-            <input type="time" id="blockStartTime" value="09:00" />
+            <input type="time" id="blockStartTime" value="00:00" />
           </div>
           <div class="form-group">
             <label>To Time</label>
-            <input type="time" id="blockEndTime" value="17:00" />
+            <input type="time" id="blockEndTime" value="23:59" />
           </div>
           <button class="btn-primary" onclick="setUnavailability()">Block Slot</button>
         </div>
@@ -674,9 +220,7 @@ th{
 
       <!-- 2. MY BLOCKED SLOTS TABLE -->
       <div class="card">
-        <h3>My Blocked Slots (Unavailability)</h3>
-        <p style="color:#667085; font-size:13px; margin-top:4px;">List of dates and time ranges you have blocked.</p>
-
+        <h3>My Blocked Slots</h3>
         <table>
           <thead>
             <tr>
@@ -687,7 +231,7 @@ th{
             </tr>
           </thead>
           <tbody id="blockedSlotsTable">
-            <tr><td colspan="4">Loading blocked slots...</td></tr>
+            <tr><td colspan="4">Loading...</td></tr>
           </tbody>
         </table>
       </div>
@@ -695,8 +239,6 @@ th{
       <!-- 3. APPOINTMENTS SCHEDULED BY ADMIN -->
       <div class="card">
         <h3>Appointments Scheduled by Admin</h3>
-        <p style="color:#667085; font-size:13px; margin-top:4px;">List of meeting requests and appointments assigned to you.</p>
-
         <table>
           <thead>
             <tr>
@@ -708,29 +250,9 @@ th{
             </tr>
           </thead>
           <tbody id="userAppointmentsTable">
-            <tr><td colspan="5">Loading appointments...</td></tr>
+            <tr><td colspan="5">Loading...</td></tr>
           </tbody>
         </table>
-      </div>
-
-      <!-- Bottom Dashboard Stats Footer -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div style="font-size:12px; font-weight:700; color:#667085">Articles Published</div>
-          <div style="font-size:28px; font-weight:800; margin-top:8px">12 <span style="font-size:12px; color:#20a95a">+2 this mo.</span></div>
-        </div>
-
-        <div class="stat-card">
-          <div style="font-size:12px; font-weight:700; color:#667085">Review Queue</div>
-          <div style="font-size:28px; font-weight:800; margin-top:8px">04</div>
-          <div style="font-size:12px; color:#667085; margin-top:4px">Requires your attention</div>
-        </div>
-
-        <div class="stat-card red-cta">
-          <div style="font-size:18px; font-weight:800">Feedback Report Due</div>
-          <div style="font-size:12px; opacity:0.9; margin-top:6px">Complete quarterly analysis by Friday afternoon.</div>
-          <button>Get Started</button>
-        </div>
       </div>
     </main>
   </div>
@@ -742,20 +264,153 @@ if (!token) {
   location.href = "login.html";
 }
 
-// 1. دالة جلب بيانات التقويم (المواعيد والأوقات المغلقة)
-async function loadUserCalendar() {
+// تاريخ التقويم والبيانات المخزنة
+let currentDate = new Date();
+let calendarEvents = { blocked: [], appointments: [] };
+
+// 1. جلب البيانات من الـ Backend
+async function fetchCalendarData() {
   try {
-    const res = await fetch("api/calendar.php?action=get_user_calendar", {
+    const res = await fetch("calendar.php?action=get_user_calendar", {
       headers: { Authorization: "Bearer " + token }
     });
     const data = await res.json();
 
-    // -- عرض الأوقات المحجوزة/المغلقة من المستخدم --
-    const blockedTbody = document.getElementById("blockedSlotsTable");
-    if (!data.blocked || !data.blocked.length) {
+    if (data.success) {
+      calendarEvents.blocked = data.blocked || [];
+      calendarEvents.appointments = data.appointments || [];
+      
+      renderTables();
+      renderCalendar();
+    } else {
+      console.error(data.message);
+    }
+  } catch (err) {
+    console.error("Error fetching data:", err);
+  }
+}
+
+// 2. دالة رسم التقويم التفاعلي dynamic 100%
+function renderCalendar() {
+  const grid = document.getElementById("calendarGrid");
+  const monthTitle = document.getElementById("calendarMonthTitle");
+  
+  if (!grid || !monthTitle) return;
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  const monthNames = ["January", "February", "March", "April", "May", "June", 
+                      "July", "August", "September", "October", "November", "December"];
+  monthTitle.innerText = `${monthNames[month]} ${year}`;
+
+  // تفريغ وإضافة هيدر الأسبوع
+  grid.innerHTML = `
+    <div class="day-header">Mon</div>
+    <div class="day-header">Tue</div>
+    <div class="day-header">Wed</div>
+    <div class="day-header">Thu</div>
+    <div class="day-header">Fri</div>
+    <div class="day-header">Sat</div>
+    <div class="day-header">Sun</div>
+  `;
+
+  const firstDayOfMonth = new Date(year, month, 1);
+  const lastDayOfMonth = new Date(year, month + 1, 0);
+  
+  let startingDay = firstDayOfMonth.getDay() - 1;
+  if (startingDay === -1) startingDay = 6; 
+
+  const totalDays = lastDayOfMonth.getDate();
+  const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+  // اليوم الحالي للتحديد المميز
+  const today = new Date();
+  const isCurrentMonthReal = today.getFullYear() === year && today.getMonth() === month;
+
+  // رسم أيام الشهر السابق
+  for (let i = startingDay; i > 0; i--) {
+    const dayDiv = document.createElement("div");
+    dayDiv.className = "day-cell other-month";
+    dayDiv.innerHTML = `<span>${prevMonthLastDay - i + 1}</span>`;
+    grid.appendChild(dayDiv);
+  }
+
+  // رسم أيام الشهر الحقيقي المحسوب
+  for (let day = 1; day <= totalDays; day++) {
+    const dayDiv = document.createElement("div");
+    
+    const isToday = isCurrentMonthReal && day === today.getDate();
+    dayDiv.className = `day-cell ${isToday ? 'today-cell' : ''}`;
+    dayDiv.innerHTML = `<span>${day}</span>`;
+
+    const formattedMonth = String(month + 1).padStart(2, '0');
+    const formattedDay = String(day).padStart(2, '0');
+    const dateStr = `${year}-${formattedMonth}-${formattedDay}`;
+
+    // إدراج الحجوزات والمواعيد
+    const dayApps = calendarEvents.appointments.filter(a => a.date === dateStr);
+    dayApps.forEach(app => {
+      const statusClass = app.status || 'pending';
+      dayDiv.innerHTML += `
+        <div class="event-card ${statusClass}">
+          ● <b>${app.title}</b><br><small>${app.time}</small>
+        </div>
+      `;
+    });
+
+    // إدراج الأيام المحظورة (Blocked)
+    const dayBlocked = calendarEvents.blocked.filter(b => b.date === dateStr);
+    dayBlocked.forEach(b => {
+      dayDiv.innerHTML += `
+        <div class="event-card blocked">
+          🚫 <b>Blocked</b><br><small>${b.start_time.substring(0,5)} - ${b.end_time.substring(0,5)}</small>
+        </div>
+      `;
+    });
+
+    grid.appendChild(dayDiv);
+  }
+
+  // المتبقي من الخانات لضبط الشكل الجمالي
+  const totalCells = grid.children.length - 7;
+  const remainingCells = (7 - (totalCells % 7)) % 7;
+  for (let i = 1; i <= remainingCells; i++) {
+    const dayDiv = document.createElement("div");
+    dayDiv.className = "day-cell other-month";
+    dayDiv.innerHTML = `<span>${i}</span>`;
+    grid.appendChild(dayDiv);
+  }
+}
+
+// 3. ربط أزرار التحكم بالتنقل
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("prevMonthBtn").onclick = () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
+  };
+
+  document.getElementById("nextMonthBtn").onclick = () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
+  };
+
+  document.getElementById("todayBtn").onclick = () => {
+    currentDate = new Date();
+    renderCalendar();
+  };
+
+  fetchCalendarData();
+});
+
+// 4. بناء الجداول
+function renderTables() {
+  const blockedTbody = document.getElementById("blockedSlotsTable");
+  if (blockedTbody) {
+    if (!calendarEvents.blocked.length) {
       blockedTbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#888;">No blocked slots added yet.</td></tr>`;
     } else {
-      blockedTbody.innerHTML = data.blocked.map(b => `
+      blockedTbody.innerHTML = calendarEvents.blocked.map(b => `
         <tr>
           <td><b>${b.date}</b></td>
           <td>${b.start_time}</td>
@@ -764,13 +419,14 @@ async function loadUserCalendar() {
         </tr>
       `).join("");
     }
+  }
 
-    // -- عرض مواعيد الأدمن --
-    const appointmentsTbody = document.getElementById("userAppointmentsTable");
-    if (!data.appointments || !data.appointments.length) {
+  const appointmentsTbody = document.getElementById("userAppointmentsTable");
+  if (appointmentsTbody) {
+    if (!calendarEvents.appointments.length) {
       appointmentsTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888;">No scheduled appointments yet.</td></tr>`;
     } else {
-      appointmentsTbody.innerHTML = data.appointments.map(a => {
+      appointmentsTbody.innerHTML = calendarEvents.appointments.map(a => {
         let actions = `-`;
         if (a.status === "pending") {
           actions = `
@@ -778,7 +434,6 @@ async function loadUserCalendar() {
             <button class="btn-reject" onclick="respondAppointment(${a.id}, 'rejected')">Reject</button>
           `;
         }
-
         return `
           <tr>
             <td><b>${a.title}</b></td>
@@ -790,17 +445,10 @@ async function loadUserCalendar() {
         `;
       }).join("");
     }
-
-  } catch (err) {
-    console.error(err);
-    document.getElementById("blockedSlotsTable").innerHTML = 
-      `<tr><td colspan="4" style="color:red;">Error loading data.</td></tr>`;
-    document.getElementById("userAppointmentsTable").innerHTML = 
-      `<tr><td colspan="5" style="color:red;">Error loading data.</td></tr>`;
   }
 }
 
-// 2. دالة حظر وقت/يوم غير متاح
+// 5. حظر تاريخ جديد
 async function setUnavailability() {
   const date = document.getElementById("blockDate").value;
   const startTime = document.getElementById("blockStartTime").value;
@@ -812,7 +460,7 @@ async function setUnavailability() {
   }
 
   try {
-    const res = await fetch("api/calendar.php?action=set_unavailability", {
+    const res = await fetch("calendar.php?action=set_unavailability", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -824,17 +472,17 @@ async function setUnavailability() {
     alert(data.message);
     if (data.success) {
       document.getElementById("blockDate").value = "";
-      loadUserCalendar();
+      fetchCalendarData();
     }
   } catch (err) {
     alert("Failed to block time slot");
   }
 }
 
-// 3. دالة قبول أو رفض الموعد
+// 6. الاستجابة للمواعيد
 async function respondAppointment(id, status) {
   try {
-    const res = await fetch("api/calendar.php?action=respond_appointment", {
+    const res = await fetch("calendar.php?action=respond_appointment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -844,14 +492,11 @@ async function respondAppointment(id, status) {
     });
     const data = await res.json();
     alert(data.message);
-    loadUserCalendar();
+    fetchCalendarData();
   } catch (err) {
     alert("Failed to update status");
   }
 }
-
-loadUserCalendar();
 </script>
-
 </body>
 </html>
