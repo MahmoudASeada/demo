@@ -63,7 +63,7 @@ body { background:#f6f7fb; color:#101828; padding:35px; }
   box-shadow:0 4px 14px rgba(201, 0, 11, 0.28);
 }
 
-/* Page Header Title */
+/* Header Title Section */
 .header-section {
   display: flex;
   justify-content: space-between;
@@ -95,7 +95,7 @@ body { background:#f6f7fb; color:#101828; padding:35px; }
   cursor: pointer;
 }
 
-/* Base Panel Styles */
+/* Panel Styles */
 .panel {
   background:#fff;
   border-radius:20px;
@@ -109,11 +109,11 @@ body { background:#f6f7fb; color:#101828; padding:35px; }
   padding:24px 28px;
   border-bottom:1px solid #eef1f5;
 }
-.panel-head h1, .panel-head h2 { font-size:20px; margin-bottom:4px; font-weight:800; }
+.panel-head h2 { font-size:20px; margin-bottom:4px; font-weight:800; }
 .panel-head p { color:#667085; font-size:14px; }
 .panel-body { padding:28px; }
 
-/* Dynamic Calendar UI Styles (Image 1 replica) */
+/* Dynamic Calendar UI Styles */
 .calendar-top-bar {
   display: flex;
   justify-content: space-between;
@@ -145,13 +145,15 @@ body { background:#f6f7fb; color:#101828; padding:35px; }
 .month-nav-controls { display: flex; align-items: center; gap: 12px; }
 .month-arrow-btn {
   background: transparent;
-  border: none;
-  font-size: 16px;
+  border: 1px solid #eaecf0;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: bold;
   color: #667085;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 4px 10px;
 }
+.month-arrow-btn:hover { background: #f8fafc; }
 .month-display-name { font-size: 16px; font-weight: 800; color: #101828; min-width: 140px; text-align: center; }
 
 .ui-calendar-grid {
@@ -170,65 +172,48 @@ body { background:#f6f7fb; color:#101828; padding:35px; }
   border-bottom: 1px solid #eaecf0;
   text-transform: uppercase;
 }
-.ui-day-header:last-child { border-right: none; }
+.ui-day-header:nth-child(7n) { border-right: none; }
 
 .ui-day-cell {
-  min-height: 120px;
-  padding: 10px;
+  min-height: 115px;
+  padding: 8px;
   border-right: 1px solid #eaecf0;
   border-bottom: 1px solid #eaecf0;
   background: #ffffff;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 .ui-day-cell:nth-child(7n) { border-right: none; }
 .ui-day-cell.other-month { background: #fafafa; }
 .ui-day-cell.other-month .num { color: #d0d5dd; }
 
-.ui-day-cell .num { font-size: 13px; font-weight: 800; color: #344054; }
+.ui-day-cell .num { font-size: 12px; font-weight: 800; color: #344054; margin-bottom: 2px; }
 .ui-day-cell.is-today .num {
   background: #c9000b;
   color: #ffffff;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Event / Article Tags inside Calendar */
+/* Dynamic Event Tags inside Calendar */
 .cal-event-tag {
-  padding: 6px 8px;
+  padding: 5px 7px;
   border-radius: 6px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   line-height: 1.3;
 }
-.cal-event-tag.red-live {
-  background: #c9000b;
-  color: #ffffff;
-}
-.cal-event-tag.soft-red {
-  background: #fef2f2;
-  border-left: 3px solid #c9000b;
-  color: #991b1b;
-}
-.cal-event-tag.dotted-add {
-  border: 1.5px dashed #d0d5dd;
-  color: #667085;
-  text-align: center;
-  background: #ffffff;
-  cursor: pointer;
-}
-.cal-event-tag.gray-subtle {
-  background: #f8fafc;
-  border-left: 3px solid #64748b;
-  color: #334155;
-}
+.cal-event-tag.approved { background: #c9000b; color: #ffffff; }
+.cal-event-tag.pending { background: #fef3c7; border-left: 3px solid #b45309; color: #b45309; }
+.cal-event-tag.rejected { background: #fef2f2; border-left: 3px solid #dc2626; color: #dc2626; }
+.cal-event-tag.blocked { background: #ffe8e8; border-left: 3px solid #c9000b; color: #c9000b; }
 
-/* Review Queue Section (Image 1 replica) */
+/* Review Queue Panel Styles */
 .queue-header {
   display: flex;
   justify-content: space-between;
@@ -268,7 +253,7 @@ body { background:#f6f7fb; color:#101828; padding:35px; }
 .btn-details { background: transparent; border: none; font-size: 13px; font-weight: 700; color: #475467; cursor: pointer; }
 .btn-approve { background: #c9000b; border: none; color: #ffffff; padding: 8px 18px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; }
 
-/* Control Form & Tables (Original functional code) */
+/* Control Form & Tables */
 label { display:block; font-weight:bold; margin-bottom:8px; font-size:14px; }
 select, input { width:100%; padding:12px; border:1px solid #ddd; border-radius:10px; font-size:14px; outline:none; }
 
@@ -347,15 +332,15 @@ th { background:#f8fafc; color:#667085; font-weight: 700; }
 <div class="header-section">
   <div>
     <h1>Content Calendar</h1>
-    <p>Manage and schedule your enterprise article releases.</p>
+    <p>Manage and schedule your enterprise article releases and user appointments.</p>
   </div>
   <div class="header-actions">
     <button class="btn-secondary-outline">˅ Bulk Actions</button>
-    <button class="btn-danger-action">+ New Entry</button>
+    <button class="btn-danger-action" onclick="scrollToBooking()">+ New Entry</button>
   </div>
 </div>
 
-<!-- NEW DESIGN SECTION 1: EDITORIAL CALENDAR GRID -->
+<!-- DYNAMIC EDITORIAL CALENDAR GRID -->
 <div class="panel">
   <div class="calendar-top-bar">
     <div class="calendar-top-left">
@@ -368,64 +353,24 @@ th { background:#f8fafc; color:#667085; font-weight: 700; }
     </div>
     <div class="month-nav-controls">
       <button class="month-arrow-btn" id="adminCalPrev">&lt;</button>
-      <span class="month-display-name" id="adminCalMonthTitle">October 2024</span>
+      <span class="month-display-name" id="adminCalMonthTitle">Loading...</span>
       <button class="month-arrow-btn" id="adminCalNext">&gt;</button>
     </div>
   </div>
 
   <div class="ui-calendar-grid" id="adminUiCalendarGrid">
-    <!-- Day Headers -->
-    <div class="ui-day-header">Mon</div>
-    <div class="ui-day-header">Tue</div>
-    <div class="ui-day-header">Wed</div>
-    <div class="ui-day-header">Thu</div>
-    <div class="ui-day-header">Fri</div>
-    <div class="ui-day-header">Sat</div>
-    <div class="ui-day-header">Sun</div>
-
-    <!-- Calendar Cells Demo View -->
-    <div class="ui-day-cell other-month"><span class="num">28</span></div>
-    <div class="ui-day-cell other-month"><span class="num">29</span></div>
-    <div class="ui-day-cell other-month"><span class="num">30</span></div>
-    
-    <div class="ui-day-cell">
-      <span class="num">1</span>
-      <div class="cal-event-tag soft-red">Q4 Strategy Launch</div>
-    </div>
-    <div class="ui-day-cell">
-      <span class="num">2</span>
-      <div class="cal-event-tag dotted-add">+ Add Article</div>
-    </div>
-    <div class="ui-day-cell">
-      <span class="num">3</span>
-      <div class="cal-event-tag gray-subtle">Social Media Recap</div>
-    </div>
-    <div class="ui-day-cell"><span class="num">4</span></div>
-
-    <div class="ui-day-cell"><span class="num">5</span></div>
-    <div class="ui-day-cell">
-      <span class="num">6</span>
-      <div class="cal-event-tag gray-subtle">User Experience Survey</div>
-    </div>
-    <div class="ui-day-cell"><span class="num">7</span></div>
-    <div class="ui-day-cell is-today">
-      <span class="num">8</span>
-      <div class="cal-event-tag red-live">Live: Annual Report</div>
-    </div>
-    <div class="ui-day-cell"><span class="num">9</span></div>
-    <div class="ui-day-cell"><span class="num">10</span></div>
-    <div class="ui-day-cell"><span class="num">11</span></div>
+    <!-- Grid elements generated dynamically by JavaScript -->
   </div>
 </div>
 
-<!-- NEW DESIGN SECTION 2: REVIEW QUEUE PANEL -->
+<!-- REVIEW QUEUE PANEL -->
 <div class="panel">
   <div class="panel-body">
     <div class="queue-header">
       <div class="queue-title-wrap">
         <div class="queue-title">
           <span>📝 Review Queue</span>
-          <span class="queue-badge">4 PENDING</span>
+          <span class="queue-badge">3 PENDING</span>
         </div>
       </div>
       <a href="#" class="queue-view-all">View All</a>
@@ -477,7 +422,7 @@ th { background:#f8fafc; color:#667085; font-weight: 700; }
   </div>
 </div>
 
-<!-- STEP 1: USER SELECTOR (CONTROL PANEL) -->
+<!-- STEP 1: USER SELECTOR -->
 <div class="panel">
   <div class="panel-head">
     <h2>User Calendar Management Controls</h2>
@@ -491,7 +436,7 @@ th { background:#f8fafc; color:#667085; font-weight: 700; }
   </div>
 </div>
 
-<!-- STEP 2: BOOKING FORM (CONTROL PANEL) -->
+<!-- STEP 2: BOOKING FORM -->
 <div class="panel" id="bookingSection" style="display:none;">
   <div class="panel-body">
     <h2>Book New Appointment</h2>
@@ -515,7 +460,7 @@ th { background:#f8fafc; color:#667085; font-weight: 700; }
   </div>
 </div>
 
-<!-- STEP 3: BLOCKED SLOTS & APPOINTMENTS TABLE (CONTROL PANEL) -->
+<!-- STEP 3: BLOCKED SLOTS & APPOINTMENTS TABLE -->
 <div class="panel" id="calendarDataSection" style="display:none;">
   <div class="panel-body">
     <h2>Blocked Slots by User</h2>
@@ -552,7 +497,6 @@ if(!adminToken || !adminUser.role){
   localStorage.setItem("admin_user", JSON.stringify(adminUser));
 }
 
-// Role Check
 if (adminUser.role !== "super_admin") {
   const a = document.getElementById("articlesAssignmentLink");
   const u = document.getElementById("usersManagementLink");
@@ -566,6 +510,100 @@ function logoutAdmin() {
   location.href = "admin-login.html";
 }
 
+let currentCalDate = new Date();
+let activeUserCalendarData = { blocked: [], appointments: [] };
+
+// Render Dynamic Editorial Calendar
+function renderAdminCalendar() {
+  const grid = document.getElementById("adminUiCalendarGrid");
+  const monthTitle = document.getElementById("adminCalMonthTitle");
+  if (!grid || !monthTitle) return;
+
+  const year = currentCalDate.getFullYear();
+  const month = currentCalDate.getMonth();
+
+  const monthNames = ["January", "February", "March", "April", "May", "June", 
+                      "July", "August", "September", "October", "November", "December"];
+  monthTitle.innerText = `${monthNames[month]} ${year}`;
+
+  grid.innerHTML = `
+    <div class="ui-day-header">Mon</div>
+    <div class="ui-day-header">Tue</div>
+    <div class="ui-day-header">Wed</div>
+    <div class="ui-day-header">Thu</div>
+    <div class="ui-day-header">Fri</div>
+    <div class="ui-day-header">Sat</div>
+    <div class="ui-day-header">Sun</div>
+  `;
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+
+  let startingDay = firstDay.getDay() - 1;
+  if (startingDay === -1) startingDay = 6;
+
+  const totalDays = lastDay.getDate();
+  const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+  const today = new Date();
+  const isCurrentMonthReal = today.getFullYear() === year && today.getMonth() === month;
+
+  // Fill previous month trailing days
+  for (let i = startingDay; i > 0; i--) {
+    const cell = document.createElement("div");
+    cell.className = "ui-day-cell other-month";
+    cell.innerHTML = `<span class="num">${prevMonthLastDay - i + 1}</span>`;
+    grid.appendChild(cell);
+  }
+
+  // Fill current month days
+  for (let day = 1; day <= totalDays; day++) {
+    const cell = document.createElement("div");
+    const isToday = isCurrentMonthReal && day === today.getDate();
+    cell.className = `ui-day-cell ${isToday ? 'is-today' : ''}`;
+    cell.innerHTML = `<span class="num">${day}</span>`;
+
+    const formattedMonth = String(month + 1).padStart(2, '0');
+    const formattedDay = String(day).padStart(2, '0');
+    const dateStr = `${year}-${formattedMonth}-${formattedDay}`;
+
+    // Display appointments
+    const dayApps = activeUserCalendarData.appointments.filter(a => a.date === dateStr);
+    dayApps.forEach(app => {
+      const statusClass = app.status || 'pending';
+      cell.innerHTML += `
+        <div class="cal-event-tag ${statusClass}">
+          <b>${app.title}</b><br><small>${app.time}</small>
+        </div>
+      `;
+    });
+
+    // Display blocked slots
+    const dayBlocked = activeUserCalendarData.blocked.filter(b => b.date === dateStr);
+    dayBlocked.forEach(b => {
+      const startTime = b.start_time ? b.start_time.substring(0,5) : '';
+      const endTime = b.end_time ? b.end_time.substring(0,5) : '';
+      cell.innerHTML += `
+        <div class="cal-event-tag blocked">
+          🚫 Blocked<br><small>${startTime}-${endTime}</small>
+        </div>
+      `;
+    });
+
+    grid.appendChild(cell);
+  }
+
+  // Fill next month leading days
+  const totalCells = grid.children.length - 7;
+  const remainingCells = (7 - (totalCells % 7)) % 7;
+  for (let i = 1; i <= remainingCells; i++) {
+    const cell = document.createElement("div");
+    cell.className = "ui-day-cell other-month";
+    cell.innerHTML = `<span class="num">${i}</span>`;
+    grid.appendChild(cell);
+  }
+}
+
 // 1. Fetch Users Dropdown
 async function loadUsersDropdown() {
   try {
@@ -573,9 +611,7 @@ async function loadUsersDropdown() {
       headers: { Authorization: "Bearer " + adminToken }
     });
     
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
     const data = await res.json();
     const select = document.getElementById("calendarUserSelect");
@@ -605,6 +641,8 @@ async function loadUserCalendarData() {
   if (!userId) {
     bookingSection.style.display = "none";
     dataSection.style.display = "none";
+    activeUserCalendarData = { blocked: [], appointments: [] };
+    renderAdminCalendar();
     return;
   }
 
@@ -617,7 +655,13 @@ async function loadUserCalendarData() {
     });
     const data = await res.json();
 
-    // Render Blocked Slots
+    activeUserCalendarData.blocked = data.blocked || [];
+    activeUserCalendarData.appointments = data.appointments || [];
+
+    // Re-render Dynamic Top Calendar Grid
+    renderAdminCalendar();
+
+    // Render Blocked Slots List
     const blockedList = document.getElementById("userBlockedList");
     if (!data.blocked || !data.blocked.length) {
       blockedList.innerHTML = `<li>No unavailable times set by user.</li>`;
@@ -642,7 +686,7 @@ async function loadUserCalendarData() {
       `).join("");
     }
   } catch (err) {
-    alert("Error loading user calendar data");
+    console.error("Error loading calendar data", err);
   }
 }
 
@@ -675,14 +719,35 @@ async function createNewAppointment() {
       document.getElementById("appTitle").value = "";
       document.getElementById("appDate").value = "";
       document.getElementById("appTime").value = "";
-      loadUserCalendarData();
+      await loadUserCalendarData();
     }
   } catch (err) {
     alert("Error creating appointment");
   }
 }
 
-loadUsersDropdown();
+function scrollToBooking() {
+  const userSelect = document.getElementById("calendarUserSelect");
+  userSelect.focus();
+  userSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("adminCalPrev").onclick = () => {
+    currentCalDate.setDate(1);
+    currentCalDate.setMonth(currentCalDate.getMonth() - 1);
+    renderAdminCalendar();
+  };
+
+  document.getElementById("adminCalNext").onclick = () => {
+    currentCalDate.setDate(1);
+    currentCalDate.setMonth(currentCalDate.getMonth() + 1);
+    renderAdminCalendar();
+  };
+
+  renderAdminCalendar();
+  loadUsersDropdown();
+});
 </script>
 
 </body>
