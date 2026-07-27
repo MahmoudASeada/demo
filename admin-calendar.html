@@ -63,38 +63,6 @@ body { background:#f6f7fb; color:#101828; padding:35px; }
   box-shadow:0 4px 14px rgba(201, 0, 11, 0.28);
 }
 
-/* Header Title Section */
-.header-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-}
-.header-section h1 { font-size: 28px; font-weight: 800; color: #101828; margin-bottom: 4px; }
-.header-section p { color: #667085; font-size: 14px; }
-.header-actions { display: flex; gap: 10px; }
-
-.btn-secondary-outline {
-  background: #ffffff;
-  border: 1px solid #d0d5dd;
-  color: #344054;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 13px;
-  cursor: pointer;
-}
-.btn-danger-action {
-  background: #c9000b;
-  border: none;
-  color: #ffffff;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 13px;
-  cursor: pointer;
-}
-
 /* Panel Styles */
 .panel {
   background:#fff;
@@ -328,23 +296,25 @@ th { background:#f8fafc; color:#667085; font-weight: 700; }
   </a>
 </div>
 
-<!-- Header Title & Action Buttons -->
-<div class="header-section">
-  <div>
-    <h1>Content Calendar</h1>
-    <p>Manage and schedule your enterprise article releases and user appointments.</p>
+<!-- 1. USER CALENDAR MANAGEMENT CONTROLS (Top Selection) -->
+<div class="panel">
+  <div class="panel-head">
+    <h2>User Calendar Management Controls</h2>
+    <p>Select a user to manage appointments and view blocked calendar dates.</p>
   </div>
-  <div class="header-actions">
-    <button class="btn-secondary-outline">˅ Bulk Actions</button>
-    <button class="btn-danger-action" onclick="scrollToBooking()">+ New Entry</button>
+  <div class="panel-body">
+    <label for="calendarUserSelect">Choose a User to view/book appointments:</label>
+    <select id="calendarUserSelect" onchange="loadUserCalendarData()">
+      <option value="">-- Choose User --</option>
+    </select>
   </div>
 </div>
 
-<!-- DYNAMIC EDITORIAL CALENDAR GRID -->
+<!-- 2. CONTENT CALENDAR (Editorial Dynamic Calendar Grid) -->
 <div class="panel">
   <div class="calendar-top-bar">
     <div class="calendar-top-left">
-      <span class="calendar-title-text">Editorial Calendar</span>
+      <span class="calendar-title-text">Content Calendar</span>
       <div class="view-toggle">
         <button class="view-btn active">Month</button>
         <button class="view-btn">Week</button>
@@ -363,7 +333,57 @@ th { background:#f8fafc; color:#667085; font-weight: 700; }
   </div>
 </div>
 
-<!-- REVIEW QUEUE PANEL -->
+<!-- 3. BOOK NEW APPOINTMENT FORM -->
+<div class="panel" id="bookingSection" style="display:none;">
+  <div class="panel-body">
+    <h2>Book New Appointment</h2>
+    <div class="form-grid">
+      <div>
+        <label>Appointment Title</label>
+        <input type="text" id="appTitle" placeholder="e.g. Project Discussion">
+      </div>
+      <div>
+        <label>Date</label>
+        <input type="date" id="appDate">
+      </div>
+      <div>
+        <label>Time</label>
+        <input type="time" id="appTime">
+      </div>
+      <div>
+        <button class="btn-primary" onclick="createNewAppointment()">Send Request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. BLOCKED SLOTS BY USER & APPOINTMENTS LIST -->
+<div class="panel" id="calendarDataSection" style="display:none;">
+  <div class="panel-body">
+    <h2>Blocked Slots by User</h2>
+    <p style="font-size:13px; color:#667085;">Times the user has marked as unavailable:</p>
+    <ul id="userBlockedList" class="blocked-list">
+      <li>No blocked slots set.</li>
+    </ul>
+
+    <h2 style="margin-top:30px;">Appointments List</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="adminAppointmentsTable">
+        <tr><td colspan="4">No appointments recorded for this user.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 5. REVIEW QUEUE PANEL -->
 <div class="panel">
   <div class="panel-body">
     <div class="queue-header">
@@ -419,70 +439,6 @@ th { background:#f8fafc; color:#667085; font-weight: 700; }
         </div>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- STEP 1: USER SELECTOR -->
-<div class="panel">
-  <div class="panel-head">
-    <h2>User Calendar Management Controls</h2>
-    <p>Select a user to manage appointments and view blocked calendar dates.</p>
-  </div>
-  <div class="panel-body">
-    <label for="calendarUserSelect">Choose a User to view/book appointments:</label>
-    <select id="calendarUserSelect" onchange="loadUserCalendarData()">
-      <option value="">-- Choose User --</option>
-    </select>
-  </div>
-</div>
-
-<!-- STEP 2: BOOKING FORM -->
-<div class="panel" id="bookingSection" style="display:none;">
-  <div class="panel-body">
-    <h2>Book New Appointment</h2>
-    <div class="form-grid">
-      <div>
-        <label>Appointment Title</label>
-        <input type="text" id="appTitle" placeholder="e.g. Project Discussion">
-      </div>
-      <div>
-        <label>Date</label>
-        <input type="date" id="appDate">
-      </div>
-      <div>
-        <label>Time</label>
-        <input type="time" id="appTime">
-      </div>
-      <div>
-        <button class="btn-primary" onclick="createNewAppointment()">Send Request</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- STEP 3: BLOCKED SLOTS & APPOINTMENTS TABLE -->
-<div class="panel" id="calendarDataSection" style="display:none;">
-  <div class="panel-body">
-    <h2>Blocked Slots by User</h2>
-    <p style="font-size:13px; color:#667085;">Times the user has marked as unavailable:</p>
-    <ul id="userBlockedList" class="blocked-list">
-      <li>No blocked slots set.</li>
-    </ul>
-
-    <h2 style="margin-top:30px;">Appointments List</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="adminAppointmentsTable">
-        <tr><td colspan="4">No appointments found.</td></tr>
-      </tbody>
-    </table>
   </div>
 </div>
 
@@ -724,12 +680,6 @@ async function createNewAppointment() {
   } catch (err) {
     alert("Error creating appointment");
   }
-}
-
-function scrollToBooking() {
-  const userSelect = document.getElementById("calendarUserSelect");
-  userSelect.focus();
-  userSelect.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
