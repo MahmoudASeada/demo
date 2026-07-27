@@ -274,6 +274,12 @@ async function fetchCalendarData() {
     const res = await fetch("calendar.php?action=get_user_calendar", {
       headers: { Authorization: "Bearer " + token }
     });
+
+    // التأكد من أن السيرفر رد بطلب ناجح HTTP 200 قبل التحويل لـ JSON
+    if (!res.ok) {
+      throw new Error(`HTTP Error! Status: ${res.status}`);
+    }
+
     const data = await res.json();
 
     if (data.success) {
@@ -286,10 +292,9 @@ async function fetchCalendarData() {
       console.error(data.message);
     }
   } catch (err) {
-    console.error("Error fetching data:", err);
+    console.error("Error fetching data:", err.message);
   }
 }
-
 // 2. دالة رسم التقويم التفاعلي dynamic 100%
 function renderCalendar() {
   const grid = document.getElementById("calendarGrid");
