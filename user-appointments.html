@@ -362,9 +362,11 @@ function renderCalendar() {
     // إدراج الأيام المحظورة (Blocked)
     const dayBlocked = calendarEvents.blocked.filter(b => b.date === dateStr);
     dayBlocked.forEach(b => {
+      const startTime = b.start_time ? b.start_time.substring(0,5) : '';
+      const endTime = b.end_time ? b.end_time.substring(0,5) : '';
       dayDiv.innerHTML += `
         <div class="event-card blocked">
-          🚫 <b>Blocked</b><br><small>${b.start_time.substring(0,5)} - ${b.end_time.substring(0,5)}</small>
+          🚫 <b>Blocked</b><br><small>${startTime} - ${endTime}</small>
         </div>
       `;
     });
@@ -383,14 +385,16 @@ function renderCalendar() {
   }
 }
 
-// 3. ربط أزرار التحكم بالتنقل
+// 3. ربط أزرار التحكم بالتنقل (مع تصليح مشكلة قفز الشهور)
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("prevMonthBtn").onclick = () => {
+    currentDate.setDate(1); // ضبط اليوم على 1 لتفادي تخطي الشهور القصيرة
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar();
   };
 
   document.getElementById("nextMonthBtn").onclick = () => {
+    currentDate.setDate(1); // ضبط اليوم على 1 لتفادي تخطي الشهور القصيرة
     currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar();
   };
@@ -468,13 +472,16 @@ async function setUnavailability() {
       },
       body: JSON.stringify({ date, start_time: startTime, end_time: endTime })
     });
+
     const data = await res.json();
-    alert(data.message);
+    alert(data.message || "Unavailability saved!");
+
     if (data.success) {
       document.getElementById("blockDate").value = "";
-      fetchCalendarData();
+      await fetchCalendarData(); // تحديث فوري للبيانات ورسم الكالندر
     }
   } catch (err) {
+    console.error(err);
     alert("Failed to block time slot");
   }
 }
@@ -490,10 +497,12 @@ async function respondAppointment(id, status) {
       },
       body: JSON.stringify({ id, status })
     });
+
     const data = await res.json();
-    alert(data.message);
-    fetchCalendarData();
+    alert(data.message || "Status updated!");
+    await fetchCalendarData(); // تحديث فوري بعد الحجز والتعديل
   } catch (err) {
+    console.error(err);
     alert("Failed to update status");
   }
 }
