@@ -25,6 +25,7 @@ body{background:#f6f7fb;color:#101828;padding:35px}
 .nav{
   margin-bottom:28px;
   display:flex;
+  justify-content:center;
   gap:8px;
   flex-wrap:wrap;
   background:#ffffff;
@@ -214,10 +215,7 @@ let adminToken = localStorage.getItem("admin_token");
 let adminUser = JSON.parse(localStorage.getItem("admin_user") || "{}");
 
 if(!adminToken || !adminUser.role){
-  adminToken = "bypass_admin_token";
-  adminUser = { id: 1, name: "Admin", role: "super_admin" };
-  localStorage.setItem("admin_token", adminToken);
-  localStorage.setItem("admin_user", JSON.stringify(adminUser));
+  window.location.href = "admin-login.html";
 }
 
 if (adminUser.role !== "super_admin") {

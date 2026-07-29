@@ -50,6 +50,64 @@ h1{
   margin-bottom:22px;
 }
 
+.collapsible-question-card{
+  background:#ffffff;
+  border:1px solid #dfe3ea;
+  border-radius:16px;
+  margin-bottom:16px;
+  overflow:hidden;
+  box-shadow:0 4px 12px rgba(0,0,0,.03);
+  transition:all 0.2s ease;
+}
+
+.collapsible-question-header{
+  padding:16px 20px;
+  background:#f8fafc;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+  user-select:none;
+  font-weight:700;
+  font-size:15px;
+}
+
+.collapsible-question-header:hover{
+  background:#f1f5f9;
+}
+
+.collapsible-question-body{
+  padding:20px;
+  border-top:1px solid #eef1f5;
+}
+
+.collapsible-question-card.collapsed .collapsible-question-body{
+  display:none;
+}
+
+.collapsible-toggle-icon{
+  font-size:12px;
+  color:#667085;
+  transition:transform 0.2s ease;
+}
+
+.collapsible-question-card.collapsed .collapsible-toggle-icon{
+  transform:rotate(-90deg);
+}
+
+.type-tag{
+  font-size:11px;
+  font-weight:800;
+  padding:4px 10px;
+  border-radius:12px;
+  margin-right:10px;
+  display:inline-block;
+}
+
+.type-tag.badge-input{ background:#e7f0ff; color:#1e5bb8; }
+.type-tag.badge-file{ background:#fef3c7; color:#92400e; }
+.type-tag.badge-checkbox, .type-tag.badge-checklist{ background:#e8faef; color:#166534; }
+
 label{
   display:block;
   font-size:14px;
@@ -387,6 +445,8 @@ function renderQuestions(){
       </button>
     `).join("");
 
+    const isCheckbox = q.question_type === "checkbox" || q.question_type === "checklist";
+
     if(q.question_type === "file"){
       inputHTML = `
         <input
@@ -404,64 +464,79 @@ function renderQuestions(){
           : ""
         }
       `;
-    }else if(q.question_type === "checkbox"){
-      // هنا كود الـ Checkbox الجديد ليعرض المربع بجانب النص بشكل منسق
-      inputHTML = `
-        <div style="display:flex; align-items:center; padding:10px 0;">
-        <input
-          type="checkbox"
-          class="survey-checkbox-input"
-          data-question-id="${q.id}"
-          data-question-label="${q.question_text}"
-          data-required="${required ? "1" : "0"}"
-          style="width:26px; height:26px; cursor:pointer; margin:0;"
-        >
-      </div>
-      `;
-    }else if(q.question_type === "textarea"){
-      inputHTML = `
-        <textarea
-          data-question-id="${q.id}"
-          data-question-label="${q.question_text}"
-          data-required="${required ? "1" : "0"}"
-          placeholder="Type your answer here..."
-          required
-        ></textarea>
-      `;
+    }else if(isCheckbox){
+      if(chips && chips.length > 0){
+        inputHTML = `
+          <div class="checklist-options-group" style="display:flex; flex-direction:column; gap:10px;">
+            ${chips.map(item => `
+              <label style="display:flex; align-items:center; gap:12px; cursor:pointer; font-weight:600; font-size:14px; background:#f8fafc; border:1px solid #dfe3ea; padding:10px 14px; border-radius:10px; transition:all 0.15s ease;">
+                <input
+                  type="checkbox"
+                  class="survey-checkbox-input"
+                  data-question-id="${q.id}"
+                  data-question-label="${q.question_text}"
+                  data-item-label="${item.replace(/"/g, '&quot;')}"
+                  data-required="${required ? "1" : "0"}"
+                  style="width:20px; height:20px; cursor:pointer; accent-color:#c9000b; margin:0;"
+                >
+                <span>${item}</span>
+              </label>
+            `).join("")}
+          </div>
+        `;
+      }else{
+        inputHTML = `
+          <label style="display:flex; align-items:center; gap:12px; cursor:pointer; font-weight:600; font-size:15px; padding:4px 0; margin:0;">
+            <input
+              type="checkbox"
+              class="survey-checkbox-input"
+              data-question-id="${q.id}"
+              data-question-label="${q.question_text}"
+              data-item-label="${q.question_text.replace(/"/g, '&quot;')}"
+              data-required="${required ? "1" : "0"}"
+              style="width:24px; height:24px; cursor:pointer; accent-color:#c9000b; margin:0;"
+            >
+            <span>Complete item</span>
+          </label>
+        `;
+      }
     }else{
       inputHTML = `
-        <input
-          type="text"
-          data-question-id="${q.id}"
-          data-question-label="${q.question_text}"
-          data-required="${required ? "1" : "0"}"
-          placeholder="Type your answer here..."
-          required
-        >
+        <div class="input-area">
+          <input
+            type="text"
+            data-question-id="${q.id}"
+            data-question-label="${q.question_text}"
+            data-required="${required ? "1" : "0"}"
+            placeholder="Type your answer here..."
+            required
+          >
+          <button class="mic-btn" type="button" onclick="toggleVoice('${q.id}', this)">🎙</button>
+        </div>
       `;
     }
 
-    return `
-      <div class="field">
-        <label>
-          ${q.question_text}
-          ${required ? `<span class="required-star">*</span>` : ""}
-        </label>
+    const typeBadge = isCheckbox ? "Checklist" : (q.question_type === "file" ? "File Upload" : "Input");
+    const typeClass = isCheckbox ? "badge-checkbox" : (q.question_type === "file" ? "badge-file" : "badge-input");
 
-        <div class="input-area">
+    return `
+      <div class="collapsible-question-card">
+        <div class="collapsible-question-header" onclick="this.parentElement.classList.toggle('collapsed')">
+          <div style="display:flex; align-items:center; flex:1; gap:6px;">
+            <span class="type-tag ${typeClass}">${typeBadge}</span>
+            <span>${q.question_text} ${required ? `<span class="required" style="color:#c9000b">*</span>` : ""}</span>
+          </div>
+          <span class="collapsible-toggle-icon">▼</span>
+        </div>
+
+        <div class="collapsible-question-body">
           ${inputHTML}
           ${
-            q.question_type !== "file" && q.question_type !== "checkbox"
-            ? `<button class="mic-btn" type="button" onclick="toggleVoice('${q.id}', this)">🎙</button>`
+            !isCheckbox && q.question_type !== "file" && chipsHTML
+            ? `<div class="question-chips">${chipsHTML}</div>`
             : ""
           }
         </div>
-
-        ${
-          q.question_type !== "file" && chipsHTML
-          ? `<div class="question-chips">${chipsHTML}</div>`
-          : ""
-        }
       </div>
     `;
   }).join("");
@@ -573,7 +648,7 @@ function resetButton(){
 
 function validateSurvey(){
 
-  const fields = document.querySelectorAll("#questionsWrap input, #questionsWrap textarea");
+  const fields = document.querySelectorAll("#questionsWrap input:not([type='checkbox']), #questionsWrap textarea");
   let valid = true;
 
   fields.forEach(field => {
@@ -607,6 +682,23 @@ function validateSurvey(){
       }else if(field.value.trim() === ""){
         field.classList.add("error-field");
         valid = false;
+      }
+    }
+  });
+
+  const cards = document.querySelectorAll("#questionsWrap .collapsible-question-card");
+  cards.forEach(card => {
+    const checkboxes = card.querySelectorAll("input[type='checkbox']");
+    if(checkboxes.length > 0){
+      const isRequired = checkboxes[0].dataset.required === "1";
+      if(isRequired){
+        const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+        if(!anyChecked){
+          card.classList.add("error-field");
+          valid = false;
+        }else{
+          card.classList.remove("error-field");
+        }
       }
     }
   });
@@ -654,8 +746,8 @@ async function submitSurvey(){
   return;
 }
 
-  const fields = document.querySelectorAll(
-    "#questionsWrap input, #questionsWrap textarea"
+  const nonCheckboxFields = document.querySelectorAll(
+    "#questionsWrap input:not([type='checkbox']), #questionsWrap textarea"
   );
 
   const answers = [];
@@ -663,7 +755,7 @@ async function submitSurvey(){
 
   formData.append("surveyId", surveyId);
 
-  fields.forEach(field => {
+  nonCheckboxFields.forEach(field => {
 
     if(field.type === "file"){
 
@@ -682,23 +774,6 @@ async function submitSurvey(){
           : ""
       });
 
-    } else if(field.type === "checkbox") {
-      
-      // هنا نتحقق إذا كان المستخدم وضع علامة صح أم لا
-      // إذا وضع صح، نرسل علامة الصح أو النص "موافق"، وإذا تركه فارغاً نرسل نص فارغ ""
-      // التحقق إذا كان الخيار معلماً عليه (Checked)
-      if (field.checked) {
-        // إذا وضع علامة صح، نرسل إيموجي الصح الأخضر المميز لملف الإكسيل
-        answers.push({
-          questionId: field.dataset.questionId,
-          questionLabel: field.dataset.questionLabel,
-          answer: "✅" 
-        });
-      } else {
-        // إذا تركه فارغاً، لن نقوم بعمل push نهائياً (كأنه مش موجود)
-        // وبذلك لن يرسل للداتابيز ولن يظهر في الإكسيل
-      }
-
     } else {
 
       answers.push({
@@ -709,6 +784,33 @@ async function submitSurvey(){
 
     }
 
+  });
+
+  const checkboxGroupMap = {};
+  const allCheckboxes = document.querySelectorAll("#questionsWrap input[type='checkbox']");
+  allCheckboxes.forEach(cb => {
+    const qId = cb.dataset.questionId;
+    if(!checkboxGroupMap[qId]){
+      checkboxGroupMap[qId] = {
+        questionLabel: cb.dataset.questionLabel,
+        items: []
+      };
+    }
+    if(cb.checked){
+      const itemLabel = cb.dataset.itemLabel || "";
+      checkboxGroupMap[qId].items.push(itemLabel ? `✅ ${itemLabel}` : "✅");
+    }
+  });
+
+  Object.keys(checkboxGroupMap).forEach(qId => {
+    const group = checkboxGroupMap[qId];
+    if(group.items.length > 0){
+      answers.push({
+        questionId: qId,
+        questionLabel: group.questionLabel,
+        answer: group.items.join(", ")
+      });
+    }
   });
 
   formData.append(
