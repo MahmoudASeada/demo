@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
     exit;
 }
 
-$DB_HOST = "mysql-demo";
+$DB_HOST = "qyz8a8qslnvrwjwwnbcnuivh";
 $DB_PORT = "3306";
 $DB_NAME = "default";
 $DB_USER = "mysql";
