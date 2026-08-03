@@ -59,7 +59,7 @@
 
       .tabs button.active {
         background: #fff;
-        color: #c9000b;
+        color: #1b1e3a;
         box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       }
 
@@ -98,7 +98,7 @@
 
       .forgot {
         font-size: 12px;
-        color: #c9000b;
+        color: #1b1e3a;
         text-decoration: none;
         font-weight: 700;
       }
@@ -129,9 +129,9 @@
       }
 
       .input-box input:focus {
-        border-color: #c9000b;
+        border-color: #1b1e3a;
         background: #fff;
-        box-shadow: 0 0 0 3px rgba(201, 0, 11, 0.08);
+        box-shadow: 0 0 0 3px rgba(27, 30, 58, 0.10);
       }
 
       .eye {
@@ -150,17 +150,17 @@
         width: 100%;
         height: 56px;
         border: none;
-        background: #c9000b;
+        background: #1b1e3a;
         color: #fff;
         font-size: 15px;
         font-weight: 800;
         border-radius: 10px;
         cursor: pointer;
-        box-shadow: 0 12px 20px rgba(201, 0, 11, 0.18);
+        box-shadow: 0 12px 20px rgba(27, 30, 58, 0.18);
       }
 
       .submit:hover {
-        background: #b00009;
+        background: #282c50;
       }
 
       .divider {
@@ -207,11 +207,11 @@
       .terms input {
         width: 16px;
         height: 16px;
-        accent-color: #c9000b;
+        accent-color: #1b1e3a;
       }
 
       .terms a {
-        color: #c9000b;
+        color: #1b1e3a;
         text-decoration: none;
         text-transform: uppercase;
         letter-spacing: 0.3px;
@@ -257,7 +257,7 @@
       }
 
       .switch-text a {
-        color: #c9000b;
+        color: #1b1e3a;
         font-weight: 800;
         text-decoration: none;
       }
@@ -265,7 +265,7 @@
       .switch-text button {
         border: none;
         background: transparent;
-        color: #c9000b;
+        color: #1b1e3a;
         font: inherit;
         font-weight: 800;
         padding: 0;
@@ -314,6 +314,18 @@
         </div>
 
         <button class="submit" onclick="loginUser()">Log In →</button>
+        <button
+          class="submit"
+          type="button"
+          onclick="devBypass()"
+          style="
+            margin-top: 12px;
+            background: #101828;
+            box-shadow: none;
+          "
+        >
+          🛠 Dev Mode — Skip Login
+        </button>
         <div class="switch-text">
           New to the platform?
           <button
@@ -435,6 +447,16 @@
       function togglePassword(id) {
         const input = document.getElementById(id);
         input.type = input.type === "password" ? "text" : "password";
+      }
+
+      // Dev-only: skip real auth so the frontend can be edited without a backend.
+      function devBypass() {
+        localStorage.setItem("portal_token", "bypass_token");
+        localStorage.setItem(
+          "portal_user",
+          JSON.stringify({ id: 1, name: "Dev User", email: "dev@local", role: "user" })
+        );
+        window.location.href = "dashboard.html";
       }
 
       async function loginUser() {

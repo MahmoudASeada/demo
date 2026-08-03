@@ -61,7 +61,7 @@ button{
   width:100%;
   height:56px;
   border:none;
-  background:#c9000b;
+  background:#1b1e3a;
   color:#fff;
   border-radius:12px;
   font-weight:800;
@@ -71,7 +71,7 @@ button{
 .status{
   margin-top:14px;
   text-align:center;
-  color:#c9000b;
+  color:#1b1e3a;
   font-size:13px;
 }
 .password-box{
@@ -96,7 +96,7 @@ button{
 }
 
 .toggle-password:hover{
-  color:#c9000b;
+  color:#1b1e3a;
 }
 </style>
 </head>
@@ -126,6 +126,10 @@ button{
 </div>
 
   <button onclick="loginAdmin()">Login</button>
+  <button type="button" onclick="devBypass()"
+    style="margin-top:12px;background:#101828">
+    🛠 Dev Mode — Skip Login
+  </button>
 
   <div class="status" id="status"></div>
 </div>
@@ -164,6 +168,16 @@ async function loginAdmin(){
   }catch(error){
     status.innerText = "Connection error";
   }
+}
+
+// Dev-only: skip real auth so the admin frontend can be edited without a backend.
+function devBypass() {
+  localStorage.setItem("admin_token", "bypass_admin_token");
+  localStorage.setItem(
+    "admin_user",
+    JSON.stringify({ id: 1, name: "Admin", role: "super_admin" })
+  );
+  window.location.href = "admin.html";
 }
 
 function togglePassword() {
