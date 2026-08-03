@@ -9,11 +9,11 @@ if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
     exit;
 }
 
-$DB_HOST = "fsook8og8oscgccgcgs88w4o";
+$DB_HOST = "mysql-demo";
 $DB_PORT = "3306";
-$DB_NAME = "mysql-demo";
+$DB_NAME = "default";
 $DB_USER = "mysql";
-$DB_PASS = "rCHm3LJRaAa04UAnRtNFPwEk8fSoif40uvP8WAPGgJ18qFzh11vMCeoii9iuX9u1";
+$DB_PASS = "4Lzsbck6zHNvqZJZq8QxHZH23ARYfdZ7EOAu7BGuDAz4jR7bgwWgbmg5ugPN1SLD";
 
 try {
     $pdo = new PDO(
