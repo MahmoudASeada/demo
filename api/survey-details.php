@@ -53,6 +53,7 @@ $qStmt->execute([$surveyId]);
 $questions = $qStmt->fetchAll();
 
 $answers = [];
+$files = [];
 
 if ($survey["status"] === "completed") {
     $aStmt = $pdo->prepare("
@@ -64,11 +65,27 @@ if ($survey["status"] === "completed") {
     ");
     $aStmt->execute([$surveyId, $user["id"]]);
     $answers = $aStmt->fetchAll();
+
+    // survey_answers only stores the file name, so the actual upload has to be
+    // returned separately for the response view to render it.
+    $fStmt = $pdo->prepare("
+        SELECT suf.id, suf.question_id, suf.original_name, suf.file_type
+        FROM survey_uploaded_files suf
+        INNER JOIN survey_responses sr ON sr.id = suf.response_id
+        WHERE sr.survey_id = ? AND suf.user_id = ?
+        ORDER BY suf.id ASC
+    ");
+    $fStmt->execute([$surveyId, $user["id"]]);
+
+    foreach ($fStmt->fetchAll() as $f) {
+        $files[(int)$f["question_id"]] = $f;
+    }
 }
 
 echo json_encode([
     "success" => true,
     "survey" => $survey,
     "questions" => $questions,
-    "answers" => $answers
+    "answers" => $answers,
+    "files" => (object)$files
 ]);

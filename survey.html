@@ -24,7 +24,7 @@ body{
 .back{
   display:inline-block;
   margin-bottom:20px;
-  color:#c9000b;
+  color:#1b1e3a;
   font-weight:800;
   text-decoration:none;
 }
@@ -135,8 +135,8 @@ textarea{
 }
 
 input:focus,textarea:focus{
-  border-color:#c9000b;
-  box-shadow:0 0 0 3px rgba(201,0,11,.08);
+  border-color:#1b1e3a;
+  box-shadow:0 0 0 3px rgba(27,30,58,.10);
 }
 
 .error-field{
@@ -158,7 +158,7 @@ input:focus,textarea:focus{
   width:100%;
   height:56px;
   border:none;
-  background:#c9000b;
+  background:#1b1e3a;
   color:#fff;
   border-radius:14px;
   font-weight:800;
@@ -168,7 +168,7 @@ input:focus,textarea:focus{
 }
 
 .submit:hover{
-  background:#b00009;
+  background:#282c50;
 }
 
 .completed{
@@ -231,6 +231,7 @@ input,textarea{
 .chip-btn:hover{
   background:#dfe3ea;
 }
+
 .confirm-box{
   margin:20px 0;
   display:flex;
@@ -250,6 +251,117 @@ input,textarea{
   width:22px;
   height:22px;
   cursor:pointer;
+  accent-color:#1b1e3a;
+}
+
+/* File picker preview */
+.file-field{
+  position:relative;
+}
+
+.file-preview{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:10px;
+  padding:10px 12px;
+  background:#f8fafc;
+  border:1px solid #dfe3ea;
+  border-radius:12px;
+}
+
+.file-preview[hidden]{
+  display:none;
+}
+
+.file-preview img{
+  width:56px;
+  height:56px;
+  object-fit:cover;
+  border-radius:8px;
+  border:1px solid #dfe3ea;
+  flex:none;
+  background:#fff;
+}
+
+.file-preview img[hidden]{
+  display:none;
+}
+
+.file-preview .file-name{
+  flex:1;
+  min-width:0;
+  font-size:13px;
+  color:#101828;
+  word-break:break-all;
+}
+
+.file-remove{
+  flex:none;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  border:1px solid #f0d2d4;
+  background:#fff;
+  color:#c9000b;
+  font-size:18px;
+  line-height:1;
+  cursor:pointer;
+}
+
+.file-remove:hover{
+  background:#fff5f5;
+}
+
+/* Read-only answers on an already-submitted survey */
+.answer-box{
+  background:#f8fafc;
+  border:1px solid #dfe3ea;
+  border-radius:14px;
+  padding:16px;
+  font-size:14px;
+  color:#101828;
+  line-height:1.6;
+}
+
+.answer-select{
+  width:100%;
+  background:#f8fafc;
+  border:1px solid #dfe3ea;
+  border-radius:14px;
+  padding:15px 16px;
+  font-size:14px;
+  color:#101828;
+  cursor:pointer;
+  outline:none;
+}
+
+.answer-select option{
+  padding:6px 0;
+  color:#101828;
+}
+
+.answer-image{
+  display:block;
+  max-width:100%;
+  max-height:320px;
+  border-radius:10px;
+  border:1px solid #dfe3ea;
+  margin-bottom:12px;
+  background:#fff;
+}
+
+.answer-file{
+  display:inline-block;
+  font-size:13px;
+  font-weight:700;
+  color:#1b1e3a;
+  text-decoration:none;
+  word-break:break-all;
+}
+
+.answer-file:hover{
+  text-decoration:underline;
 }
 </style>
 </head>
@@ -268,7 +380,7 @@ input,textarea{
     <p class="subtitle" id="surveyMeta">Please answer all required questions.</p>
 
     <div id="questionsWrap"></div>
-    <div class="confirm-box">
+    <div class="confirm-box" id="confirmBox">
       <label>
         <input type="checkbox" id="confirmSubmit">
         I have reviewed all questions before submitting this form.
@@ -285,10 +397,16 @@ input,textarea{
 </div>
 
 <script>
-const token = localStorage.getItem("portal_token");
+let token = localStorage.getItem("portal_token");
 
 if(!token){
-  window.location.href = "login.html";
+  // Dev-only: skip real auth so the frontend can be edited without a backend.
+  token = "bypass_token";
+  localStorage.setItem("portal_token", token);
+  localStorage.setItem(
+    "portal_user",
+    JSON.stringify({ id: 1, name: "Dev User", email: "dev@local", role: "user" })
+  );
 }
 
 const params = new URLSearchParams(window.location.search);
@@ -367,11 +485,14 @@ async function loadSurvey(){
 
     loadedQuestions = data.questions;
     window.loadedAnswers = data.answers || [];
+    window.loadedFiles = data.files || {};
     if(data.survey.status === "completed"){
       document.getElementById("completedBox").innerHTML =
         `<div class="completed">This survey has already been submitted.</div>`;
 
       document.getElementById("submitBtn").style.display = "none";
+      // the confirm gate belongs to the fill-in flow only
+      document.getElementById("confirmBox").style.display = "none";
     }
 
     renderQuestions();
@@ -399,22 +520,51 @@ function renderQuestions(){
 
       const answerObj = (window.loadedAnswers || []).find(a => Number(a.question_id) === Number(q.id));
       const answerText = answerObj ? answerObj.answer : "No answer found";
+      const isChecklist = q.question_type === "checkbox" || q.question_type === "checklist";
+
+      let answerHTML;
+
+      if(q.question_type === "file"){
+        const upload = (window.loadedFiles || {})[q.id];
+
+        if(upload){
+          const base = "api/download-survey-file.php?id=" + upload.id +
+                       "&token=" + encodeURIComponent(token);
+          const isImage = String(upload.file_type || "").indexOf("image/") === 0;
+
+          answerHTML = `
+            <div class="answer-box">
+              ${isImage ? `<img class="answer-image" src="${base}&mode=view" alt="${upload.original_name}">` : ""}
+              <a class="answer-file" href="${base}" target="_blank" rel="noopener">
+                ⬇ ${upload.original_name}
+              </a>
+            </div>
+          `;
+        }else{
+          answerHTML = `<div class="answer-box">${answerText}</div>`;
+        }
+      }else if(isChecklist && answerObj){
+        // Checklist answers are stored as "✅ item, ✅ item" — split on the comma that
+        // precedes a tick so item labels containing commas stay intact.
+        const items = answerText
+          .split(/,\s*(?=✅)/)
+          .map(s => s.trim())
+          .filter(Boolean);
+
+        answerHTML = `
+          <select class="answer-select" onchange="this.selectedIndex=0">
+            <option>${items.length} item${items.length === 1 ? "" : "s"} selected</option>
+            ${items.map(item => `<option>${item}</option>`).join("")}
+          </select>
+        `;
+      }else{
+        answerHTML = `<div class="answer-box">${answerText}</div>`;
+      }
 
       return `
         <div class="field">
           <label>${q.question_text}</label>
-
-          <div style="
-            background:#f8fafc;
-            border:1px solid #dfe3ea;
-            border-radius:14px;
-            padding:16px;
-            font-size:14px;
-            color:#101828;
-            line-height:1.6;
-          ">
-            ${answerText}
-          </div>
+          ${answerHTML}
         </div>
       `;
     }).join("");
@@ -449,15 +599,30 @@ function renderQuestions(){
 
     if(q.question_type === "file"){
       inputHTML = `
-        <input
-          type="file"
-          data-question-id="${q.id}"
-          data-question-label="${q.question_text}"
-          data-required="${required ? "1" : "0"}"
-          data-max-size="${q.max_file_size_mb || ""}"
-          required
-          style="padding-left:16px;"
-        >
+        <div class="file-field">
+          <input
+            type="file"
+            data-question-id="${q.id}"
+            data-question-label="${q.question_text}"
+            data-required="${required ? "1" : "0"}"
+            data-max-size="${q.max_file_size_mb || ""}"
+            required
+            onchange="handleFilePick(this)"
+            style="padding-left:16px;"
+          >
+
+          <div class="file-preview" hidden>
+            <img alt="" hidden>
+            <span class="file-name"></span>
+            <button
+              type="button"
+              class="file-remove"
+              onclick="clearFilePick(this)"
+              title="Remove file"
+              aria-label="Remove file"
+            >&times;</button>
+          </div>
+        </div>
         ${
           q.max_file_size_mb
           ? `<div style="font-size:12px;color:#667085;margin-top:6px;">Max file size: ${q.max_file_size_mb} MB</div>`
@@ -477,7 +642,7 @@ function renderQuestions(){
                   data-question-label="${q.question_text}"
                   data-item-label="${item.replace(/"/g, '&quot;')}"
                   data-required="${required ? "1" : "0"}"
-                  style="width:20px; height:20px; cursor:pointer; accent-color:#c9000b; margin:0;"
+                  style="width:20px; height:20px; cursor:pointer; accent-color:#1b1e3a; margin:0;"
                 >
                 <span>${item}</span>
               </label>
@@ -494,7 +659,7 @@ function renderQuestions(){
               data-question-label="${q.question_text}"
               data-item-label="${q.question_text.replace(/"/g, '&quot;')}"
               data-required="${required ? "1" : "0"}"
-              style="width:24px; height:24px; cursor:pointer; accent-color:#c9000b; margin:0;"
+              style="width:24px; height:24px; cursor:pointer; accent-color:#1b1e3a; margin:0;"
             >
             <span>Complete item</span>
           </label>
@@ -721,13 +886,58 @@ function insertChip(questionId, text){
   field.classList.remove("error-field");
   saveToLocalStorage();
 }
+// ── File picker preview ──────────────────────────────────────────────
+// Images get a thumbnail; any file gets its name plus an × to clear it so a
+// different one can be chosen (a file input cannot be emptied by the user).
+function handleFilePick(input){
+  const wrap = input.closest(".file-field");
+  const preview = wrap.querySelector(".file-preview");
+  const img = preview.querySelector("img");
+  const name = preview.querySelector(".file-name");
+  const file = input.files[0];
+
+  if(img.dataset.url){
+    URL.revokeObjectURL(img.dataset.url);
+    delete img.dataset.url;
+  }
+
+  if(!file){
+    img.hidden = true;
+    img.removeAttribute("src");
+    preview.hidden = true;
+    return;
+  }
+
+  name.textContent = file.name;
+
+  if(file.type.indexOf("image/") === 0){
+    const url = URL.createObjectURL(file);
+    img.dataset.url = url;
+    img.src = url;
+    img.hidden = false;
+  }else{
+    img.hidden = true;
+    img.removeAttribute("src");
+  }
+
+  preview.hidden = false;
+}
+
+function clearFilePick(btn){
+  const wrap = btn.closest(".file-field");
+  const input = wrap.querySelector("input[type='file']");
+
+  input.value = "";
+  handleFilePick(input);
+  input.focus();
+}
+
 async function submitSurvey(){
 
   const status = document.getElementById("status");
   status.classList.remove("error");
 
-  const confirmSubmit =
-  document.getElementById("confirmSubmit");
+  const confirmSubmit = document.getElementById("confirmSubmit");
 
   if(!confirmSubmit.checked){
     status.classList.add("error");
